@@ -409,18 +409,7 @@ public class BlogServiceImpl implements BlogService {
 		return blogMapper.getPublishedByBlogId(blogId);
 	}
 
-    @Override
-    public List<Blog> getBolgTitleById(Long id) {
 
-		List<Blog> bolgTitleById = blogMapper.getBolgTitleById(id);
-//		for (Blog blog : bolgTitleById) {
-//			if (!blog.getPassword().equals("")){
-//				blog.setPassword(null);
-//
-//			}
-//		}
-		return bolgTitleById;
-	}
 
     /**
 	 * 删除首页缓存、最新推荐缓存、归档页面缓存、博客浏览量缓存

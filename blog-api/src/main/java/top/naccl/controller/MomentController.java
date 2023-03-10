@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import top.naccl.annotation.AccessLimit;
 import top.naccl.annotation.VisitLogger;
 import top.naccl.constant.JwtConstants;
+import top.naccl.entity.Blog;
 import top.naccl.entity.Moment;
 import top.naccl.entity.User;
 import top.naccl.enums.VisitBehavior;
@@ -19,6 +20,8 @@ import top.naccl.model.vo.Result;
 import top.naccl.service.MomentService;
 import top.naccl.service.impl.UserServiceImpl;
 import top.naccl.util.JwtUtils;
+
+import java.util.List;
 
 /**
  * @Description: 动态
@@ -43,6 +46,7 @@ public class MomentController {
 	@GetMapping("/moments")
 	public Result moments(@RequestParam(defaultValue = "1") Integer pageNum,
 	                      @RequestHeader(value = "Authorization", defaultValue = "") String jwt) {
+		// 定义当前用户的登录状态 true登录 false未登录
 		boolean adminIdentity = false;
 		if (JwtUtils.judgeTokenIsExist(jwt)) {
 			try {
@@ -77,5 +81,15 @@ public class MomentController {
 	public Result like(@PathVariable Long id) {
 		momentService.addLikeByMomentId(id);
 		return Result.ok("点赞成功");
+	}
+
+	/**
+	 * 通过userId获得内容的标题
+	 * @return
+	 */
+	@GetMapping("/bolgTitleById")
+	public Result bolgById(@RequestParam Long id){
+		List<Blog> blogs = momentService.getBolgTitleById(id);
+		return Result.ok("获取成功",blogs);
 	}
 }

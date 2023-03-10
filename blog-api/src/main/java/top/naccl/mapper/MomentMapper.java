@@ -2,6 +2,7 @@ package top.naccl.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+import top.naccl.entity.Blog;
 import top.naccl.entity.Moment;
 
 import java.util.List;
@@ -27,4 +28,5 @@ public interface MomentMapper {
 	int saveMoment(Moment moment);
 
 	int updateMoment(Moment moment);
+
 }

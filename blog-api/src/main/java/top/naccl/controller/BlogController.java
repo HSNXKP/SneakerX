@@ -131,13 +131,5 @@ public class BlogController {
 		return Result.ok("获取成功", searchBlogs);
 	}
 
-	/**
-	 * 通过userId获得内容的标题
-	 * @return
-	 */
-	@GetMapping("/bolgTitleById")
-	public Result bolgById(@RequestParam Long id){
-		List<Blog> blogs = blogService.getBolgTitleById(id);
-		return Result.ok("获取成功",blogs);
-	}
+
 }
