@@ -71,5 +71,9 @@ public interface BlogService {
 
 	Boolean getPublishedByBlogId(Long blogId);
 
-
+	/**
+	 *通过userId获得内容的标题
+	 * @param id
+	 */
+	List<Blog> getBolgTitleById(Long id);
 }

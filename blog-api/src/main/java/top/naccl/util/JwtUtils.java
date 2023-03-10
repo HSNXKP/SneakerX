@@ -41,7 +41,7 @@ public class JwtUtils {
 	}
 
 	/**
-	 * 生成没有角色的token
+	 * 生成token
 	 *
 	 * @param subject
 	 * @return

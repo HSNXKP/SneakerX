@@ -4,11 +4,9 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import top.naccl.entity.Blog;
 import top.naccl.entity.Moment;
 import top.naccl.exception.NotFoundException;
 import top.naccl.exception.PersistenceException;
-import top.naccl.mapper.BlogMapper;
 import top.naccl.mapper.MomentMapper;
 import top.naccl.service.MomentService;
 import top.naccl.util.markdown.MarkdownUtils;
@@ -24,10 +22,6 @@ import java.util.List;
 public class MomentServiceImpl implements MomentService {
 	@Autowired
 	MomentMapper momentMapper;
-
-	@Autowired
-	BlogMapper blogMapper;
-
 	//每页显示5条动态
 	private static final int pageSize = 5;
 	//动态列表排序方式
@@ -101,11 +95,5 @@ public class MomentServiceImpl implements MomentService {
 		if (momentMapper.updateMoment(moment) != 1) {
 			throw new PersistenceException("动态修改失败");
 		}
-	}
-
-	@Override
-	public List<Blog> getBolgTitleById(Long id) {
-		List<Blog> bolgTitleById = blogMapper.getBolgTitleById(id);
-		return bolgTitleById;
 	}
 }
