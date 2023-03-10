@@ -1,5 +1,6 @@
 package top.naccl.service;
 
+import top.naccl.entity.Blog;
 import top.naccl.entity.Moment;
 
 import java.util.List;
@@ -20,4 +21,10 @@ public interface MomentService {
 	void saveMoment(Moment moment);
 
 	void updateMoment(Moment moment);
+
+	/**
+	 *通过userId获得内容的标题
+	 * @param id
+	 */
+	List<Blog> getBolgTitleById(Long id);
 }
