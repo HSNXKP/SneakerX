@@ -15,10 +15,7 @@
         select id, content, create_time, likes, is_published from moment
     </select>
 
-    <!--给动态点赞-->
-    <update id="addLikeByMomentId">
-        update moment set likes=likes+1 where id=#{momentId}
-    </update>
+
 
     <!--更新动态发布状态-->
     <update id="updateMomentPublishedById">

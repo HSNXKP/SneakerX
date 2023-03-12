@@ -10,8 +10,6 @@ public interface MomentService {
 
 	List<Moment> getMomentVOList(Integer pageNum, boolean adminIdentity);
 
-	void addLikeByMomentId(Long momentId);
-
 	void updateMomentPublishedById(Long momentId, Boolean published);
 
 	Moment getMomentById(Long id);
@@ -26,5 +24,11 @@ public interface MomentService {
 	 *通过userId获得内容的标题
 	 * @param id
 	 */
-	List<Blog> getBolgTitleById(Long id);
+	List<Blog> getBolgTitleById(Long id,Integer pageNum);
+
+	/**
+	 * 点赞动态通过BlogId
+	 * @param id
+	 */
+	void addLikeByBlogId(Long id);
 }

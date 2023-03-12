@@ -54,13 +54,6 @@ public class MomentServiceImpl implements MomentService {
 		return moments;
 	}
 
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public void addLikeByMomentId(Long momentId) {
-		if (momentMapper.addLikeByMomentId(momentId) != 1) {
-			throw new PersistenceException("操作失败");
-		}
-	}
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
@@ -104,8 +97,17 @@ public class MomentServiceImpl implements MomentService {
 	}
 
 	@Override
-	public List<Blog> getBolgTitleById(Long id) {
+	public List<Blog> getBolgTitleById(Long id,Integer pageNum) {
+		PageHelper.startPage(pageNum, pageSize);
 		List<Blog> bolgTitleById = blogMapper.getBolgTitleById(id);
 		return bolgTitleById;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public void addLikeByBlogId(Long id) {
+		if (blogMapper.addLikeByBlogId(id) != 1) {
+			throw new PersistenceException("操作失败");
+		}
 	}
 }

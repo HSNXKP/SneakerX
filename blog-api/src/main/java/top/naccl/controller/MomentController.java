@@ -68,18 +68,17 @@ public class MomentController {
 		return Result.ok("获取成功", pageResult);
 	}
 
+
 	/**
-	 * 给动态点赞
-	 * 简单限制一下点赞
-	 *
-	 * @param id 动态id
+	 * 点赞动态
+	 * @param id
 	 * @return
 	 */
 	@AccessLimit(seconds = 86400, maxCount = 1, msg = "不可以重复点赞哦")
 	@VisitLogger(VisitBehavior.LIKE_MOMENT)
-	@PostMapping("/moment/like/{id}")
-	public Result like(@PathVariable Long id) {
-		momentService.addLikeByMomentId(id);
+	@PostMapping("/moment/likeMoment/{id}")
+	public Result likeMoment(@PathVariable Long id){
+		momentService.addLikeByBlogId(id);
 		return Result.ok("点赞成功");
 	}
 
@@ -88,8 +87,11 @@ public class MomentController {
 	 * @return
 	 */
 	@GetMapping("/bolgTitleById")
-	public Result bolgById(@RequestParam Long id){
-		List<Blog> blogs = momentService.getBolgTitleById(id);
-		return Result.ok("获取成功",blogs);
+	public Result bolgById(@RequestParam Long id,
+						   @RequestParam(defaultValue = "1") Integer pageNum){
+		List<Blog> blogs = momentService.getBolgTitleById(id,pageNum);
+		PageInfo<Blog> blogPageInfo = new PageInfo<>(blogs);
+		PageResult<Blog> blogPageResult = new PageResult<>(blogPageInfo.getPages(), blogPageInfo.getList());
+		return Result.ok("获取成功",blogPageResult);
 	}
 }

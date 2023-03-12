@@ -16,7 +16,6 @@ import java.util.List;
 public interface MomentMapper {
 	List<Moment> getMomentList();
 
-	int addLikeByMomentId(Long momentId);
 
 	int updateMomentPublishedById(Long momentId, Boolean published);
 

@@ -273,6 +273,9 @@
                 #{top}, #{createTime}, #{updateTime}, #{views}, #{words}, #{readTime}, #{category.id}, #{user.id},
                 #{password})
     </insert>
+    <update id="addLikeByBlogId" parameterType="java.lang.Long">
+        update  blog set  likes=likes+1 where blog.id = #{id}
+    </update>
 
     <!--更新博客推荐状态-->
     <update id="updateBlogRecommendById">
