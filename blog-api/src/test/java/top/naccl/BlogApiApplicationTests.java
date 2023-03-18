@@ -1,5 +1,6 @@
 package top.naccl;
 
+import jdk.jfr.internal.Logger;
 import net.minidev.json.JSONObject;
 import org.json.JSONString;
 import org.junit.jupiter.api.Test;
@@ -83,21 +84,54 @@ class BlogApiApplicationTests {
 
 	@Test
 	void test3(){
-		User user = new User();
-		// 代码1.在暂存得接口上加上AOP注解
-		// 思维层次1.前提暂存 2.受试者编号，访事*，操作*
-		// 3.前端给id，编号，访事sql查询，一条没有插入日志 访事 查询出来不用插入日志
-		// 4.前端给id，编号，访事，事件，sql查询，一条没有插入日志 事件 查询出来不用插入日志
+		HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+		objectObjectHashMap.put("1",1);
+		objectObjectHashMap.put("2",2);
+		objectObjectHashMap.put("S3",3);
+		System.out.println(objectObjectHashMap);
+		objectObjectHashMap.forEach((k,v) ->{
+			String s = "S";
+			String s1 = "3";
+			String s2 = "S3";
+			String s3 = "S4";
+			String s4 = "S5";
+			List<Object> objects = new ArrayList<>();
+			objects.add(s2);
+			objects.add(s3);
+			objects.add(s4);
+			for (Object object : objects) {
+				if (k.equals(object)){
+					System.out.println("存在");
+					objectObjectHashMap.put(k,1);
+				}
+			}
+
+		});
+		System.out.println(objectObjectHashMap);
+
+	}
+
+	public static  class C{
+			private static final String[] AUTH_WHITELIST = {
+					// admin接口是后台管理接口 放行到下一个过滤器
+					"/admin",
+					// 动态接口
+					"/bolgTitleById",
+					// 日志接口
+					"/archives",
+			};
+
+		public static void main(String[] args) {
+			for (String s : AUTH_WHITELIST) {
+				String s1 ="/archives";
+				if (s1.equals(s)){
+					return;
+				}
+			}
+			System.out.println("进来了");
+		}
 
 
-//		String s ="2022-";
-//		String format = String.format(s, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-//		System.out.println(format);
-//		System.out.println((LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
-		user.setPassword("12345");
-		user.setUsername("admin");
-		ArrayList<User> users = new ArrayList<>();
-		users.add(user);
 	}
 
 
