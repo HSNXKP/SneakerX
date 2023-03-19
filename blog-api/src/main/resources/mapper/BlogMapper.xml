@@ -431,6 +431,7 @@
         from blog,user
         where blog.user_id = user.id
           and blog.is_published = true
+          and user.id=#{id}
     </select>
 
     <!--按分类id查询博客数量-->
