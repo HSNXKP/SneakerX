@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.naccl.mapper.UserMapper">
+
+    <resultMap id="BaseResultMapper" type="top.naccl.entity.User">
+        <id column="id" property="id" />
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname" />
+        <result column="password" property="password"/>
+        <result column="email" property="email" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="role" property="role" />
+    </resultMap>
+      <!--注册用户-->
+    <insert id="registerUser" parameterType="top.naccl.entity.User">
+        insert into user(username,nickname,password,email,avatar,create_time,update_time,role)
+        values(#{username},#{nickname},#{password},#{email},#{avatar},#{createTime},#{updateTime},#{role})
+    </insert>
+
     <!--按用户名查询User-->
     <select id="findByUsername" resultType="top.naccl.entity.User">
         select * from user where username=#{username} limit 1

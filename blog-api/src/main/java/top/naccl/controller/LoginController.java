@@ -76,5 +76,10 @@ public class LoginController {
 		return Result.ok("退出成功");
 	}
 
+	@PostMapping("/register")
+	public Result register(@RequestBody User user){
+		return userService.register(user);
+	}
+
 
 }

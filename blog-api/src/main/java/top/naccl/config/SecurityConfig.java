@@ -53,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				//基于Token，不创建会话
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.authorizeRequests()
+				// 前台需要登录的接口
 				.antMatchers("/archives","/bolgTitleById").hasAnyRole("common","admin")
 				//放行获取网页标题后缀的请求
 				.antMatchers("/admin/webTitleSuffix").permitAll()

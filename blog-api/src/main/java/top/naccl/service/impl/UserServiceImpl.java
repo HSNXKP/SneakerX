@@ -8,8 +8,12 @@ import org.springframework.stereotype.Service;
 import top.naccl.exception.NotFoundException;
 import top.naccl.mapper.UserMapper;
 import top.naccl.entity.User;
+import top.naccl.model.vo.Result;
 import top.naccl.service.UserService;
 import top.naccl.util.HashUtils;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @Description: 用户业务层接口实现类
@@ -50,6 +54,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		return user;
 	}
+
+    @Override
+    public Result register(User user) {
+		if (userMapper.findByUsername(user.getUsername()) !=null){
+			return Result.error("用户名已存在");
+		}
+		// 创建账号时间
+		user.setCreateTime(LocalDateTime.now());
+		user.setUpdateTime(LocalDateTime.now());
+		// 密码加密
+		user.setPassword(HashUtils.getBC(user.getPassword()));
+		user.setRole("ROLE_common");
+		// 设置默认头像
+		user.setAvatar("http://localhost/QQ20221014224335.jpg");
+		if (userMapper.registerUser(user)){
+			return Result.ok("注册成功");
+		}
+		return Result.error("注册失败");
+    }
 
 
 }

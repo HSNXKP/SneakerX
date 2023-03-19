@@ -38,7 +38,7 @@ public class JwtFilter extends GenericFilterBean  {
 
 
     private static final String[] AUTH_WHITELIST = {
-            // admin接口是后台管理接口 放行到下一个过滤器
+            // admin接口是后台管理接口
             "/admin",
             // 动态接口
             "/bolgTitleById",
@@ -77,6 +77,7 @@ public class JwtFilter extends GenericFilterBean  {
                 return;
             }
         }
+        // 放行其他请求
         filterChain.doFilter(request, servletResponse);
 
 //        if (!request.getRequestURI().startsWith(request.getContextPath() + "/admin") && !request.getRequestURI().startsWith(request.getContextPath() + "/bolgTitleById") && !request.getRequestURI().startsWith(request.getContextPath() + "/archives")){

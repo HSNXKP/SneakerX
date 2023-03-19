@@ -1,5 +1,6 @@
 package top.naccl.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -31,8 +33,11 @@ public class User implements UserDetails {
 	private String nickname; //昵称
 	private String avatar; //头像
 	private String email; //邮箱
-	private Date createTime; //创建账号时间
-	private Date updateTime; //更新动态时间
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
+	private LocalDateTime createTime; //创建账号时间
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
+	private LocalDateTime updateTime; //更新动态时间
 	private String role; //角色
 
 	@JsonIgnore
