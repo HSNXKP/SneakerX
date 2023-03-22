@@ -1,5 +1,6 @@
 package top.naccl.service.impl;
 
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import top.naccl.exception.NotFoundException;
 import top.naccl.mapper.UserMapper;
 import top.naccl.entity.User;
+import top.naccl.model.vo.NewPasswordVo;
 import top.naccl.model.vo.Result;
 import top.naccl.service.UserService;
 import top.naccl.util.HashUtils;
@@ -73,6 +75,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		return Result.error("注册失败");
     }
+
+    @Override
+    public Result getPasswordByUserId(NewPasswordVo newPasswordVo) {
+		// 拿到原始密码
+		String password = (userMapper.getPasswordByUserId(newPasswordVo.getId())).getPassword();
+		// HashUtil对比
+		if (HashUtils.matchBC(newPasswordVo.getOldPassword(),password)) {
+			// 通过userId修改密码
+			userMapper.updateUser(newPasswordVo.getId(),HashUtils.getBC(newPasswordVo.getNewPassword()));
+			return Result.ok("修改成功");
+		}
+		return Result.error("密码不正确,请重新填写");
+
+	}
 
 
 }

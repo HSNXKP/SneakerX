@@ -1,6 +1,7 @@
 package top.naccl.service;
 
 import top.naccl.entity.User;
+import top.naccl.model.vo.NewPasswordVo;
 import top.naccl.model.vo.Result;
 
 public interface UserService {
@@ -9,4 +10,7 @@ public interface UserService {
 	User findUserById(Long id);
 
     Result register(User user);
+
+    Result getPasswordByUserId(NewPasswordVo newPasswordVo);
+
 }

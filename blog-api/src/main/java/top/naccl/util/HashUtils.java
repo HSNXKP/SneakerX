@@ -1,5 +1,6 @@
 package top.naccl.util;
 
+import lombok.val;
 import org.apache.commons.codec.digest.MurmurHash3;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.DigestUtils;
@@ -38,10 +39,14 @@ public class HashUtils {
 	 * @return
 	 */
 	public static boolean matchBC(CharSequence rawPassword, String encodedPassword) {
+		// 前面为前端传入的不加密 密码 ,后面这个是数据库的加密密码
 		return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
+
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getBC("123456"));
+		boolean b = matchBC("123456", "$2a$10$4wnwMW8Z4Bn6wR4K1YlbquQunlHM/4rvudVBX8oyfx16xeVtI6i7C");
+		System.out.printf(String.valueOf(b));
+
 	}
 }
