@@ -67,15 +67,6 @@ public class TagController {
 	}
 
 
-	/**
-	 * 获得所有tags
-	 * @return
-	 */
-	@GetMapping("/user/tags")
-	public List<Tag> getAllTags(){
-		return tagService.getTagList();
-	}
-
 
 
 }
