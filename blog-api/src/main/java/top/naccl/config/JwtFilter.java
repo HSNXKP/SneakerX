@@ -44,6 +44,7 @@ public class JwtFilter extends GenericFilterBean  {
             "/bolgTitleById",
             // 日志接口
             "/archives",
+            "/user"
     };
 
 
