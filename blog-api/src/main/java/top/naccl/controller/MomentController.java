@@ -93,4 +93,9 @@ public class MomentController {
 		PageResult<Blog> blogPageResult = new PageResult<>(blogPageInfo.getPages(), blogPageInfo.getList());
 		return Result.ok("获取成功",blogPageResult);
 	}
+
+	@GetMapping("/user/deleteBlog")
+	public Result deleteBlogById(@RequestParam Long id){
+		return momentService.deleteBlogById(id);
+	}
 }

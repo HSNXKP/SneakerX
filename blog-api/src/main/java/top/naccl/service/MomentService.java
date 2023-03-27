@@ -32,4 +32,12 @@ public interface MomentService {
 	 * @param id
 	 */
 	Result addLikeByBlogId(Long id);
+
+	/**
+	 * 删除Blog
+	 *
+	 * @param id
+	 * @return
+	 */
+	Result deleteBlogById(Long id);
 }

@@ -112,4 +112,12 @@ public class MomentServiceImpl implements MomentService {
 		}
 		throw new PersistenceException("操作失败");
 	}
+
+	@Override
+	public Result deleteBlogById(Long id) {
+		if (blogMapper.deleteBlogById(id) != 1){
+			return Result.error("删除失败");
+		}
+		return Result.ok("删除成功");
+	}
 }
