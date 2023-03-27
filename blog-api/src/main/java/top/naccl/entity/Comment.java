@@ -33,6 +33,7 @@ public class Comment {
 	private Integer page;//0普通文章，1关于我页面
 	private Boolean notice;//接收邮件提醒
 	private Long parentCommentId;//父评论id
+	private String qq;
 
 	private BlogIdAndTitle blog;//所属的动态
 	private List<Comment> replyComments = new ArrayList<>();//回复该评论的评论
