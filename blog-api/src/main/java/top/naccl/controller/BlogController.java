@@ -1,6 +1,7 @@
 package top.naccl.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.naccl.annotation.VisitLogger;
 import top.naccl.constant.JwtConstants;
+import top.naccl.entity.Blog;
 import top.naccl.entity.User;
 import top.naccl.enums.VisitBehavior;
-import top.naccl.model.dto.Blog;
 import top.naccl.model.dto.BlogPassword;
 import top.naccl.model.vo.BlogDetail;
 import top.naccl.model.vo.BlogInfo;
@@ -61,16 +62,29 @@ public class BlogController {
 	@GetMapping("/blog")
 	public Result getBlog(@RequestParam Long id,
 	                      @RequestHeader(value = "Authorization", defaultValue = "") String jwt) {
-		BlogDetail blog = blogService.getBlogByIdAndIsPublished(id);
+		String subject = JwtUtils.getTokenBody(jwt).getSubject();
+		String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
+		User userDetails = (User) userService.loadUserByUsername(username);
+		if (JwtUtils.judgeTokenIsExist(jwt)){
+			Blog blog = blogService.getBlogById(id);
+			if (!blog.getPublished()) {
+				if (blog.getUser().getId().equals(userDetails.getId())) {
+					BlogDetail blogDetail = blogService.getBlogByIdAndIsPublished(id,"notPublished");
+					return Result.ok("获取成功", blogDetail);
+				}
+			}
+		}
+		BlogDetail blog = blogService.getBlogByIdAndIsPublished(id,"isPublished");
 		//对密码保护的文章校验Token
 		if (!"".equals(blog.getPassword())) {
 			if (JwtUtils.judgeTokenIsExist(jwt)) {
 				try {
-					String subject = JwtUtils.getTokenBody(jwt).getSubject();
+
 					if (subject.startsWith(JwtConstants.ADMIN_PREFIX)) {
 						//博主身份Token
-						String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
+
 						User admin = (User) userService.loadUserByUsername(username);
+
 						if (admin == null) {
 							return Result.create(403, "博主身份Token已失效，请重新登录！");
 						}

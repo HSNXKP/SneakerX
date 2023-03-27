@@ -49,7 +49,7 @@ public interface BlogService {
 
 	String getTitleByBlogId(Long id);
 
-	BlogDetail getBlogByIdAndIsPublished(Long id);
+	BlogDetail getBlogByIdAndIsPublished(Long id,String type);
 
 	String getBlogPassword(Long blogId);
 
