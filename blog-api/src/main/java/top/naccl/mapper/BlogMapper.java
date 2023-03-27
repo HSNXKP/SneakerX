@@ -88,5 +88,5 @@ public interface BlogMapper {
 
 	List<Blog> getBolgTitleById(Long id);
 
-    int addLikeByBlogId(Long id);
+    Boolean addLikeByBlogId(Long id);
 }

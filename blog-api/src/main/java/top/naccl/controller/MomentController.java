@@ -78,8 +78,7 @@ public class MomentController {
 	@VisitLogger(VisitBehavior.LIKE_MOMENT)
 	@PostMapping("/moment/likeMoment/{id}")
 	public Result likeMoment(@PathVariable Long id){
-		momentService.addLikeByBlogId(id);
-		return Result.ok("点赞成功");
+		return momentService.addLikeByBlogId(id);
 	}
 
 	/**

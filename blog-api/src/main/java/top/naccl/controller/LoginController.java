@@ -74,4 +74,16 @@ public class LoginController {
 	}
 
 
+
+	/**
+	 * 退出登录
+	 *
+	 * @return
+	 */
+	@PostMapping("/logOut")
+	public Result logOut() {
+		SecurityContextHolder.clearContext();
+		return Result.ok("退出成功");
+	}
+
 }

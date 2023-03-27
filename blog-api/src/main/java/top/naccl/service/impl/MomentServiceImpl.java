@@ -10,6 +10,7 @@ import top.naccl.exception.NotFoundException;
 import top.naccl.exception.PersistenceException;
 import top.naccl.mapper.BlogMapper;
 import top.naccl.mapper.MomentMapper;
+import top.naccl.model.vo.Result;
 import top.naccl.service.MomentService;
 import top.naccl.util.markdown.MarkdownUtils;
 
@@ -105,9 +106,10 @@ public class MomentServiceImpl implements MomentService {
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public void addLikeByBlogId(Long id) {
-		if (blogMapper.addLikeByBlogId(id) != 1) {
-			throw new PersistenceException("操作失败");
+	public Result addLikeByBlogId(Long id) {
+		if (blogMapper.addLikeByBlogId(id)) {
+			return Result.ok("点赞成功");
 		}
+		throw new PersistenceException("操作失败");
 	}
 }

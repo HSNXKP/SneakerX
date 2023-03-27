@@ -42,16 +42,7 @@ public class UserController {
         return userService.getPasswordByUserId(newPasswordVo);
     }
 
-    /**
-     * 退出登录
-     *
-     * @return
-     */
-    @PostMapping("/logOut")
-    public Result logOut() {
-        SecurityContextHolder.clearContext();
-        return Result.ok("退出成功");
-    }
+
 
     /**
      * 获得所有分类和标签

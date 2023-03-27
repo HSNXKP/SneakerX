@@ -3,33 +3,31 @@ package top.naccl.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.naccl.constant.RedisKeyConstants;
+import top.naccl.controller.admin.BlogAdminController;
 import top.naccl.entity.Blog;
+import top.naccl.entity.Category;
+import top.naccl.entity.Tag;
+import top.naccl.entity.User;
 import top.naccl.exception.NotFoundException;
 import top.naccl.exception.PersistenceException;
 import top.naccl.mapper.BlogMapper;
 import top.naccl.model.dto.BlogView;
 import top.naccl.model.dto.BlogVisibility;
-import top.naccl.model.vo.ArchiveBlog;
-import top.naccl.model.vo.BlogDetail;
-import top.naccl.model.vo.BlogInfo;
-import top.naccl.model.vo.NewBlog;
-import top.naccl.model.vo.PageResult;
-import top.naccl.model.vo.RandomBlog;
-import top.naccl.model.vo.SearchBlog;
+import top.naccl.model.vo.*;
 import top.naccl.service.BlogService;
+import top.naccl.service.CategoryService;
 import top.naccl.service.RedisService;
 import top.naccl.service.TagService;
 import top.naccl.util.JacksonUtils;
+import top.naccl.util.StringUtils;
 import top.naccl.util.markdown.MarkdownUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Description: 博客文章业务层实现
@@ -44,6 +42,12 @@ public class BlogServiceImpl implements BlogService {
 	TagService tagService;
 	@Autowired
 	RedisService redisService;
+	@Autowired
+	private CategoryService categoryService;
+	@Autowired
+	private BlogService blogService;
+
+
 	//随机博客显示5条
 	private static final int randomBlogLimitNum = 5;
 	//最新推荐博客显示3条
@@ -409,6 +413,103 @@ public class BlogServiceImpl implements BlogService {
 		return blogMapper.getPublishedByBlogId(blogId);
 	}
 
+	/**
+	 * 执行博客添加或更新操作：校验参数是否合法，添加分类、标签，维护博客标签关联表
+	 * @param blog
+	 * @param type
+	 * @return
+	 */
+	@Override
+    public Result editBlog(top.naccl.model.dto.Blog blog, String type) {
+		//验证普通字段
+		if (StringUtils.isEmpty(blog.getTitle(), blog.getFirstPicture(), blog.getContent(), blog.getDescription())
+				|| blog.getWords() == null || blog.getWords() < 0) {
+			return Result.error("参数有误");
+		}
+
+		//处理分类
+		Object cate = blog.getCate();
+		if (cate == null) {
+			return Result.error("分类不能为空");
+		}
+		if (cate instanceof Integer) {//选择了已存在的分类
+			Category c = categoryService.getCategoryById(((Integer) cate).longValue());
+			blog.setCategory(c);
+		} else if (cate instanceof String) {//添加新分类
+			//查询分类是否已存在
+			Category category = categoryService.getCategoryByName((String) cate);
+			if (category != null) {
+				return Result.error("不可添加已存在的分类");
+			}
+			Category c = new Category();
+			c.setName((String) cate);
+			categoryService.saveCategory(c);
+			blog.setCategory(c);
+		} else {
+			return Result.error("分类不正确");
+		}
+
+		//处理标签
+		List<Object> tagList = blog.getTagList();
+		List<Tag> tags = new ArrayList<>();
+		for (Object t : tagList) {
+			if (t instanceof Integer) {//选择了已存在的标签
+				Tag tag = tagService.getTagById(((Integer) t).longValue());
+				tags.add(tag);
+			} else if (t instanceof String) {//添加新标签
+				//查询标签是否已存在
+				Tag tag1 = tagService.getTagByName((String) t);
+				if (tag1 != null) {
+					return Result.error("不可添加已存在的标签");
+				}
+				Tag tag = new Tag();
+				tag.setName((String) t);
+				tagService.saveTag(tag);
+				tags.add(tag);
+			} else {
+				return Result.error("标签不正确");
+			}
+		}
+
+		// 处理时间、阅读时长
+		Date date = new Date();
+		if (blog.getReadTime() == null || blog.getReadTime() < 0) {
+			blog.setReadTime((int) Math.round(blog.getWords() / 200.0));//粗略计算阅读时长
+		}
+		if (blog.getViews() == null || blog.getViews() < 0) {
+			blog.setViews(0);
+		}
+
+		// 处理点赞
+		blog.setLikes(0);
+		if ("save".equals(type)) {
+			blog.setCreateTime(date);
+			blog.setUpdateTime(date);
+			User user = new User();
+			if (blog.getId() == null) {
+				user.setId(1L);
+			}else {
+				user.setId(blog.getId());//前端userId暂时放到id中
+			}
+			blog.setUser(user);
+
+			blogService.saveBlog(blog);
+			//关联博客和标签(维护 blog_tag 表)
+			for (Tag t : tags) {
+				blogService.saveBlogTag(blog.getId(), t.getId());
+			}
+			return Result.ok("添加成功");
+		} else {
+			blog.setUpdateTime(date);
+			blogService.updateBlog(blog);
+			//关联博客和标签(维护 blog_tag 表)
+			blogService.deleteBlogTagByBlogId(blog.getId());
+			for (Tag t : tags) {
+				blogService.saveBlogTag(blog.getId(), t.getId());
+			}
+			return Result.ok("更新成功");
+		}
+    }
 
 
     /**

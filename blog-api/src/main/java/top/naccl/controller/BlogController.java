@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.naccl.annotation.VisitLogger;
 import top.naccl.constant.JwtConstants;
-import top.naccl.entity.Blog;
 import top.naccl.entity.User;
 import top.naccl.enums.VisitBehavior;
+import top.naccl.model.dto.Blog;
 import top.naccl.model.dto.BlogPassword;
 import top.naccl.model.vo.BlogDetail;
 import top.naccl.model.vo.BlogInfo;
@@ -131,5 +131,15 @@ public class BlogController {
 		return Result.ok("获取成功", searchBlogs);
 	}
 
+
+	/**
+	 * 添加动态Blog
+	 * @param blog
+	 * @return
+	 */
+	@PostMapping("/user/blog")
+	public Result saveBlog(@RequestBody Blog blog){
+		return blogService.editBlog(blog,"save");
+	}
 
 }

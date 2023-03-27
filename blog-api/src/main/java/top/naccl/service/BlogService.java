@@ -3,12 +3,7 @@ package top.naccl.service;
 import top.naccl.entity.Blog;
 import top.naccl.model.dto.BlogView;
 import top.naccl.model.dto.BlogVisibility;
-import top.naccl.model.vo.BlogDetail;
-import top.naccl.model.vo.BlogInfo;
-import top.naccl.model.vo.NewBlog;
-import top.naccl.model.vo.PageResult;
-import top.naccl.model.vo.RandomBlog;
-import top.naccl.model.vo.SearchBlog;
+import top.naccl.model.vo.*;
 
 import java.util.List;
 import java.util.Map;
@@ -70,6 +65,8 @@ public interface BlogService {
 	Boolean getCommentEnabledByBlogId(Long blogId);
 
 	Boolean getPublishedByBlogId(Long blogId);
+
+	Result editBlog(top.naccl.model.dto.Blog blog,String type);
 
 
 }

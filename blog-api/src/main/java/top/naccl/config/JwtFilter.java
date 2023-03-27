@@ -81,10 +81,6 @@ public class JwtFilter extends GenericFilterBean  {
         // 放行其他请求
         filterChain.doFilter(request, servletResponse);
 
-//        if (!request.getRequestURI().startsWith(request.getContextPath() + "/admin") && !request.getRequestURI().startsWith(request.getContextPath() + "/bolgTitleById") && !request.getRequestURI().startsWith(request.getContextPath() + "/archives")){
-//            filterChain.doFilter(request, servletResponse);
-//            return;
-//        }
 
 
     }

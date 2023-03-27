@@ -2,6 +2,7 @@ package top.naccl.service;
 
 import top.naccl.entity.Blog;
 import top.naccl.entity.Moment;
+import top.naccl.model.vo.Result;
 
 import java.util.List;
 
@@ -30,5 +31,5 @@ public interface MomentService {
 	 * 点赞动态通过BlogId
 	 * @param id
 	 */
-	void addLikeByBlogId(Long id);
+	Result addLikeByBlogId(Long id);
 }
