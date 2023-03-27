@@ -2,6 +2,7 @@ package top.naccl.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,7 @@ import top.naccl.mapper.BlogMapper;
 import top.naccl.model.dto.BlogView;
 import top.naccl.model.dto.BlogVisibility;
 import top.naccl.model.vo.*;
-import top.naccl.service.BlogService;
-import top.naccl.service.CategoryService;
-import top.naccl.service.RedisService;
-import top.naccl.service.TagService;
+import top.naccl.service.*;
 import top.naccl.util.JacksonUtils;
 import top.naccl.util.StringUtils;
 import top.naccl.util.markdown.MarkdownUtils;
@@ -46,6 +44,9 @@ public class BlogServiceImpl implements BlogService {
 	private CategoryService categoryService;
 	@Autowired
 	private BlogService blogService;
+
+	@Autowired
+	private UserService userService;
 
 
 	//随机博客显示5条
@@ -436,15 +437,20 @@ public class BlogServiceImpl implements BlogService {
 			Category c = categoryService.getCategoryById(((Integer) cate).longValue());
 			blog.setCategory(c);
 		} else if (cate instanceof String) {//添加新分类
-			//查询分类是否已存在
-			Category category = categoryService.getCategoryByName((String) cate);
-			if (category != null) {
-				return Result.error("不可添加已存在的分类");
+			// 非admin不能添加分类
+			if(userService.findUserById(blog.getId()).getRole().equals("ROLE_admin")){
+				//查询分类是否已存在
+				Category category = categoryService.getCategoryByName((String) cate);
+				if (category != null) {
+					return Result.error("不可添加已存在的分类");
+				}
+				Category c = new Category();
+				c.setName((String) cate);
+				categoryService.saveCategory(c);
+				blog.setCategory(c);
+			}else {
+				return Result.error("您的权限不足,不能添加分类");
 			}
-			Category c = new Category();
-			c.setName((String) cate);
-			categoryService.saveCategory(c);
-			blog.setCategory(c);
 		} else {
 			return Result.error("分类不正确");
 		}
@@ -486,13 +492,8 @@ public class BlogServiceImpl implements BlogService {
 			blog.setCreateTime(date);
 			blog.setUpdateTime(date);
 			User user = new User();
-			if (blog.getId() == null) {
-				user.setId(1L);
-			}else {
-				user.setId(blog.getId());//前端userId暂时放到id中
-			}
+			user.setId(blog.getId());//前端userId暂时放到id中
 			blog.setUser(user);
-
 			blogService.saveBlog(blog);
 			//关联博客和标签(维护 blog_tag 表)
 			for (Tag t : tags) {
@@ -520,4 +521,5 @@ public class BlogServiceImpl implements BlogService {
 		redisService.deleteCacheByKey(RedisKeyConstants.NEW_BLOG_LIST);
 		redisService.deleteCacheByKey(RedisKeyConstants.ARCHIVE_BLOG_MAP);
 	}
+
 }

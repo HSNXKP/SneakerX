@@ -132,14 +132,6 @@ public class BlogController {
 	}
 
 
-	/**
-	 * 添加动态Blog
-	 * @param blog
-	 * @return
-	 */
-	@PostMapping("/user/blog")
-	public Result saveBlog(@RequestBody Blog blog){
-		return blogService.editBlog(blog,"save");
-	}
+
 
 }

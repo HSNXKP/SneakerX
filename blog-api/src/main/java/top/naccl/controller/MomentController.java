@@ -1,13 +1,9 @@
 package top.naccl.controller;
 
 import com.github.pagehelper.PageInfo;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.naccl.annotation.AccessLimit;
 import top.naccl.annotation.VisitLogger;
 import top.naccl.constant.JwtConstants;
@@ -17,6 +13,7 @@ import top.naccl.entity.User;
 import top.naccl.enums.VisitBehavior;
 import top.naccl.model.vo.PageResult;
 import top.naccl.model.vo.Result;
+import top.naccl.service.BlogService;
 import top.naccl.service.MomentService;
 import top.naccl.service.impl.UserServiceImpl;
 import top.naccl.util.JwtUtils;
@@ -34,6 +31,9 @@ public class MomentController {
 	MomentService momentService;
 	@Autowired
 	UserServiceImpl userService;
+
+	@Autowired
+	private BlogService blogService;
 
 	/**
 	 * 分页查询动态List
@@ -94,8 +94,44 @@ public class MomentController {
 		return Result.ok("获取成功",blogPageResult);
 	}
 
+	/**
+	 * 删除Blog
+	 * @param id
+	 * @return
+	 */
 	@GetMapping("/user/deleteBlog")
 	public Result deleteBlogById(@RequestParam Long id){
 		return momentService.deleteBlogById(id);
+	}
+
+	/**
+	 * 添加动态Blog
+	 * @param blog
+	 * @return
+	 */
+	@PostMapping("/user/blog")
+	public Result saveBlog(@RequestBody top.naccl.model.dto.Blog blog){
+		return momentService.editBlog(blog,"save");
+	}
+
+	/**
+	 * 查询当前Id的Blog
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("/user/blog")
+	public Result getBlogById(@RequestParam Long id){
+		return momentService.getBlogById(id);
+	}
+
+
+	/**
+	 * 更新Blog
+	 * @param blog
+	 * @return
+	 */
+	@PutMapping("/user/blog")
+	public Result updateBlog(@RequestBody top.naccl.model.dto.Blog blog){
+		return momentService.editBlog(blog,"update");
 	}
 }

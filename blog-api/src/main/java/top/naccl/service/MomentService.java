@@ -40,4 +40,19 @@ public interface MomentService {
 	 * @return
 	 */
 	Result deleteBlogById(Long id);
+
+	/**
+	 * 添加Blog
+	 * @param blog
+	 * @param save
+	 * @return
+	 */
+	Result editBlog(top.naccl.model.dto.Blog blog, String type);
+
+	/**
+	 * 查询当前Id的Blog
+	 * @param id
+	 * @return
+	 */
+	Result getBlogById(Long id);
 }

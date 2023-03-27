@@ -1,6 +1,7 @@
 package top.naccl.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,8 +10,11 @@ import top.naccl.entity.Moment;
 import top.naccl.exception.NotFoundException;
 import top.naccl.exception.PersistenceException;
 import top.naccl.mapper.BlogMapper;
+import top.naccl.mapper.CommentMapper;
 import top.naccl.mapper.MomentMapper;
 import top.naccl.model.vo.Result;
+import top.naccl.service.BlogService;
+import top.naccl.service.CommentService;
 import top.naccl.service.MomentService;
 import top.naccl.util.markdown.MarkdownUtils;
 
@@ -28,6 +32,12 @@ public class MomentServiceImpl implements MomentService {
 
 	@Autowired
 	BlogMapper blogMapper;
+
+	@Autowired
+	private BlogService blogService;
+
+	@Autowired
+	private CommentMapper commentMapper;
 
 	//每页显示5条动态
 	private static final int pageSize = 5;
@@ -115,9 +125,23 @@ public class MomentServiceImpl implements MomentService {
 
 	@Override
 	public Result deleteBlogById(Long id) {
-		if (blogMapper.deleteBlogById(id) != 1){
-			return Result.error("删除失败");
-		}
+		commentMapper.deleteCommentsByBlogId(id);
+		blogMapper.deleteBlogById(id);
+		blogMapper.deleteBlogTagByBlogId(id);
 		return Result.ok("删除成功");
+	}
+
+	@Override
+	public Result editBlog(top.naccl.model.dto.Blog blog, String type) {
+		return blogService.editBlog(blog,type);
+	}
+
+	@Override
+	public Result getBlogById(Long id) {
+		Blog blog = blogMapper.getBlogById(id);
+		if (blog == null) {
+			throw new NotFoundException("博客不存在");
+		}
+		return Result.ok("获取成功",blog) ;
 	}
 }

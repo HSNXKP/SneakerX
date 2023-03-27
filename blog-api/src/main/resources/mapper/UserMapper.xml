@@ -26,7 +26,7 @@
         select * from user where username=#{username} limit 1
     </select>
 
-    <!--按id查询User，实际上这个User就应该是博主-->
+    <!--按id查询User-->
     <select id="findById" resultType="top.naccl.entity.User">
         select * from user where id=#{id} limit 1
     </select>
