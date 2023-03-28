@@ -367,10 +367,15 @@
         <association property="category" javaType="top.naccl.entity.Category">
             <result property="name" column="category_name"/>
         </association>
+        <association property="user" javaType="top.naccl.entity.User">
+            <id property="id" column="user_id"/>
+            <result property="username" column="username"/>
+        </association>
         <collection property="tags" javaType="top.naccl.entity.Tag">
             <result property="name" column="tag_name"/>
             <result property="color" column="color"/>
         </collection>
+
     </resultMap>
 
     <!--按id查询博客-->
@@ -390,9 +395,11 @@
                b.is_published,
                c.category_name,
                t.tag_name as tag_name,
-               t.color
-        from (((blog as b left join category as c on b.category_id = c.id) left join blog_tag as bt
-               on b.id = bt.blog_id) left join tag as t on bt.tag_id = t.id)
+               t.color,
+               u.id as user_id,
+               u.username
+        from ((((blog as b left join category as c on b.category_id = c.id) left join blog_tag as bt
+               on b.id = bt.blog_id) left join tag as t on bt.tag_id = t.id) left join user as u on b.user_id = u.id)
         where b.id = #{id}
     </select>
 
@@ -412,9 +419,11 @@
                b.password,
                c.category_name,
                t.tag_name as tag_name,
-               t.color
-        from (((blog as b left join category as c on b.category_id = c.id) left join blog_tag as bt
-               on b.id = bt.blog_id) left join tag as t on bt.tag_id = t.id)
+               t.color,
+               u.id as user_id,
+               u.username
+        from ((((blog as b left join category as c on b.category_id = c.id) left join blog_tag as bt
+               on b.id = bt.blog_id) left join tag as t on bt.tag_id = t.id) left join user as u on b.user_id = u.id)
         where b.id = #{id}
           and b.is_published = true
     </select>

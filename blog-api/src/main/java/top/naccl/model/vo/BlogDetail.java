@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import top.naccl.entity.Category;
 import top.naccl.entity.Tag;
+import top.naccl.entity.User;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +36,7 @@ public class BlogDetail {
 	private String password;//密码保护
 	private Boolean isPublished;// 私密作品
 
+	private User user;//作者信息
 	private Category category;//文章分类
 	private List<Tag> tags = new ArrayList<>();//文章标签
 }
