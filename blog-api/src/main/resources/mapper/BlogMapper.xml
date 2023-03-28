@@ -135,7 +135,11 @@
         <association property="category" javaType="top.naccl.entity.Category">
             <result property="name" column="category_name"/>
         </association>
-    </resultMap>
+        <association property="user" javaType="top.naccl.entity.User">
+            <id property="id" column="user_id"/>
+            <result property="username" column="username"/>
+        </association>
+     </resultMap>
 
     <!--查询公开博客的简要信息-->
     <select id="getBlogInfoListByIsPublished" resultMap="blogInfo">
@@ -149,9 +153,10 @@
                b.read_time,
                b.password,
                c.category_name,
-               b.likes
-        from blog as b
-                 left join category as c on b.category_id = c.id
+               b.likes,
+               u.id as user_id,
+               u.username
+        from ((blog as b left join category as c on b.category_id = c.id )left join user as u on b.user_id=u.id)
         where b.is_published = true
     </select>
 
@@ -358,6 +363,7 @@
         <result property="words" column="words"/>
         <result property="readTime" column="read_time"/>
         <result property="password" column="password"/>
+        <result property="isPublished" column="is_published"/>
         <association property="category" javaType="top.naccl.entity.Category">
             <result property="name" column="category_name"/>
         </association>
@@ -381,6 +387,7 @@
                b.words,
                b.read_time,
                b.password,
+               b.is_published,
                c.category_name,
                t.tag_name as tag_name,
                t.color

@@ -1,5 +1,6 @@
 package top.naccl.service;
 
+import org.springframework.web.bind.annotation.RequestHeader;
 import top.naccl.entity.Blog;
 import top.naccl.entity.Moment;
 import top.naccl.model.vo.BlogWithMomentView;
@@ -40,7 +41,7 @@ public interface MomentService {
 	 * @param id
 	 * @return
 	 */
-	Result deleteBlogById(Long id);
+	Result deleteBlogById(Long id,String jwt);
 
 	/**
 	 * 添加Blog
@@ -48,12 +49,12 @@ public interface MomentService {
 	 * @param save
 	 * @return
 	 */
-	Result editBlog(top.naccl.model.dto.Blog blog, String type);
+	Result editBlog(top.naccl.model.dto.Blog blog, String type,String jwt);
 
 	/**
 	 * 查询当前Id的Blog
 	 * @param id
 	 * @return
 	 */
-	Result getBlogById(Long id);
+	Result getBlogById(Long id,String jwt);
 }

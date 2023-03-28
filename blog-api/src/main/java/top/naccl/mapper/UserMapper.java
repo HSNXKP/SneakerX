@@ -23,5 +23,4 @@ public interface UserMapper {
 
 	boolean updateUser(@Param("id") Long id,@Param("password") String password);
 
-	boolean updateUser2(@Param("id") Long id,@Param("password") String password);
 }

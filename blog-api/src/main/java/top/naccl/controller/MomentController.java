@@ -108,8 +108,8 @@ public class MomentController {
 	 * @return
 	 */
 	@GetMapping("/user/deleteBlog")
-	public Result deleteBlogById(@RequestParam Long id){
-		return momentService.deleteBlogById(id);
+	public Result deleteBlogById(@RequestParam Long id,@RequestHeader(value = "Authorization", defaultValue = "") String jwt){
+		return momentService.deleteBlogById(id,jwt);
 	}
 
 	/**
@@ -118,8 +118,8 @@ public class MomentController {
 	 * @return
 	 */
 	@PostMapping("/user/blog")
-	public Result saveBlog(@RequestBody top.naccl.model.dto.Blog blog){
-		return momentService.editBlog(blog,"save");
+	public Result saveBlog(@RequestBody top.naccl.model.dto.Blog blog,@RequestHeader(value = "Authorization", defaultValue = "") String jwt){
+		return momentService.editBlog(blog,"save",jwt);
 	}
 
 	/**
@@ -128,8 +128,8 @@ public class MomentController {
 	 * @return
 	 */
 	@GetMapping("/user/blog")
-	public Result getBlogById(@RequestParam Long id){
-		return momentService.getBlogById(id);
+	public Result getBlogById(@RequestParam Long id,@RequestHeader(value = "Authorization", defaultValue = "") String jwt){
+		return momentService.getBlogById(id,jwt);
 	}
 
 
@@ -139,7 +139,7 @@ public class MomentController {
 	 * @return
 	 */
 	@PutMapping("/user/blog")
-	public Result updateBlog(@RequestBody top.naccl.model.dto.Blog blog){
-		return momentService.editBlog(blog,"update");
+	public Result updateBlog(@RequestBody top.naccl.model.dto.Blog blog,@RequestHeader(value = "Authorization", defaultValue = "") String jwt){
+		return momentService.editBlog(blog,"update",jwt);
 	}
 }

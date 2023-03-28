@@ -62,20 +62,33 @@ public class BlogController {
 	@GetMapping("/blog")
 	public Result getBlog(@RequestParam Long id,
 	                      @RequestHeader(value = "Authorization", defaultValue = "") String jwt) {
-		if (JwtUtils.judgeTokenIsExist(jwt)){
-		String subject = JwtUtils.getTokenBody(jwt).getSubject();
-		String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
-		User userDetails = (User) userService.loadUserByUsername(username);
-
-			Blog blog = blogService.getBlogById(id);
-			if (!blog.getPublished()) {
-				if (blog.getUser().getId().equals(userDetails.getId())) {
-					BlogDetail blogDetail = blogService.getBlogByIdAndIsPublished(id,"notPublished");
-					return Result.ok("获取成功", blogDetail);
+		// 当用户登陆以后就不用校验当前用户下动态的密码校验 先进行私密作品的校验
+		BlogDetail blogDetail = blogService.getBlogByIdAndIsPublished(id,"notPublished");
+		if (!blogDetail.getIsPublished()){
+			if (JwtUtils.judgeTokenIsExist(jwt)){
+				String subject = JwtUtils.getTokenBody(jwt).getSubject();
+				String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
+				//判断token是否为blogToken
+				User userDetails = (User) userService.loadUserByUsername(username);
+				if (userDetails != null) {
+					Blog blog = blogService.getBlogById(id);
+					if (!blog.getPublished()) {
+						if (blog.getUser().getId().equals(userDetails.getId())) {
+							return Result.ok("获取成功", blogDetail);
+						}
+					}
+				}else {
+					//经密码验证后的Token
+					Long tokenBlogId = Long.parseLong(subject);
+					//博客id不匹配，验证不通过，可能博客id改变或客户端传递了其它密码保护文章的Token
+					if (!tokenBlogId.equals(id)) {
+						return Result.create(403, "Token不匹配，请重新验证密码！");
+					}
 				}
 			}
 		}
 
+		// 用户没有登陆的访问,或者用户登陆了 访问的当前的blogId并不是该用户的blog，需要校验信息的正确性 密码作品的校验
 		BlogDetail blog = blogService.getBlogByIdAndIsPublished(id,"isPublished");
 		//对密码保护的文章校验Token
 		if (!"".equals(blog.getPassword())) {
@@ -85,9 +98,7 @@ public class BlogController {
 					String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
 					if (subject.startsWith(JwtConstants.ADMIN_PREFIX)) {
 						//博主身份Token
-
 						User admin = (User) userService.loadUserByUsername(username);
-
 						if (admin == null) {
 							return Result.create(403, "博主身份Token已失效，请重新登录！");
 						}

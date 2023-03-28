@@ -5,20 +5,22 @@ import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.naccl.constant.JwtConstants;
 import top.naccl.constant.RedisKeyConstants;
 import top.naccl.entity.Blog;
 import top.naccl.entity.Moment;
+import top.naccl.entity.User;
 import top.naccl.exception.NotFoundException;
 import top.naccl.exception.PersistenceException;
 import top.naccl.mapper.BlogMapper;
 import top.naccl.mapper.CommentMapper;
 import top.naccl.mapper.MomentMapper;
+import top.naccl.mapper.UserMapper;
+import top.naccl.model.vo.BlogDetail;
 import top.naccl.model.vo.BlogWithMomentView;
 import top.naccl.model.vo.Result;
-import top.naccl.service.BlogService;
-import top.naccl.service.CommentService;
-import top.naccl.service.MomentService;
-import top.naccl.service.RedisService;
+import top.naccl.service.*;
+import top.naccl.util.JwtUtils;
 import top.naccl.util.markdown.MarkdownUtils;
 
 import java.util.List;
@@ -44,6 +46,9 @@ public class MomentServiceImpl implements MomentService {
 
 	@Autowired
 	private RedisService redisService;
+
+	@Autowired
+	private UserServiceImpl userService;
 
 	//每页显示5条动态
 	private static final int pageSize = 5;
@@ -130,27 +135,56 @@ public class MomentServiceImpl implements MomentService {
 	}
 
 	@Override
-	public Result deleteBlogById(Long id) {
-		commentMapper.deleteCommentsByBlogId(id);
-		blogMapper.deleteBlogById(id);
-		blogMapper.deleteBlogTagByBlogId(id);
-		redisService.deleteCacheByKey(RedisKeyConstants.HOME_BLOG_INFO_LIST);
-		redisService.deleteCacheByKey(RedisKeyConstants.NEW_BLOG_LIST);
-		redisService.deleteCacheByKey(RedisKeyConstants.ARCHIVE_BLOG_MAP);
-		return Result.ok("删除成功");
-	}
-
-	@Override
-	public Result editBlog(top.naccl.model.dto.Blog blog, String type) {
-		return blogService.editBlog(blog,type);
-	}
-
-	@Override
-	public Result getBlogById(Long id) {
-		Blog blog = blogMapper.getBlogById(id);
-		if (blog == null) {
-			throw new NotFoundException("博客不存在");
+	public Result deleteBlogById(Long id,String jwt) {
+		// 多用户登陆防止错误请求
+		if (JwtUtils.judgeTokenIsExist(jwt)){
+			User userDetails =getUserDetails(jwt);
+			if (blogMapper.getBlogById(id).getUser().getId().equals(userDetails.getId())){
+				commentMapper.deleteCommentsByBlogId(id);
+				blogMapper.deleteBlogById(id);
+				blogMapper.deleteBlogTagByBlogId(id);
+				redisService.deleteCacheByKey(RedisKeyConstants.HOME_BLOG_INFO_LIST);
+				redisService.deleteCacheByKey(RedisKeyConstants.NEW_BLOG_LIST);
+				redisService.deleteCacheByKey(RedisKeyConstants.ARCHIVE_BLOG_MAP);
+				return Result.ok("删除成功");
+			}
+			return Result.error("您删除的动态并不是登陆账户下的动态");
 		}
-		return Result.ok("获取成功",blog) ;
+		return Result.error("token无效,请检查是否登陆");
+
+	}
+
+	@Override
+	public Result editBlog(top.naccl.model.dto.Blog blog, String type,String jwt) {
+		// 多用户登陆防止错误请求
+		if (JwtUtils.judgeTokenIsExist(jwt)){
+				return blogService.editBlog(blog,type);
+		}
+		return Result.error("token无效,请检查是否登陆");
+
+	}
+
+	@Override
+	public Result getBlogById(Long id,String jwt) {
+		if (JwtUtils.judgeTokenIsExist(jwt)){
+			User userDetails =getUserDetails(jwt);
+			if (blogMapper.getBlogById(id).getUser().getId().equals(userDetails.getId())){
+				Blog blog = blogMapper.getBlogById(id);
+				if (blog == null) {
+					throw new NotFoundException("博客不存在");
+				}
+				return Result.ok("获取成功",blog) ;
+			}
+			return Result.error("您查看的动态并不是登陆账户下的动态");
+		}
+		return Result.error("token无效,请检查是否登陆");
+
+	}
+
+	User getUserDetails(String jwt){
+		String subject = JwtUtils.getTokenBody(jwt).getSubject();
+		String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
+		User userDetails = (User) userService.loadUserByUsername(username);
+		return userDetails;
 	}
 }
