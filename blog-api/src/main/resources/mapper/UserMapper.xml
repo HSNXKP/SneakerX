@@ -35,4 +35,7 @@
     <select id="getPasswordByUserId" parameterType="java.lang.Long" resultType="top.naccl.entity.User">
         select user.password from user where id=#{id}
     </select>
+    <select id="findByUsernameIsNull" resultType="java.lang.Integer">
+        select count(user.id) from user where username=#{username}
+    </select>
 </mapper>

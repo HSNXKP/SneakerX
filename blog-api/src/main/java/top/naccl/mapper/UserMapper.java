@@ -15,6 +15,8 @@ import top.naccl.entity.User;
 public interface UserMapper {
 	User findByUsername(String username);
 
+	Integer findByUsernameIsNull(String username);
+
 	User findById(Long id);
 
 	boolean registerUser(User user);

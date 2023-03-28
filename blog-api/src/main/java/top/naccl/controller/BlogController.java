@@ -13,6 +13,7 @@ import top.naccl.constant.JwtConstants;
 import top.naccl.entity.Blog;
 import top.naccl.entity.User;
 import top.naccl.enums.VisitBehavior;
+import top.naccl.mapper.UserMapper;
 import top.naccl.model.dto.BlogPassword;
 import top.naccl.model.vo.BlogDetail;
 import top.naccl.model.vo.BlogInfo;
@@ -37,6 +38,9 @@ public class BlogController {
 	BlogService blogService;
 	@Autowired
 	UserServiceImpl userService;
+
+	@Autowired
+	private UserMapper userMapper;
 
 	/**
 	 * 按置顶、创建时间排序 分页查询博客简要信息列表
@@ -63,6 +67,7 @@ public class BlogController {
 	public Result getBlog(@RequestParam Long id,
 	                      @RequestHeader(value = "Authorization", defaultValue = "") String jwt) {
 		// 当用户登陆以后就不用校验当前用户下动态的密码校验 先进行私密作品的校验
+		// blogDetail前端显示页面 blog为校验数据
 		BlogDetail blogDetail = blogService.getBlogByIdAndIsPublished(id,"notPublished");
 		if (!blogDetail.getIsPublished()){
 			if (JwtUtils.judgeTokenIsExist(jwt)){
@@ -71,21 +76,19 @@ public class BlogController {
 				//判断token是否为blogToken
 				User userDetails = (User) userService.loadUserByUsername(username);
 				if (userDetails != null) {
-					Blog blog = blogService.getBlogById(id);
-					if (!blog.getPublished()) {
-						if (blog.getUser().getId().equals(userDetails.getId())) {
+					Blog blogWithUser = blogService.getBlogById(id);
+					if (!blogWithUser.getPublished()) {
+						if (blogWithUser.getUser().getId().equals(userDetails.getId())) {
 							return Result.ok("获取成功", blogDetail);
 						}
+						return Result.error("当前账号未发布该动态");
 					}
 				}else {
 					//经密码验证后的Token
-					Long tokenBlogId = Long.parseLong(subject);
-					//博客id不匹配，验证不通过，可能博客id改变或客户端传递了其它密码保护文章的Token
-					if (!tokenBlogId.equals(id)) {
-						return Result.create(403, "Token不匹配，请重新验证密码！");
-					}
+					return Result.error("当前账号登录的信息未有该动态");
 				}
 			}
+			return Result.error("Token已失效,请重新登录");
 		}
 
 		// 用户没有登陆的访问,或者用户登陆了 访问的当前的blogId并不是该用户的blog，需要校验信息的正确性 密码作品的校验
@@ -96,13 +99,16 @@ public class BlogController {
 				try {
 					String subject = JwtUtils.getTokenBody(jwt).getSubject();
 					String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
-					if (subject.startsWith(JwtConstants.ADMIN_PREFIX)) {
-						//博主身份Token
-						User admin = (User) userService.loadUserByUsername(username);
-						if (admin == null) {
-							return Result.create(403, "博主身份Token已失效，请重新登录！");
-						}
-					} else {
+					if (userMapper.findByUsernameIsNull(username) != 0){
+						if (userService.loadUserByUsername(username) != null){
+							User userDetails = (User) userService.loadUserByUsername(username);
+							Blog blogWithUser = blogService.getBlogById(id);
+							if (userDetails.getId().equals(blogWithUser.getUser().getId())){
+								return Result.ok("获取成功", blog);
+							}
+							return Result.create(403, "Token不匹配，请输入验证密码！");
+					    }
+					}else {
 						//经密码验证后的Token
 						Long tokenBlogId = Long.parseLong(subject);
 						//博客id不匹配，验证不通过，可能博客id改变或客户端传递了其它密码保护文章的Token
@@ -135,6 +141,7 @@ public class BlogController {
 		String password = blogService.getBlogPassword(blogPassword.getBlogId());
 		if (password.equals(blogPassword.getPassword())) {
 			//生成有效时间一个月的Token
+			// 未登录访问密码
 			String jwt = JwtUtils.generateToken(blogPassword.getBlogId().toString(), 1000 * 3600 * 24 * 30L);
 			return Result.ok("密码正确", jwt);
 		} else {
