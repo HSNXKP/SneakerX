@@ -2,13 +2,10 @@ package top.naccl.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.naccl.constant.RedisKeyConstants;
-import top.naccl.controller.admin.BlogAdminController;
 import top.naccl.entity.Blog;
 import top.naccl.entity.Category;
 import top.naccl.entity.Tag;
@@ -205,17 +202,18 @@ public class BlogServiceImpl implements BlogService {
 
 	@Override
 	public Map<String, Object> getArchiveBlogAndCountByIsPublished(Long id) {
+		 // 多用户登陆的情况还得重新设置,所以就不使用redis了
 //		String redisKey = RedisKeyConstants.ARCHIVE_BLOG_MAP;
 //		Map<String, Object> mapFromRedis = redisService.getMapByValue(redisKey);
 //		if (mapFromRedis != null) {
 //			return mapFromRedis;
 //		}
 		// 需要改成当前user.id传参
-		List<String> groupYearMonth = blogMapper.getGroupYearMonthByIsPublished(id);
+		List<String> groupYearMonth = blogMapper.getGroupYearMonthByUserId(id);
 		Map<String, List<ArchiveBlog>> archiveBlogMap = new LinkedHashMap<>();
 		for (String s : groupYearMonth) {
 			// 需要加上当前user.id传参
-			List<ArchiveBlog> archiveBlogs = blogMapper.getArchiveBlogListByYearMonthAndIsPublished(s,id);
+			List<ArchiveBlog> archiveBlogs = blogMapper.getArchiveBlogListByYearMonthByUserId(s,id);
 			for (ArchiveBlog archiveBlog : archiveBlogs) {
 				if (!"".equals(archiveBlog.getPassword())) {
 					archiveBlog.setPrivacy(true);
@@ -227,7 +225,7 @@ public class BlogServiceImpl implements BlogService {
 			archiveBlogMap.put(s, archiveBlogs);
 		}
 		// 根据userId查询博客总数
-		Integer count = countBlogByIsPublished(id);
+		Integer count = countBlogByUserId(id);
 		Map<String, Object> map = new HashMap<>(4);
 		map.put("blogMap", archiveBlogMap);
 		map.put("count", count);
@@ -405,8 +403,8 @@ public class BlogServiceImpl implements BlogService {
 
 
 	@Override
-	public int countBlogByIsPublished(Long id) {
-		return blogMapper.countBlogByIsPublished(id);
+	public int countBlogByUserId(Long id) {
+		return blogMapper.countBlogByUserId(id);
 	}
 
 	@Override

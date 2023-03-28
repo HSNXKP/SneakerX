@@ -62,10 +62,11 @@ public class BlogController {
 	@GetMapping("/blog")
 	public Result getBlog(@RequestParam Long id,
 	                      @RequestHeader(value = "Authorization", defaultValue = "") String jwt) {
+		if (JwtUtils.judgeTokenIsExist(jwt)){
 		String subject = JwtUtils.getTokenBody(jwt).getSubject();
 		String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
 		User userDetails = (User) userService.loadUserByUsername(username);
-		if (JwtUtils.judgeTokenIsExist(jwt)){
+
 			Blog blog = blogService.getBlogById(id);
 			if (!blog.getPublished()) {
 				if (blog.getUser().getId().equals(userDetails.getId())) {
@@ -74,12 +75,14 @@ public class BlogController {
 				}
 			}
 		}
+
 		BlogDetail blog = blogService.getBlogByIdAndIsPublished(id,"isPublished");
 		//对密码保护的文章校验Token
 		if (!"".equals(blog.getPassword())) {
 			if (JwtUtils.judgeTokenIsExist(jwt)) {
 				try {
-
+					String subject = JwtUtils.getTokenBody(jwt).getSubject();
+					String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
 					if (subject.startsWith(JwtConstants.ADMIN_PREFIX)) {
 						//博主身份Token
 

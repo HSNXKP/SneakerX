@@ -11,6 +11,7 @@ import top.naccl.entity.Blog;
 import top.naccl.entity.Moment;
 import top.naccl.entity.User;
 import top.naccl.enums.VisitBehavior;
+import top.naccl.model.vo.BlogWithMomentView;
 import top.naccl.model.vo.PageResult;
 import top.naccl.model.vo.Result;
 import top.naccl.service.BlogService;
@@ -88,9 +89,16 @@ public class MomentController {
 	@GetMapping("/bolgTitleById")
 	public Result bolgById(@RequestParam Long id,
 						   @RequestParam(defaultValue = "1") Integer pageNum){
-		List<Blog> blogs = momentService.getBolgTitleById(id,pageNum);
-		PageInfo<Blog> blogPageInfo = new PageInfo<>(blogs);
-		PageResult<Blog> blogPageResult = new PageResult<>(blogPageInfo.getPages(), blogPageInfo.getList());
+		List<BlogWithMomentView> blogs = momentService.getBolgTitleById(id,pageNum);
+		for (BlogWithMomentView blog : blogs) {
+			if (blog.getPassword().equals("")){
+				blog.setPrivacy(false);
+			}else {
+				blog.setPrivacy(true);
+			}
+		}
+		PageInfo<BlogWithMomentView> blogPageInfo = new PageInfo<>(blogs);
+		PageResult<BlogWithMomentView> blogPageResult = new PageResult<>(blogPageInfo.getPages(), blogPageInfo.getList());
 		return Result.ok("获取成功",blogPageResult);
 	}
 

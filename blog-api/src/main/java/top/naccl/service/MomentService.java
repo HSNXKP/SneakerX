@@ -2,6 +2,7 @@ package top.naccl.service;
 
 import top.naccl.entity.Blog;
 import top.naccl.entity.Moment;
+import top.naccl.model.vo.BlogWithMomentView;
 import top.naccl.model.vo.Result;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface MomentService {
 	 *通过userId获得内容的标题
 	 * @param id
 	 */
-	List<Blog> getBolgTitleById(Long id,Integer pageNum);
+	List<BlogWithMomentView> getBolgTitleById(Long id, Integer pageNum);
 
 	/**
 	 * 点赞动态通过BlogId

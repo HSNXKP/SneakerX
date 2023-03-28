@@ -5,6 +5,7 @@ import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.naccl.constant.RedisKeyConstants;
 import top.naccl.entity.Blog;
 import top.naccl.entity.Moment;
 import top.naccl.exception.NotFoundException;
@@ -12,10 +13,12 @@ import top.naccl.exception.PersistenceException;
 import top.naccl.mapper.BlogMapper;
 import top.naccl.mapper.CommentMapper;
 import top.naccl.mapper.MomentMapper;
+import top.naccl.model.vo.BlogWithMomentView;
 import top.naccl.model.vo.Result;
 import top.naccl.service.BlogService;
 import top.naccl.service.CommentService;
 import top.naccl.service.MomentService;
+import top.naccl.service.RedisService;
 import top.naccl.util.markdown.MarkdownUtils;
 
 import java.util.List;
@@ -38,6 +41,9 @@ public class MomentServiceImpl implements MomentService {
 
 	@Autowired
 	private CommentMapper commentMapper;
+
+	@Autowired
+	private RedisService redisService;
 
 	//每页显示5条动态
 	private static final int pageSize = 5;
@@ -108,9 +114,9 @@ public class MomentServiceImpl implements MomentService {
 	}
 
 	@Override
-	public List<Blog> getBolgTitleById(Long id,Integer pageNum) {
+	public List<BlogWithMomentView> getBolgTitleById(Long id, Integer pageNum) {
 		PageHelper.startPage(pageNum, pageSize);
-		List<Blog> bolgTitleById = blogMapper.getBolgTitleById(id);
+		List<BlogWithMomentView> bolgTitleById = blogMapper.getBolgTitleById(id);
 		return bolgTitleById;
 	}
 
@@ -128,6 +134,9 @@ public class MomentServiceImpl implements MomentService {
 		commentMapper.deleteCommentsByBlogId(id);
 		blogMapper.deleteBlogById(id);
 		blogMapper.deleteBlogTagByBlogId(id);
+		redisService.deleteCacheByKey(RedisKeyConstants.HOME_BLOG_INFO_LIST);
+		redisService.deleteCacheByKey(RedisKeyConstants.NEW_BLOG_LIST);
+		redisService.deleteCacheByKey(RedisKeyConstants.ARCHIVE_BLOG_MAP);
 		return Result.ok("删除成功");
 	}
 

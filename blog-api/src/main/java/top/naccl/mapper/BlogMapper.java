@@ -5,13 +5,7 @@ import org.springframework.stereotype.Repository;
 import top.naccl.entity.Blog;
 import top.naccl.model.dto.BlogView;
 import top.naccl.model.dto.BlogVisibility;
-import top.naccl.model.vo.ArchiveBlog;
-import top.naccl.model.vo.BlogDetail;
-import top.naccl.model.vo.BlogInfo;
-import top.naccl.model.vo.CategoryBlogCount;
-import top.naccl.model.vo.NewBlog;
-import top.naccl.model.vo.RandomBlog;
-import top.naccl.model.vo.SearchBlog;
+import top.naccl.model.vo.*;
 
 import java.util.List;
 
@@ -37,9 +31,9 @@ public interface BlogMapper {
 
 	List<BlogInfo> getBlogInfoListByTagNameAndIsPublished(String tagName);
 
-	List<String> getGroupYearMonthByIsPublished(Long id);
+	List<String> getGroupYearMonthByUserId(Long id);
 
-	List<ArchiveBlog> getArchiveBlogListByYearMonthAndIsPublished(String yearMonth,Long id);
+	List<ArchiveBlog> getArchiveBlogListByYearMonthByUserId(String yearMonth,Long id);
 
 	List<RandomBlog> getRandomBlogListByLimitNumAndIsPublishedAndIsRecommend(Integer limitNum);
 
@@ -74,7 +68,7 @@ public interface BlogMapper {
 
 	int countBlog();
 
-	int countBlogByIsPublished(Long id);
+	int countBlogByUserId(Long id);
 
 	int countBlogByCategoryId(Long categoryId);
 
@@ -87,7 +81,7 @@ public interface BlogMapper {
 	List<CategoryBlogCount> getCategoryBlogCountList();
 
 
-	List<Blog> getBolgTitleById(Long id);
+	List<BlogWithMomentView> getBolgTitleById(Long id);
 
     Boolean addLikeByBlogId(Long id);
 }

@@ -192,11 +192,10 @@
     </select>
 
     <!--查询公开博客年月List-->
-    <select id="getGroupYearMonthByIsPublished" resultType="java.lang.String">
+    <select id="getGroupYearMonthByUserId" resultType="java.lang.String">
         select date_format(blog.create_time, "%Y年%m月")
         from blog,user
-        where blog.is_published = true
-          and blog.user_id=user.id
+        where blog.user_id=user.id
           and user.id=#{id}
         group by date_format(blog.create_time, "%Y年%m月")
         order by date_format(blog.create_time, "%Y年%m月") desc
@@ -210,12 +209,11 @@
     </resultMap>
 
     <!--按年月查询公开博客简要信息List-->
-    <select id="getArchiveBlogListByYearMonthAndIsPublished" resultMap="archiveBlog">
-        select blog.id, blog.title, blog.password, date_format(blog.create_time, "%d日") as create_day
+    <select id="getArchiveBlogListByYearMonthByUserId" resultMap="archiveBlog">
+        select blog.id, blog.title, blog.password,blog.is_published, date_format(blog.create_time, "%d日") as create_day
         from blog,user
         where date_format(blog.create_time, "%Y年%m月") = #{yearMonth}
-          and blog.is_published = true
-          and blog.user_id=user.id
+          and  blog.user_id=user.id
           and user.id=#{id}
         order by blog.create_time desc
     </select>
@@ -450,12 +448,11 @@
     </select>
 
     <!--查询公开博客总数-->
-    <select id="countBlogByIsPublished" resultType="java.lang.Integer">
+    <select id="countBlogByUserId" resultType="java.lang.Integer">
         select count(*)
         from blog,user
         where blog.user_id = user.id
-          and blog.is_published = true
-          and user.id=#{id}
+          and  user.id=#{id}
     </select>
 
     <!--按分类id查询博客数量-->
@@ -500,8 +497,8 @@
 
 
     <!--通过userId获得内容的标题-->
-    <select id="getBolgTitleById" resultMap="BaseResultMap">
-        select b.id, b.title, b.create_time, b.is_published,b.likes
+    <select id="getBolgTitleById" resultType="top.naccl.model.vo.BlogWithMomentView">
+        select b.id, b.title, b.create_time, b.is_published,b.password,b.likes
         from blog as b,
              user as u
         where u.id = b.user_id

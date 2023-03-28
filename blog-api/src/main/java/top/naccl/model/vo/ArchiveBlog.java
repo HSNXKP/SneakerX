@@ -20,4 +20,5 @@ public class ArchiveBlog {
 	private String day;
 	private String password;
 	private Boolean privacy;
+	private Boolean isPublished;
 }
