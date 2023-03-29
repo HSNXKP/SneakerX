@@ -11,11 +11,12 @@
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
         <result column="role" property="role" />
+        <result column="user_flag" property="userFlag" />
     </resultMap>
       <!--注册用户-->
     <insert id="registerUser" parameterType="top.naccl.entity.User">
-        insert into user(username,nickname,password,email,avatar,create_time,update_time,role)
-        values(#{username},#{nickname},#{password},#{email},#{avatar},#{createTime},#{updateTime},#{role})
+        insert into user(username,nickname,password,email,avatar,create_time,update_time,role,user_flag)
+        values(#{username},#{nickname},#{password},#{email},#{avatar},#{createTime},#{updateTime},#{role},#{userFlag})
     </insert>
     <!--更新用户密码    -->
     <update id="updateUser" >

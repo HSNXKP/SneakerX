@@ -70,6 +70,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setRole("ROLE_common");
 		// 设置默认头像
 		user.setAvatar("http://localhost/QQ20221014224335.jpg");
+		// 设置默认登陆标识
+		user.setUserFlag("潮流教父");
 		if (userMapper.registerUser(user)){
 			return Result.ok("注册成功");
 		}

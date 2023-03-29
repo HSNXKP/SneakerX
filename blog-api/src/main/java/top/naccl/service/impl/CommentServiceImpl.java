@@ -36,6 +36,7 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public List<PageComment> getPageCommentList(Integer page, Long blogId, Long parentCommentId) {
+		// 递归处理将所有的评论进行处理，将子评论添加到父评论下
 		List<PageComment> comments = getPageCommentListByPageAndParentCommentId(page, blogId, parentCommentId);
 		for (PageComment c : comments) {
 			List<PageComment> tmpComments = new ArrayList<>();

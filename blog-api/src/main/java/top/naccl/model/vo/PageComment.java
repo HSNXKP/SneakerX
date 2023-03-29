@@ -28,6 +28,8 @@ public class PageComment {
 	private Boolean adminComment;//博主回复
 	private String parentCommentId;//父评论id
 	private String parentCommentNickname;//父评论昵称
+	private Long userId;// 登陆了就是userId标识
+	private String userFlag;//userFlag前戳
 
 	private List<PageComment> replyComments = new ArrayList<>();//回复该评论的评论
 }

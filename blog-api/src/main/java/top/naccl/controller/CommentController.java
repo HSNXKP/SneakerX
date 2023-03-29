@@ -103,6 +103,7 @@ public class CommentController {
 		PageResult<PageComment> pageResult = new PageResult<>(pageInfo.getPages(), pageInfo.getList());
 		Map<String, Object> map = new HashMap<>(8);
 		map.put("allComment", allComment);
+		// 隐藏的评论
 		map.put("closeComment", allComment - openComment);
 		map.put("comments", pageResult);
 		return Result.ok("获取成功", map);

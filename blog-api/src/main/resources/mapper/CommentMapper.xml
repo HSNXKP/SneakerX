@@ -57,6 +57,8 @@
         <result property="adminComment" column="is_admin_comment"/>
         <result property="parentCommentId" column="parent_comment_id"/>
         <result property="parentCommentNickname" column="parent_comment_nickname"/>
+        <result property="userId" column="user_id"/>
+        <result property="userFlag" column="user_flag"/>
     </resultMap>
 
     <!--查询页面展示的评论List-->

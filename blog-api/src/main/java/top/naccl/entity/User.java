@@ -33,6 +33,7 @@ public class User implements UserDetails {
 	private String nickname; //昵称
 	private String avatar; //头像
 	private String email; //邮箱
+	private String userFlag;// 登陆后的前戳
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
 	private LocalDateTime createTime; //创建账号时间
