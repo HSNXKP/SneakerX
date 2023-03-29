@@ -59,12 +59,13 @@
         <result property="parentCommentNickname" column="parent_comment_nickname"/>
         <result property="userId" column="user_id"/>
         <result property="userFlag" column="user_flag"/>
+        <result property="flagColor" column="flag_color"/>
     </resultMap>
 
     <!--查询页面展示的评论List-->
     <select id="getPageCommentListByPageAndParentCommentId" resultMap="pageComment">
         select c1.id, c1.nickname, c1.content, c1.avatar, c1.create_time, c1.is_admin_comment, c1.website,
-        c1.parent_comment_id as parent_comment_id, c2.nickname as parent_comment_nickname
+        c1.parent_comment_id as parent_comment_id, c2.nickname as parent_comment_nickname,c1.user_id as user_id,c1.user_flag as user_flag ,c1.flag_color as flag_color,c2.flag_color as parent_flag_color,c2.user_id as parent_user_id,c2.user_flag as parent_user_flag
         from comment as c1 left join comment as c2 on c1.parent_comment_id=c2.id
         where c1.page=#{page}
         <if test="page==0 and blogId!=null">
@@ -129,8 +130,8 @@
     <!--保存评论-->
     <insert id="saveComment" useGeneratedKeys="true" keyProperty="id">
         insert into comment (nickname, email, content, avatar, create_time, website, ip, is_published, is_admin_comment,
-        page, is_notice, parent_comment_id, blog_id, qq)
+        page, is_notice, parent_comment_id, blog_id, qq,user_id,user_flag,flag_color)
         values (#{nickname}, #{email}, #{content}, #{avatar}, #{createTime}, #{website}, #{ip}, #{published}, #{adminComment},
-        #{page}, #{notice}, #{parentCommentId}, #{blogId}, #{qq})
+        #{page}, #{notice}, #{parentCommentId}, #{blogId}, #{qq},#{user_id},#{user_flag},#{flag_color})
     </insert>
 </mapper>

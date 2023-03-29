@@ -72,6 +72,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setAvatar("http://localhost/QQ20221014224335.jpg");
 		// 设置默认登陆标识
 		user.setUserFlag("潮流教父");
+		// 设置默认前戳的颜色为黑色
+		user.setFlagColor("black");
 		if (userMapper.registerUser(user)){
 			return Result.ok("注册成功");
 		}

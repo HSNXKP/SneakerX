@@ -165,7 +165,7 @@ public class CommentUtils {
 	/**
 	 * 查询对应页面评论是否开启
 	 *
-	 * @param page   页面分类（0普通文章，1关于我，2友链）
+	 * @param page   页面分类（0普通文章，1关于我们）
 	 * @param blogId 如果page==0，需要博客id参数，校验文章是否公开状态
 	 * @return CommentOpenStateEnum
 	 */
@@ -234,6 +234,9 @@ public class CommentUtils {
 	 * @param admin   博主信息
 	 */
 	private void setGeneralAdminComment(Comment comment, User admin) {
+		comment.setUser_id(admin.getId());
+		comment.setUser_flag(admin.getUserFlag());
+		comment.setFlag_color(admin.getFlagColor());
 		comment.setAdminComment(true);
 		comment.setCreateTime(new Date());
 		comment.setPublished(true);
