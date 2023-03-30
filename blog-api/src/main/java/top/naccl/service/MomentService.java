@@ -46,7 +46,7 @@ public interface MomentService {
 	/**
 	 * 添加Blog
 	 * @param blog
-	 * @param save
+	 * @param type
 	 * @return
 	 */
 	Result editBlog(top.naccl.model.dto.Blog blog, String type,String jwt);
