@@ -14,4 +14,6 @@ public interface SiteSettingService {
 	String getWebTitleSuffix();
 
 	void updateSiteSetting(List<LinkedHashMap> siteSettings, List<Integer> deleteIds);
+
+	String getAnonymousAvatar();
 }

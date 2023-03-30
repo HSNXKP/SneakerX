@@ -29,4 +29,7 @@ public interface SiteSettingMapper {
 	int updateFriendInfoContent(String content);
 
 	int updateFriendInfoCommentEnabled(Boolean commentEnabled);
+
+	String getAnonymousAvatar();
+
 }

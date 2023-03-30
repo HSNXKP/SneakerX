@@ -172,6 +172,11 @@ public class SiteSettingServiceImpl implements SiteSettingService {
         deleteSiteInfoRedisCache();
     }
 
+    @Override
+    public String getAnonymousAvatar() {
+        return siteSettingMapper.getAnonymousAvatar();
+    }
+
     public void saveOneSiteSetting(SiteSetting siteSetting) {
         if (siteSettingMapper.saveSiteSetting(siteSetting) != 1) {
             throw new PersistenceException("配置添加失败");

@@ -2,6 +2,7 @@ package top.naccl.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,11 +12,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.naccl.annotation.AccessLimit;
 import top.naccl.constant.JwtConstants;
+import top.naccl.entity.Blog;
 import top.naccl.entity.User;
+import top.naccl.mapper.UserMapper;
 import top.naccl.model.dto.Comment;
 import top.naccl.model.vo.PageComment;
 import top.naccl.model.vo.PageResult;
 import top.naccl.model.vo.Result;
+import top.naccl.service.BlogService;
 import top.naccl.service.CommentService;
 import top.naccl.service.impl.UserServiceImpl;
 import top.naccl.util.JwtUtils;
@@ -40,6 +44,12 @@ public class CommentController {
 	UserServiceImpl userService;
 	@Autowired
 	CommentUtils commentUtils;
+
+	@Autowired
+	private UserMapper userMapper;
+
+	@Autowired
+	private BlogService blogService;
 
 	/**
 	 * 根据页面分页查询评论列表
@@ -68,14 +78,17 @@ public class CommentController {
 				if (JwtUtils.judgeTokenIsExist(jwt)) {
 					try {
 						String subject = JwtUtils.getTokenBody(jwt).getSubject();
-						if (subject.startsWith(JwtConstants.ADMIN_PREFIX)) {
 							//博主身份Token
 							String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
-							User admin = (User) userService.loadUserByUsername(username);
-							if (admin == null) {
-								return Result.create(403, "博主身份Token已失效，请重新登录！");
-							}
-						} else {
+							if(userMapper.findByUsernameIsNull(username) !=0){
+								if (userService.loadUserByUsername(username) != null){
+									User userDetails = (User) userService.loadUserByUsername(username);
+									Blog blogWithUser = blogService.getBlogById(blogId);
+									if (!userDetails.getId().equals(blogWithUser.getUser().getId())){
+										return Result.create(403, "Token不匹配，请输入验证密码！");
+									}
+								}
+							} else {
 							//经密码验证后的Token
 							Long tokenBlogId = Long.parseLong(subject);
 							//博客id不匹配，验证不通过，可能博客id改变或客户端传递了其它密码保护文章的Token
@@ -122,7 +135,7 @@ public class CommentController {
 	@PostMapping("/comment")
 	public Result postComment(@RequestBody Comment comment,
 	                          HttpServletRequest request,
-	                          @RequestHeader(value = "Authorization", defaultValue = "") String jwt) {
+	                          @RequestHeader(value = "Authorization", defaultValue = "") String jwt) throws Exception {
 		//评论内容合法性校验
 		if (StringUtils.isEmpty(comment.getContent()) || comment.getContent().length() > 250 ||
 				comment.getPage() == null || comment.getParentCommentId() == null) {
@@ -154,30 +167,23 @@ public class CommentController {
 			case CLOSE:
 				return Result.create(403, "评论已关闭");
 			case PASSWORD:
+				// TODO 登陆情况下携带了blogToken 且访问了正常开放的Blog 如何判断携带的token做登陆处理 前端做了判断 :如果登陆且已经通过了密码校验 直接发送adminToken 就不会发送blogToken
 				//文章受密码保护
 				//验证Token合法性
 				if (JwtUtils.judgeTokenIsExist(jwt)) {
 					String subject;
 					try {
 						subject = JwtUtils.getTokenBody(jwt).getSubject();
-					} catch (Exception e) {
-						e.printStackTrace();
-						return Result.create(403, "Token已失效，请重新验证密码！");
-					}
-					//博主评论，不受密码保护限制，根据博主信息设置评论属性
-					if (subject.startsWith(JwtConstants.ADMIN_PREFIX)) {
-						//Token验证通过，获取Token中用户名
+						//博主评论，不受密码保护限制，根据博主信息设置评论属性
 						String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
-						User admin = (User) userService.loadUserByUsername(username);
-						if (admin == null) {
-							return Result.create(403, "博主身份Token已失效，请重新登录！");
-						}
-						commentUtils.setAdminComment(comment, request, admin);
-						isVisitorComment = false;
-					} else {//普通访客经文章密码验证后携带Token
+						if(userMapper.findByUsernameIsNull(username) !=0){
+							User admin = (User) userService.loadUserByUsername(username);
+							//Token验证通过，获取Token中用户名
+							commentUtils.setAdminComment(comment, request, admin);
+						} else {//普通访客经文章密码验证后携带Token
 						//对访客的评论昵称、邮箱合法性校验
-						if (StringUtils.isEmpty(comment.getNickname(), comment.getEmail()) || comment.getNickname().length() > 15) {
-							return Result.error("参数有误");
+						if (StringUtils.isEmpty(comment.getNickname(), comment.getEmail()) || comment.getNickname().length() > 8  ||comment.getNickname().length() < 2) {
+							return Result.error("昵称为两位且少于八位长度");
 						}
 						//对于受密码保护的文章，则Token是必须的
 						Long tokenBlogId = Long.parseLong(subject);
@@ -187,6 +193,10 @@ public class CommentController {
 						}
 						commentUtils.setVisitorComment(comment, request);
 						isVisitorComment = true;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						return Result.create(403, "Token已失效，请重新验证密码！");
 					}
 				} else {//不存在Token则无评论权限
 					return Result.create(403, "此文章受密码保护，请验证密码！");
@@ -199,33 +209,28 @@ public class CommentController {
 					String subject;
 					try {
 						subject = JwtUtils.getTokenBody(jwt).getSubject();
-					} catch (Exception e) {
-						e.printStackTrace();
-						return Result.create(403, "Token已失效，请重新验证密码");
-					}
-					//博主评论，根据博主信息设置评论属性
-					if (subject.startsWith(JwtConstants.ADMIN_PREFIX)) {
-						//Token验证通过，获取Token中用户名
 						String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
-						User admin = (User) userService.loadUserByUsername(username);
-						if (admin == null) {
-							return Result.create(403, "博主身份Token已失效，请重新登录！");
-						}
-						commentUtils.setAdminComment(comment, request, admin);
-						isVisitorComment = false;
-					} else {//文章原先为密码保护，后取消保护，但客户端仍存在Token，则忽略Token
+						if(userMapper.findByUsernameIsNull(username) !=0){
+							User admin = (User) userService.loadUserByUsername(username);
+							commentUtils.setAdminComment(comment, request, admin);
+						} else {//文章原先为密码保护，后取消保护，但客户端仍存在Token，则忽略Token
 						//对访客的评论昵称、邮箱合法性校验
-						if (StringUtils.isEmpty(comment.getNickname(), comment.getEmail()) || comment.getNickname().length() > 15) {
-							return Result.error("参数有误");
+						if (StringUtils.isEmpty(comment.getNickname(), comment.getEmail()) || comment.getNickname().length() > 8  ||comment.getNickname().length() < 2) {
+							return Result.error("昵称为两位且少于八位长度");
 						}
 						commentUtils.setVisitorComment(comment, request);
 						isVisitorComment = true;
 					}
+					} catch (Exception e) {
+						e.printStackTrace();
+						return Result.create(403, "Token已失效，请重新验证密码");
+					}
+
 				} else {
 					//访客评论
 					//对访客的评论昵称、邮箱合法性校验
-					if (StringUtils.isEmpty(comment.getNickname(), comment.getEmail()) || comment.getNickname().length() > 15) {
-						return Result.error("参数有误");
+					if (StringUtils.isEmpty(comment.getNickname(), comment.getEmail()) ||comment.getNickname().length() > 8  ||comment.getNickname().length() < 2) {
+						return Result.error("昵称为两位且少于八位长度");
 					}
 					commentUtils.setVisitorComment(comment, request);
 					isVisitorComment = true;
@@ -235,7 +240,7 @@ public class CommentController {
 				break;
 		}
 		commentService.saveComment(comment);
-		commentUtils.judgeSendNotify(comment, isVisitorComment, parentComment);
+//		commentUtils.judgeSendNotify(comment, isVisitorComment, parentComment);
 		return Result.ok("评论成功");
 	}
 }

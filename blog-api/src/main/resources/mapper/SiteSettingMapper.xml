@@ -17,6 +17,10 @@
         select value from site_setting where name_en='webTitleSuffix'
     </select>
 
+    <select id="getAnonymousAvatar" resultType="java.lang.String">
+        select site_setting.value from site_setting where name_en='anonymousAvatarUrl'
+    </select>
+
     <!--更新-->
     <update id="updateSiteSetting">
         update site_setting set value=#{value} where id=#{id}

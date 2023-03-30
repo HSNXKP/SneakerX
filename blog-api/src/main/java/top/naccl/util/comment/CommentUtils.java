@@ -1,5 +1,6 @@
 package top.naccl.util.comment;
 
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
@@ -10,11 +11,7 @@ import top.naccl.constant.RedisKeyConstants;
 import top.naccl.entity.User;
 import top.naccl.model.dto.Comment;
 import top.naccl.model.vo.FriendInfo;
-import top.naccl.service.AboutService;
-import top.naccl.service.BlogService;
-import top.naccl.service.FriendService;
-import top.naccl.service.RedisService;
-import top.naccl.service.UserService;
+import top.naccl.service.*;
 import top.naccl.util.HashUtils;
 import top.naccl.util.IpAddressUtils;
 import top.naccl.util.MailUtils;
@@ -59,6 +56,9 @@ public class CommentUtils {
 	 * 新评论是否默认公开
 	 */
 	private Boolean commentDefaultOpen;
+
+	@Autowired
+	private SiteSettingService siteSettingService;
 
 	@Autowired
 	public void setBlogService(BlogService blogService) {
@@ -192,7 +192,7 @@ public class CommentUtils {
 				}
 				break;
 			case PageConstants.ABOUT:
-				//关于我页面
+				//关于我们页面
 				if (!aboutService.getAboutCommentEnabled()) {
 					//页面评论已关闭
 					return CommentOpenStateEnum.CLOSE;
@@ -278,27 +278,12 @@ public class CommentUtils {
 	 * @param comment 当前收到的评论
 	 * @param request 用于获取ip
 	 */
-	public void setVisitorComment(Comment comment, HttpServletRequest request) {
+	public void setVisitorComment(Comment comment, HttpServletRequest request) throws Exception {
 		String nickname = comment.getNickname();
-		try {
-			if (QQInfoUtils.isQQNumber(nickname)) {
-				comment.setQq(nickname);
-				comment.setNickname(QQInfoUtils.getQQNickname(nickname));
-				setCommentQQAvatar(comment, nickname);
-			} else {
-				comment.setNickname(comment.getNickname().trim());
-				setCommentRandomAvatar(comment);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			comment.setNickname(comment.getNickname().trim());
-			setCommentRandomAvatar(comment);
-		}
-
-		//check website
-		if (!isValidUrl(comment.getWebsite())) {
-			comment.setWebsite("");
-		}
+		comment.setQq(nickname);
+		comment.setNickname(nickname);
+		setCommentQQAvatar(comment, nickname);
+		comment.setWebsite("");
 		comment.setAdminComment(false);
 		comment.setCreateTime(new Date());
 		comment.setPublished(commentDefaultOpen);
@@ -316,9 +301,13 @@ public class CommentUtils {
 	private void setCommentQQAvatar(Comment comment, String qq) throws Exception {
 		String uploadAvatarUrl = (String) redisService.getValueByHashKey(RedisKeyConstants.QQ_AVATAR_URL_MAP, qq);
 		if (StringUtils.isEmpty(uploadAvatarUrl)) {
-			uploadAvatarUrl = QQInfoUtils.getQQAvatarUrl(qq);
+			// 获取匿名头像
+			uploadAvatarUrl =siteSettingService.getAnonymousAvatar();
+			comment.setAvatar(uploadAvatarUrl);
+			// 设置到redis中
 			redisService.saveKVToHash(RedisKeyConstants.QQ_AVATAR_URL_MAP, qq, uploadAvatarUrl);
 		}
+		// 设置匿名头像
 		comment.setAvatar(uploadAvatarUrl);
 	}
 
