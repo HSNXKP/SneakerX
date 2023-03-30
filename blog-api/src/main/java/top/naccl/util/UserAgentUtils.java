@@ -7,7 +7,7 @@ import top.naccl.model.dto.UserAgentDTO;
 
 /**
  * @Description: UserAgent解析工具类
- * @Author: Naccl
+ * @Author: wdd
  * @Date: 2020-11-30
  */
 @Component

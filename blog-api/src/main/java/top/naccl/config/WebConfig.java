@@ -11,7 +11,7 @@ import top.naccl.interceptor.AccessLimitInterceptor;
 
 /**
  * @Description: 配置CORS跨域支持、拦截器
- * @Author: Naccl
+ * @Author: wdd
  * @Date: 2020-07-22
  */
 @Configuration

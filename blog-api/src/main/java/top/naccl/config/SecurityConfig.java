@@ -19,7 +19,7 @@ import top.naccl.service.impl.UserServiceImpl;
 
 /**
  * @Description: Spring Security配置类
- * @Author: Naccl
+ * @Author: wdd
  * @Date: 2020-07-19
  */
 @Configuration

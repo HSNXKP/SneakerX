@@ -15,7 +15,7 @@ import top.naccl.util.telegram.TelegramBotMsgHandler;
  * 处理TelegramBot接收到的新消息
  * 如果不使用Telegram方式，即comment.notify.channel != tg，则该类不会被实例化，对应的Webhook接口也不会被创建
  *
- * @author: Naccl
+ * @author: wdd
  * @date: 2022-01-24
  */
 @Slf4j

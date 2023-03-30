@@ -10,7 +10,7 @@ import top.naccl.util.markdown.ext.cover.Cover;
 
 /**
  * @Description: 定界
- * @Author: Naccl
+ * @Author: wdd
  * @Date: 2020-05-13
  */
 public class CoverDelimiterProcessor implements DelimiterProcessor {

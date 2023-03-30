@@ -3,7 +3,7 @@ package top.naccl.enums;
 /**
  * 评论页面枚举类
  *
- * @author: Naccl
+ * @author: wdd
  * @date: 2022-01-22
  */
 public enum CommentPageEnum {

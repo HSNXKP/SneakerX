@@ -3,7 +3,7 @@ package top.naccl.enums;
 /**
  * 访问行为枚举类
  *
- * @author: Naccl
+ * @author: wdd
  * @date: 2022-01-08
  */
 public enum VisitBehavior {

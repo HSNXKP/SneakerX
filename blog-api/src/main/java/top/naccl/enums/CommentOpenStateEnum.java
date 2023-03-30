@@ -3,7 +3,7 @@ package top.naccl.enums;
 /**
  * 评论开放状态枚举类
  *
- * @author: Naccl
+ * @author: wdd
  * @date: 2022-01-23
  */
 public enum CommentOpenStateEnum {

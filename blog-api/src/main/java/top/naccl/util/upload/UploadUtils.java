@@ -15,7 +15,7 @@ import top.naccl.util.upload.channel.FileUploadChannel;
 
 /**
  * @Description: 图片下载保存工具类
- * @Author: Naccl
+ * @Author: wdd
  * @Date: 2021-11-11
  */
 @Component

@@ -10,7 +10,7 @@ import top.naccl.service.AboutService;
 
 /**
  * @Description: 关于我页面
- * @Author: Naccl
+ * @Author: wdd
  * @Date: 2020-08-31
  */
 @RestController

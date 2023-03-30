@@ -14,7 +14,7 @@ import top.naccl.service.ExceptionLogService;
 
 /**
  * @Description: 异常日志后台管理
- * @Author: Naccl
+ * @Author: wdd
  * @Date: 2020-12-04
  */
 @RestController

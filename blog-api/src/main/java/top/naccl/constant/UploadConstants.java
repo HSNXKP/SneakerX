@@ -3,7 +3,7 @@ package top.naccl.constant;
 /**
  * 上传文件相关常量
  *
- * @author: Naccl
+ * @author: wdd
  * @date: 2022-01-23
  */
 public class UploadConstants {

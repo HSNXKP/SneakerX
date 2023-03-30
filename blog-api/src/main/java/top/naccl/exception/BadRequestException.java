@@ -2,7 +2,7 @@ package top.naccl.exception;
 
 /**
  * @Description: 非法请求异常
- * @Author: Naccl
+ * @Author: wdd
  * @Date: 2020-07-23
  */
 

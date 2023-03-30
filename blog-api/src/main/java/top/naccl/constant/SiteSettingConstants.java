@@ -3,7 +3,7 @@ package top.naccl.constant;
 /**
  * 站点设置常量
  *
- * @author: Naccl
+ * @author: wdd
  * @date: 2022-01-28
  */
 public class SiteSettingConstants {

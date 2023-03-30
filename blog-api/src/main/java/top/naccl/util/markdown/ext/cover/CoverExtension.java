@@ -15,7 +15,7 @@ import top.naccl.util.markdown.ext.cover.internal.CoverTextContentNodeRenderer;
 
 /**
  * @Description: 自定义遮盖层拓展
- * @Author: Naccl
+ * @Author: wdd
  * @Date: 2020-05-13
  */
 public class CoverExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension, TextContentRenderer.TextContentRendererExtension {

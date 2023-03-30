@@ -5,7 +5,7 @@ import top.naccl.util.upload.UploadUtils;
 /**
  * 文件上传方式
  *
- * @author: Naccl
+ * @author: wdd
  * @date: 2022-01-23
  */
 public interface FileUploadChannel {

@@ -2,7 +2,7 @@ package top.naccl.exception;
 
 /**
  * @Description: 404异常
- * @Author: Naccl
+ * @Author: wdd
  * @Date: 2020-08-14
  */
 
