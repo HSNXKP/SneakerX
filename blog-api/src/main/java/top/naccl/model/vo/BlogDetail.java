@@ -35,6 +35,7 @@ public class BlogDetail {
 	private Integer readTime;//阅读时长(分钟)
 	private String password;//密码保护
 	private Boolean isPublished;// 私密作品
+	private Long likes;// 点赞
 
 	private User user;//作者信息
 	private Category category;//文章分类

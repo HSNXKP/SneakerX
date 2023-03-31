@@ -369,6 +369,7 @@
         <result property="readTime" column="read_time"/>
         <result property="password" column="password"/>
         <result property="isPublished" column="is_published"/>
+        <result property="likes" column="likes"/>
         <association property="category" javaType="top.naccl.entity.Category">
             <result property="name" column="category_name"/>
         </association>
@@ -398,6 +399,7 @@
                b.read_time,
                b.password,
                b.is_published,
+               b.likes,
                c.category_name,
                t.tag_name as tag_name,
                t.color,
@@ -422,6 +424,7 @@
                b.words,
                b.read_time,
                b.password,
+               b.likes,
                c.category_name,
                t.tag_name as tag_name,
                t.color,
