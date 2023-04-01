@@ -40,6 +40,7 @@ public class TagController {
 	@GetMapping("/tag")
 	public Result tag(@RequestParam String tagName,
 	                  @RequestParam(defaultValue = "1") Integer pageNum) {
+		// 根据标签name分页查询公开博客列表
 		PageResult<BlogInfo> pageResult = blogService.getBlogInfoListByTagNameAndIsPublished(tagName, pageNum);
 		return Result.ok("请求成功", pageResult);
 	}
@@ -52,6 +53,8 @@ public class TagController {
 	 */
 	@PostMapping("/user/addTag")
 	public Result addTag(@RequestBody Tag tag) {
+		//TODO 前端存在标签#的情况 需要处理
+		tag.setName(tag.getName().replace("#", ""));
 		if (StringUtils.isEmpty(tag.getName())) {
 			return Result.error("参数不能为空");
 		}
@@ -61,7 +64,6 @@ public class TagController {
 		if (tag1 != null && !tag1.getId().equals(tag.getId())) {
 			return Result.error("该标签已存在");
 		}
-		tag.setName("#"+tag.getName());
 		tagService.saveTag(tag);
 		return Result.ok("添加成功");
 

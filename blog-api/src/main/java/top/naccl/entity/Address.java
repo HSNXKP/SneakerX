@@ -21,6 +21,7 @@ public class Address {
     private String name;// 收货人姓名
     private String phone;// 收货人电话
     private String address;// 收货人地址
+    private Boolean isDefaultAddress;// 是否默认地址
     private LocalDateTime createTime;// 创建时间
     private LocalDateTime updateTime;// 更新时间
 

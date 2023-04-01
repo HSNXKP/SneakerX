@@ -74,6 +74,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setUserFlag("潮流教父");
 		// 设置默认前戳的颜色为黑色
 		user.setFlagColor("black");
+		// 设置默认签名
+		user.setUserSign("这个人很懒，什么都没有留下");
 		if (userMapper.registerUser(user)){
 			return Result.ok("注册成功");
 		}

@@ -35,6 +35,7 @@ public class User implements UserDetails {
 	private String email; //邮箱
 	private String userFlag;// 登陆后的前戳
 	private String flagColor;//前戳的颜色
+	private String userSign;//个人签名
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
 	private LocalDateTime createTime; //创建账号时间
