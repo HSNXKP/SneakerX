@@ -12,4 +12,5 @@ public interface ProductCategoryService {
     ProductCategory getProductCategoryById(Long id);
 
     List<ProductCategory> getProductCategoryByParentId(Long id);
+
 }

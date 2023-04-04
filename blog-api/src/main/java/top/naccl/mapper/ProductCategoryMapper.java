@@ -13,4 +13,5 @@ public interface ProductCategoryMapper {
     List<ProductCategory> getProductCategoryByParentId(@Param("parentId") Long parentId);
 
     ProductCategory getProductCategoryById(@Param("id") Long id);
+
 }

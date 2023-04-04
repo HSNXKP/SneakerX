@@ -24,4 +24,5 @@
     <select id="getProductsIsRecommend" resultType="top.naccl.entity.Product">
     select * from product where product.recommend = true
     </select>
+
 </mapper>

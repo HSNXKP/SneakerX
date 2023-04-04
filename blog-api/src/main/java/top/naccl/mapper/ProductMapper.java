@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import top.naccl.entity.Product;
+import top.naccl.entity.ProductCategory;
 
 import java.util.List;
 
@@ -20,4 +21,5 @@ public interface ProductMapper {
     List<Product> getProductByProductCategoryId(@Param("id") Long id);
 
     List<Product> getProductsIsRecommend();
+
 }

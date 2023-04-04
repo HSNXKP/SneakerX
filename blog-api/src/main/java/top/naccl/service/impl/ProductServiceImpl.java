@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import top.naccl.entity.Product;
 import top.naccl.exception.NotFoundException;
 import top.naccl.mapper.ProductMapper;
+import top.naccl.model.vo.Result;
 import top.naccl.service.ProductService;
 
 import java.util.List;
@@ -50,4 +51,5 @@ public class ProductServiceImpl implements ProductService {
         }
 
     }
+
 }

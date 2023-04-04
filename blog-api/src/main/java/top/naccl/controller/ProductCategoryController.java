@@ -56,4 +56,6 @@ public class ProductCategoryController {
         return Result.ok("获取成功",productList);
 
     }
+
+
 }

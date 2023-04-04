@@ -1,6 +1,7 @@
 package top.naccl.service;
 
 import top.naccl.entity.Product;
+import top.naccl.model.vo.Result;
 
 import java.util.List;
 

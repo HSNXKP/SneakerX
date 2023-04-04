@@ -23,4 +23,5 @@
     <select id="getProductCategoryById" resultType="top.naccl.entity.ProductCategory">
     select * from  product_category as p where p.id=#{id}
     </select>
+
 </mapper>
