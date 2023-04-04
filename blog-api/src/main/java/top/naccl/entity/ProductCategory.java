@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 /**
  * @author: wdd
  * @date: 2023/4/1 14:47
@@ -19,6 +21,7 @@ public class ProductCategory {
     private String description;// 分类描述
     private String image;// 分类图片
     private Long parentId;// 父分类ID
-    private Integer sort;// 排序
+
+    private List<ProductCategory> children;// 子分类
 
 }

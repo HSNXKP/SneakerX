@@ -174,7 +174,6 @@ public class CommentController {
 					String subject;
 					try {
 						subject = JwtUtils.getTokenBody(jwt).getSubject();
-						//博主评论，不受密码保护限制，根据博主信息设置评论属性
 						String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
 						if(userMapper.findByUsernameIsNull(username) !=0){
 							User admin = (User) userService.loadUserByUsername(username);
@@ -187,7 +186,7 @@ public class CommentController {
 						}
 						//对于受密码保护的文章，则Token是必须的
 						Long tokenBlogId = Long.parseLong(subject);
-						//博客id不匹配，验证不通过，可能博客id改变或客户端传递了其它密码保护文章的Token
+						//动态id不匹配，验证不通过，可能博客id改变或客户端传递了其它密码保护文章的Token
 						if (!tokenBlogId.equals(comment.getBlogId())) {
 							return Result.create(403, "Token不匹配，请重新验证密码！");
 						}
