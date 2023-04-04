@@ -10,11 +10,17 @@
         <result property="parentId" column="parentId"/>
     </resultMap>
 
-    <select id="getProductCategories" resultType="top.naccl.entity.ProductCategory">
-        select p1.id       as id,
-               p1.name     as name,
-               p1.parentId as grandpa_id
+    <select id="getProductCategoryByParentId" resultType="top.naccl.entity.ProductCategory">
+        select p1.id,
+               p1.name,
+               p1.image,
+               p1.description,
+               p1.parentId
         from product_category as p1
                  left join product_category as p2 on p1.parentId = p2.id where p1.parentId = #{parentId}
+    </select>
+
+    <select id="getProductCategoryById" resultType="top.naccl.entity.ProductCategory">
+    select * from  product_category as p where p.id=#{id}
     </select>
 </mapper>

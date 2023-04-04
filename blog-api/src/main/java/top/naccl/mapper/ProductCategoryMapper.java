@@ -10,5 +10,7 @@ import java.util.List;
 @Repository
 public interface ProductCategoryMapper {
 
-    List<ProductCategory> getProductCategories(@Param("parentId") Long parentId);
+    List<ProductCategory> getProductCategoryByParentId(@Param("parentId") Long parentId);
+
+    ProductCategory getProductCategoryById(@Param("id") Long id);
 }

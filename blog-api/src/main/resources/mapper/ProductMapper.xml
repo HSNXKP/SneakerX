@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.naccl.mapper.ProductMapper">
+
+    <resultMap id="log" type="top.naccl.entity.Product">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="image" column="image"/>
+        <result property="description" column="description"/>
+        <result property="price" column="price"/>
+        <result property="recommend" column="recommend"/>
+        <result property="published" column="published"/>
+        <result property="productCategoryId" column="product_category_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <select id="getProductByProductCategoryId" resultType="top.naccl.entity.Product" parameterType="java.lang.Long">
+        select *
+        from product as p
+                 left join product_category pc on p.product_category_id = pc.id
+        where pc.id = #{id}
+    </select>
+
+    <select id="getProductsIsRecommend" resultType="top.naccl.entity.Product">
+    select * from product where product.recommend = true
+    </select>
+</mapper>

@@ -33,8 +33,6 @@ public class MomentController {
 	@Autowired
 	UserServiceImpl userService;
 
-	@Autowired
-	private BlogService blogService;
 
 	/**
 	 * 分页查询动态List

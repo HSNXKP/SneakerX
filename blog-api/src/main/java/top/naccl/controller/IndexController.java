@@ -4,14 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.naccl.entity.Category;
+import top.naccl.entity.Product;
 import top.naccl.entity.Tag;
 import top.naccl.model.vo.NewBlog;
 import top.naccl.model.vo.RandomBlog;
 import top.naccl.model.vo.Result;
-import top.naccl.service.BlogService;
-import top.naccl.service.CategoryService;
-import top.naccl.service.SiteSettingService;
-import top.naccl.service.TagService;
+import top.naccl.service.*;
 
 import java.util.List;
 import java.util.Map;
@@ -33,8 +31,11 @@ public class IndexController {
 	@Autowired
 	TagService tagService;
 
+	@Autowired
+	private ProductService productService;
+
 	/**
-	 * 获取站点配置信息、最新推荐博客、分类列表、标签云、随机博客
+	 * 获取站点配置信息、最新推荐博客、分类列表、标签云、随机博客、随机商品
 	 *
 	 * @return
 	 */
@@ -45,10 +46,12 @@ public class IndexController {
 		List<Category> categoryList = categoryService.getCategoryNameList();
 		List<Tag> tagList = tagService.getTagListNotId();
 		List<RandomBlog> randomBlogList = blogService.getRandomBlogListByLimitNumAndIsPublishedAndIsRecommend();
+		List<Product> randomProductList = productService.getProductsIsRecommend();
 		map.put("newBlogList", newBlogList);
 		map.put("categoryList", categoryList);
 		map.put("tagList", tagList);
 		map.put("randomBlogList", randomBlogList);
+		map.put("randomProductList",randomProductList);
 		return Result.ok("请求成功", map);
 	}
 }
