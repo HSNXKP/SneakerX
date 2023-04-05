@@ -22,4 +22,5 @@ public interface ProductMapper {
 
     List<Product> getProductsIsRecommend();
 
+    Product getProductById(Long id);
 }

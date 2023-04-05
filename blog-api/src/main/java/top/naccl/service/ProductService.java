@@ -17,4 +17,6 @@ public interface ProductService {
 
     List<Product> getProductsIsRecommend();
 
+
+    Product getProductById(Long id);
 }

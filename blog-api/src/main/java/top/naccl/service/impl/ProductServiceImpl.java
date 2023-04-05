@@ -52,4 +52,9 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
+    @Override
+    public Product getProductById(Long id) {
+        return productMapper.getProductById(id);
+    }
+
 }

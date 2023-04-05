@@ -13,11 +13,10 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class ProductInfo {
+public class ProductSize {
     private Long id;// 商品详情ID
-    private Long productCategoryId;// 商品分类ID
-    private String productId;// 商品名称
     private String name;// 商品属性名称
+    private String productId;// 商品名称
     private Long productCount;// 商品数量
 
 }

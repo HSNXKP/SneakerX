@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.naccl.mapper.AddressMapper">
+    <resultMap id="addressMap" type="top.naccl.entity.Address">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <result column="address" property="address"/>
+        <result column="address_detail" property="addressDetail"/>
+        <result column="is_default_address" property="isDefaultAddress"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="saveAddress" parameterType="top.naccl.entity.Address">
+        insert into address(user_id, name, phone, address,address_detail, is_default_address, create_time, update_time)
+        values(#{userId}, #{name}, #{phone}, #{address},#{addressDetail}, #{isDefaultAddress}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="updateAddress" parameterType="top.naccl.entity.Address">
+        update address set
+        user_id = #{userId},
+        name = #{name},
+        phone = #{phone},
+        address = #{address},
+        address_detail = #{addressDetail},
+        is_default_address = #{isDefaultAddress},
+        update_time = #{updateTime},
+        update_time = #{updateTime}
+        where id = #{id}
+    </update>
+    <!--取消其他地址默认    -->
+    <update id="setOtherAddressNotDefault" parameterType="java.lang.Long">
+        update address set is_default_address = 0 where user_id = #{userId}
+    </update>
+
+    <delete id="deleteAddress">
+        delete from address where id = #{id}
+    </delete>
+
+    <!--输入的内容是否存在相同地址  -->
+    <select id="isExistAddress" resultType="java.lang.Integer" parameterType="top.naccl.entity.Address">
+        select count(address.id) from address where user_id = #{userId} and address = #{address} and address_detail = #{addressDetail} and phone= #{phone} and name = #{name}
+    </select>
+    <!--通过userId获得地址列表    -->
+    <select id="getAddressList" resultType="top.naccl.entity.Address" parameterType="java.lang.Long">
+        select * from address where user_id = #{id}
+    </select>
+</mapper>

@@ -20,6 +20,9 @@ public class Product {
     private String name;//商品名称
     private String image;//商品图片
     private String description;//商品描述
+    private String code;//商品货号
+    private String color;//商品配色
+    private String retail;//零售价
     private String price;// 商品价格
     private String imageUrl;// 商品链接
     private Boolean recommend;// 是否上推荐列表

@@ -25,4 +25,8 @@
     select * from product where product.recommend = true
     </select>
 
+    <select id="getProductById" resultType="top.naccl.entity.Product" parameterType="java.lang.Long">
+    select * from product where product.id = #{id}
+    </select>
+
 </mapper>

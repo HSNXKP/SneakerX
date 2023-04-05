@@ -33,4 +33,14 @@ public class ProductController {
     }
 
 
+    /**
+     * 通过id查询商品
+     * @param id
+     * @return
+     */
+    @GetMapping("/getProductById")
+    public Result getProductById(@RequestParam("id") Long id){
+        return Result.ok("获取成功",productService.getProductById(id));
+    }
+
 }
