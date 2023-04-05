@@ -15,7 +15,8 @@
                p1.name,
                p1.image,
                p1.description,
-               p1.parentId
+               p1.parentId,
+               p2.name as parentName
         from product_category as p1
                  left join product_category as p2 on p1.parentId = p2.id where p1.parentId = #{parentId}
     </select>

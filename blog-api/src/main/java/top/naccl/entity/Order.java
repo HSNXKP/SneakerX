@@ -19,10 +19,11 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 public class Order {
-    private String id;// 订单Id
+    private Long id;// Id
     private Long userId;// 用户Id
     private Long productId;// 商品Id
     private String productPrice;// 商品价格
+    private String productSize;// 商品尺码
     private Long quantity;// 数量
     private Double amount;// 总价格
     private String addressId;// 收货地址id

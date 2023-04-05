@@ -18,6 +18,6 @@ public class ProductInfo {
     private Long productCategoryId;// 商品分类ID
     private String productId;// 商品名称
     private String name;// 商品属性名称
-
+    private Long productCount;// 商品数量
 
 }
