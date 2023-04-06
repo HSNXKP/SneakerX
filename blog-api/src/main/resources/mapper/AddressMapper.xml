@@ -32,7 +32,7 @@
     </update>
     <!--取消其他地址默认    -->
     <update id="setOtherAddressNotDefault" parameterType="java.lang.Long">
-        update address set is_default_address = 0 where user_id = #{userId}
+        update address set is_default_address = 0 where user_id = #{id}
     </update>
 
     <delete id="deleteAddress">
@@ -45,6 +45,6 @@
     </select>
     <!--通过userId获得地址列表    -->
     <select id="getAddressList" resultType="top.naccl.entity.Address" parameterType="java.lang.Long">
-        select * from address where user_id = #{id}
+        select * from address where address.user_id = #{id} order by is_default_address  desc
     </select>
 </mapper>

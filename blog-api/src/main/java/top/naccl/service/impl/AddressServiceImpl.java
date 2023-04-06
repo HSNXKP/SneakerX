@@ -25,7 +25,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Result saveAddress(Address address, Long id) {
         //四个必要信息不能为空
-        if (StringUtils.isEmpty(address.getName()) && StringUtils.isEmpty(address.getPhone()) && StringUtils.isEmpty(address.getAddress()) && StringUtils.isEmpty(address.getAddressDetail())){
+        if (StringUtils.isEmpty(address.getName(),address.getPhone(),address.getAddress(),address.getAddressDetail())){
             return Result.error("详细信息不能为空");
         }
         // 设置用户id
@@ -81,6 +81,6 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Result getAddressList(Long id) {
-        return Result.ok(addressMapper.getAddressList(id));
+        return Result.ok("获取成功",addressMapper.getAddressList(id));
     }
 }

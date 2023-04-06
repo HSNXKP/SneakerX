@@ -54,7 +54,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductById(Long id) {
-        return productMapper.getProductById(id);
+
+        try {
+            Product product = productMapper.getProductById(id);
+            if (product == null){
+                throw new NotFoundException("该商品未上架");
+            }
+            return product;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
