@@ -16,8 +16,8 @@ import lombok.ToString;
 public class ProductSize {
     private Long id;// 商品详情ID
     private String name;// 商品属性名称(尺码)
-    private String productId;// 商品名称
+    private Long productId;// 商品id
     private Long productCount;// 商品数量
-    private String productPrice; // 商品价格
+    private Long productPrice; // 商品价格
 
 }

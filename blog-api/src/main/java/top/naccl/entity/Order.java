@@ -22,26 +22,29 @@ public class Order {
     private Long id;// Id
     private Long userId;// 用户Id
     private Long productId;// 商品Id
-    private String productPrice;// 商品价格
-    private String productSize;// 商品尺码
+    private Long price;// 商品价格
+    private String size;// 商品尺码
     private Long quantity;// 数量
     private Double amount;// 总价格
-    private String addressId;// 收货地址id
-    private String status;// 订单状态 0:未支付 1:已支付 2:已发货 3:已完成 4:已取消
-    private String payType;// 支付方式 0:微信支付 1:支付宝支付 2:银联支付
-    private String payTime;// 支付时间
-    private String deliveryTime;// 发货时间
-    private String finishTime;// 完成时间
-    private String cancelTime;// 取消时间
-    private String refundTime;// 退款时间
+    private Long addressId;// 收货地址id
+    private Long status;// 订单状态 0:未支付 1:已支付 2:已发货 3:已完成 4:已取消
+    private Long payType;// 支付方式 1:微信支付 2:支付宝支付
+    private LocalDateTime payTime;// 支付时间
+    private LocalDateTime deliveryTime;// 发货时间
+    private Boolean delivery;// 紧急发货
+    private String orderRemarks;// 订单说明（订单备注）
+    private String express;// 物流单号
+    private LocalDateTime finishTime;// 完成时间
+    private LocalDateTime cancelTime;// 取消时间
+    private LocalDateTime refundTime;// 退款时间
     private String refundReason;// 退款原因
-    private String refundStatus;// 退款状态 0:未退款 1:已退款
-    private String refundAmount;// 退款金额
+    private Long refundStatus;// 退款状态 0:未退款 1:已退款
+    private Long refundAmount;// 退款金额
     private String refundNo;// 退款单号
     private String refundTimeLimit;// 退款时限
-    private String refundDesc;// 退款说明
+    private String refundRemarks;// 退款说明
     private String orderNumber;// 订单编号
-    private LocalDateTime createdTime;//创始时间
+    private LocalDateTime createTime;//创始时间
     private LocalDateTime updateTime;//更新时间
 
 }

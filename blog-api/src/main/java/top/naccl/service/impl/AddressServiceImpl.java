@@ -36,7 +36,7 @@ public class AddressServiceImpl implements AddressService {
             return Result.error("该地址已存在");
         }
         // 判断是否设置为默认地址
-        if (address.getIsDefaultAddress() == true) {
+        if (address.getIsDefaultAddress()) {
             // 设置其他地址为非默认地址
             addressMapper.setOtherAddressNotDefault(id);
         }

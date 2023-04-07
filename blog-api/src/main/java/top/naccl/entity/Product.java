@@ -28,6 +28,7 @@ public class Product {
     private String imageUrl;// 商品链接
     private Boolean recommend;// 是否上推荐列表
     private Boolean published;// 是否上架
+    private Integer purchaseRestrictions;// 限购数量
     private String productCategoryId;// 商品分类id
     private LocalDateTime createTime;//创建时间
     private LocalDateTime updateTime;//更新时间

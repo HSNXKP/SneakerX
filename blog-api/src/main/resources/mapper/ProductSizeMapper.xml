@@ -2,9 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.naccl.mapper.ProductSizeMapper">
 
-
-
+    <!--通过商品Id查询当前商品的尺码和价格    -->
     <select id="getProductSizeWithPriceByProductId" resultType="top.naccl.entity.ProductSize" parameterType="java.lang.Long">
         select * from product_size where product_id = #{productId}
+    </select>
+
+    <!--减少库存通过productSizeId    -->
+    <update id="reduceProductCount" parameterType="java.lang.Long">
+        update product_size
+        set product_count = product_count - 1
+        where id = #{id}
+    </update>
+
+    <!--通过id获取提交订单的价格尺码    -->
+    <select id="getProductSizeById" resultType="top.naccl.entity.ProductSize">
+        SELECT *
+        FROM product_size
+        WHERE id = #{id}
     </select>
 </mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.naccl.mapper.OrderMapper">
+
+    <!--通过用户id提交订单列表    -->
+    <insert id="summitOrder" parameterType="top.naccl.entity.Order">
+        insert into  order_table (user_id, product_id, price, size, quantity, amount, address_id, status, pay_type, pay_time,
+                             delivery_time, delivery, order_remarks, express, finish_time, cancel_time, refund_time,
+                             refund_reason, refund_status, refund_amount, refund_no, refund_time_limit, refund_remarks,
+                             order_number, create_time, update_time)
+        values (#{userId}, #{productId}, #{price}, #{size}, #{quantity}, #{amount}, #{addressId}, #{status}, #{payType},
+                #{payTime}, #{deliveryTime}, #{delivery}, #{orderRemarks}, #{express}, #{finishTime}, #{cancelTime},
+                #{refundTime}, #{refundReason}, #{refundStatus}, #{refundAmount}, #{refundNo}, #{refundTimeLimit},
+                #{refundRemarks}, #{orderNumber}, #{createTime}, #{updateTime})
+    </insert>
+    <!--查询当前用户下单的单个商品的数量    -->
+    <select id="getProductOrderCountByUserId" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        select count(*) from order_table where user_id = #{userId} and product_id = #{productId}
+    </select>
+
+
+</mapper>

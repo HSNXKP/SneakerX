@@ -1,5 +1,6 @@
 package top.naccl.controller;
 
+import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +12,10 @@ import top.naccl.model.vo.Result;
 import top.naccl.service.ProductCategoryService;
 import top.naccl.service.ProductService;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: wdd
@@ -45,15 +49,19 @@ public class ProductCategoryController {
     public Result productCategory(@RequestParam("id") Long id){
 
         ProductCategory productCategory = productCategoryService.getProductCategoryById(id);
+        Map<Object,Object> map = new HashMap<Object, Object>();
+        map.put("productCategoryName",productCategory.getName());
         if (productCategory.getParentId() == -1L){
             // 为-1的时候当前用户点击的是第一菜单
             // 将子集合查询返给前端
-            List<ProductCategory> productCategoryList = productCategoryService.getProductCategoryByParentId(id);
-            return Result.ok("获取成功",productCategoryList);
+            List<ProductCategory> productCategoryListWithProduct = productCategoryService.getProductCategoryByParentId(id);
+            map.put("productCategoryListWithProduct",productCategoryListWithProduct);
+            return Result.ok("获取成功",map);
         }
         // 不是-1的话就是商品列表
-        List<Product> productList = productService.getProductByProductCategoryId(id);
-        return Result.ok("获取成功",productList);
+        List<Product> productCategoryListWithProduct = productService.getProductByProductCategoryId(id);
+        map.put("productCategoryListWithProduct",productCategoryListWithProduct);
+        return Result.ok("获取成功",map);
 
     }
 

@@ -58,7 +58,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public List<ProductCategory> getProductCategoryByParentId(Long id) {
-
         try {
             List<ProductCategory> productCategoryList = productCategoryMapper.getProductCategoryByParentId(id);
             if (productCategoryList == null){

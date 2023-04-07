@@ -34,6 +34,10 @@
     <update id="setOtherAddressNotDefault" parameterType="java.lang.Long">
         update address set is_default_address = 0 where user_id = #{id}
     </update>
+    <!--设置默认地址    -->
+    <update id="setAddressDefault" parameterType="java.lang.Long">
+        update address set is_default_address = 1 where id = #{id}
+    </update>
 
     <delete id="deleteAddress">
         delete from address where id = #{id}
