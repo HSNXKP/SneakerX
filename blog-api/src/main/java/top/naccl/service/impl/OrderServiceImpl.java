@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import top.naccl.constant.JwtConstants;
-import top.naccl.entity.Order;
-import top.naccl.entity.Product;
-import top.naccl.entity.ProductSize;
-import top.naccl.entity.User;
+import top.naccl.entity.*;
 import top.naccl.exception.NotFoundException;
 import top.naccl.mapper.AddressMapper;
 import top.naccl.mapper.OrderMapper;
@@ -25,6 +22,7 @@ import top.naccl.util.StringUtils;
 import javax.tools.Tool;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -156,5 +154,47 @@ public class OrderServiceImpl implements OrderService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Result getOrderByOrderNumber(String jwt,String orderNumber) {
+        try {
+            if (JwtUtils.judgeTokenIsExist(jwt)) {
+                // 比对当前的token和id是否一致
+                String subject = JwtUtils.getTokenBody(jwt).getSubject();
+                String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
+                //判断token是否为blogToken
+                User userDetails = (User) userService.loadUserByUsername(username);
+                if (userDetails != null) {
+                    Order order = orderMapper.getOrderByOrderNumber(orderNumber);
+                    if (order != null) {
+                        if (order.getUserId().equals(userDetails.getId())){
+                            // 设置订单的收货地址
+                            order.setAddress(addressMapper.getAddressByID(order.getAddressId()));
+                            // 设置商品名称
+                            order.setProduct(productService.getProductById(order.getProductId()));
+                            return Result.ok("查询成功", order);
+                        }
+                        return Result.error("您没有此订单的权限");
+                    }
+                    return Result.error("没有该订单");
+                }
+                return Result.error("token无效，请重新登录");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return Result.error("token无效，请重新登录");
+    }
+
+    @Override
+    public int updateOrder(Order order) {
+        order.setPayTime(LocalDateTime.now());
+        order.setUpdateTime(LocalDateTime.now());
+        order.setStatus(1L);
+        if (orderMapper.updateOrder(order) == 1){
+            return 1;
+        }
+        return 0;
     }
 }

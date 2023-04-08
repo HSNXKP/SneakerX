@@ -26,6 +26,11 @@ public interface AddressMapper {
      */
     int setOtherAddressNotDefault(@Param("id") Long id);
 
+    /**
+     * 通过userId获取地址列表
+     * @param id
+     * @return
+     */
     List<Address> getAddressList(@Param("id") Long id);
 
     /**
@@ -34,4 +39,11 @@ public interface AddressMapper {
      * @return
      */
     int setAddressDefault(@Param("id") Long id);
+
+    /**
+     * 通过收获地址id获取地址信息
+     * @param addressId
+     * @return
+     */
+    Address getAddressByID(@Param("addressId") Long addressId);
 }

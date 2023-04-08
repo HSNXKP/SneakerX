@@ -51,4 +51,7 @@
     <select id="getAddressList" resultType="top.naccl.entity.Address" parameterType="java.lang.Long">
         select * from address where address.user_id = #{id} order by is_default_address  desc
     </select>
+    <select id="getAddressByID" resultType="top.naccl.entity.Address" parameterType="java.lang.Long">
+        select * from address where address.id = #{addressId}
+    </select>
 </mapper>
