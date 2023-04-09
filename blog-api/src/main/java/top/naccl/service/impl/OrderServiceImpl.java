@@ -72,72 +72,76 @@ public class OrderServiceImpl implements OrderService {
                             int productOrderCount = orderMapper.getProductOrderCountByUserId(orderVo.getUserId(), orderVo.getProductId());
                             Product product = productService.getProductById(orderVo.getProductId());
                             if (productOrderCount < product.getPurchaseRestrictions()) {
-                                if (orderVo.getIsDefaultAddress()) {
-                                    addressMapper.setOtherAddressNotDefault(orderVo.getUserId());
-                                    addressMapper.setAddressDefault(orderVo.getAddress());
-                                }
-                                Order order = new Order();
-                                // 设置订单的用户id
-                                order.setUserId(orderVo.getUserId());
-                                // 设置订单的商品id
-                                order.setProductId(orderVo.getProductId());
-                                // 设置订单的创建时间
-                                order.setCreateTime(LocalDateTime.now());
-                                // 设置订单的更新时间
-                                order.setUpdateTime(LocalDateTime.now());
-                                // 设置订单的状态
-                                order.setStatus(0L);
-                                // 设置订单的快递单号
-                                order.setExpress("");
-                                String orderNumber = UUID.randomUUID().toString().replace("-", "");
-                                // 设置订单的订单号
-                                order.setOrderNumber(orderNumber);
-                                // 设置订单的价格
-                                order.setPrice(productSize.getProductPrice());
-                                // 设置订单的尺码
-                                order.setSize(productSize.getName());
-                                // 设置订单的数量
-                                order.setQuantity(orderVo.getQuantity());
-                                // 设置订单的总价
-                                order.setAmount((double) (productSize.getProductPrice() * (orderVo.getQuantity())));
-                                // 设置订单的收货地址
-                                order.setAddressId(orderVo.getAddress());
-                                // 设置订单的支付方式
-                                order.setPayType(orderVo.getPayType());
-                                // 设置支付时间
-                                order.setPayTime(null);
-                                // 设置订单的发货时间
-                                order.setDeliveryTime(null);
-                                // 设置订单的备注
-                                order.setOrderRemarks(orderVo.getOrderRemarks());
-                                // 设置紧急发货
-                                order.setDelivery(orderVo.getDelivery());
-                                // 设置完成时间
-                                order.setFinishTime(null);
-                                // 设置取消时间
-                                order.setCancelTime(null);
-                                // 设置退款原因
-                                order.setRefundReason(null);
-                                // 设置退款时间
-                                order.setRefundTime(null);
-                                // 设置退款状态
-                                order.setRefundStatus(0L);
-                                // 设置退款金额
-                                order.setRefundAmount(null);
-                                // 设置退款单号
-                                order.setRefundNo(null);
-                                // 设置退款时限
-                                order.setRefundTimeLimit(null);
-                                // 设置退款备注
-                                order.setRefundRemarks(null);
-                                // 提交订单
-                                if (orderMapper.summitOrder(order) == 1) {
-                                    // 提交订单成功后，减少商品的库存
-                                    if (productSizeMapper.reduceProductCount(orderVo.getSizeWithPrice())) {
-                                        return Result.ok("提交订单成功", orderNumber);
+                                // 判断当前下单的商品数量是否超过限购数量
+                                if (orderVo.getQuantity() + productOrderCount < product.getPurchaseRestrictions()){
+                                    if (orderVo.getIsDefaultAddress()) {
+                                        addressMapper.setOtherAddressNotDefault(orderVo.getUserId());
+                                        addressMapper.setAddressDefault(orderVo.getAddress());
                                     }
+                                    Order order = new Order();
+                                    // 设置订单的用户id
+                                    order.setUserId(orderVo.getUserId());
+                                    // 设置订单的商品id
+                                    order.setProductId(orderVo.getProductId());
+                                    // 设置订单的创建时间
+                                    order.setCreateTime(LocalDateTime.now());
+                                    // 设置订单的更新时间
+                                    order.setUpdateTime(LocalDateTime.now());
+                                    // 设置订单的状态
+                                    order.setStatus(0L);
+                                    // 设置订单的快递单号
+                                    order.setExpress("");
+                                    String orderNumber = UUID.randomUUID().toString().replace("-", "");
+                                    // 设置订单的订单号
+                                    order.setOrderNumber(orderNumber);
+                                    // 设置订单的价格
+                                    order.setPrice(productSize.getProductPrice());
+                                    // 设置订单的尺码
+                                    order.setSize(productSize.getName());
+                                    // 设置订单的数量
+                                    order.setQuantity(orderVo.getQuantity());
+                                    // 设置订单的总价
+                                    order.setAmount((double) (productSize.getProductPrice() * (orderVo.getQuantity())));
+                                    // 设置订单的收货地址
+                                    order.setAddressId(orderVo.getAddress());
+                                    // 设置订单的支付方式
+                                    order.setPayType(orderVo.getPayType());
+                                    // 设置支付时间
+                                    order.setPayTime(null);
+                                    // 设置订单的发货时间
+                                    order.setDeliveryTime(null);
+                                    // 设置订单的备注
+                                    order.setOrderRemarks(orderVo.getOrderRemarks());
+                                    // 设置紧急发货
+                                    order.setDelivery(orderVo.getDelivery());
+                                    // 设置完成时间
+                                    order.setFinishTime(null);
+                                    // 设置取消时间
+                                    order.setCancelTime(null);
+                                    // 设置退款原因
+                                    order.setRefundReason(null);
+                                    // 设置退款时间
+                                    order.setRefundTime(null);
+                                    // 设置退款状态
+                                    order.setRefundStatus(0L);
+                                    // 设置退款金额
+                                    order.setRefundAmount(null);
+                                    // 设置退款单号
+                                    order.setRefundNo(null);
+                                    // 设置退款时限
+                                    order.setRefundTimeLimit(null);
+                                    // 设置退款备注
+                                    order.setRefundRemarks(null);
+                                    // 提交订单
+                                    if (orderMapper.summitOrder(order) == 1) {
+                                        // 提交订单成功后，减少商品的库存
+                                        if (productSizeMapper.reduceProductCount(orderVo.getSizeWithPrice())) {
+                                            return Result.ok("提交订单成功", orderNumber);
+                                        }
+                                    }
+                                    return Result.error("提交订单失败");
                                 }
-                                return Result.error("提交订单失败");
+                                return Result.error("当前下单的商品数量超过限购数量");
                             }
                             return Result.error("当前商品已达到购买上限");
 

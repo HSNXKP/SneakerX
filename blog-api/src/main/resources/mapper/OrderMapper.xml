@@ -103,7 +103,7 @@
     </update>
     <!--查询当前用户下单的单个商品的数量  支付的订单   -->
     <select id="getProductOrderCountByUserId" resultType="java.lang.Integer" parameterType="java.lang.Long">
-        select count(*)
+        select sum(quantity)
         from order_table
         where user_id = #{userId}
           and product_id = #{productId}
