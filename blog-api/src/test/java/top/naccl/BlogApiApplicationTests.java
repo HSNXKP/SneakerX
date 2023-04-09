@@ -15,6 +15,7 @@ import top.naccl.service.UrlService;
 import top.naccl.service.impl.UrlServiceImpl;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -122,13 +123,15 @@ class BlogApiApplicationTests {
 			};
 
 		public static void main(String[] args) {
-			for (String s : AUTH_WHITELIST) {
-				String s1 ="/archives";
-				if (s1.equals(s)){
-					return;
-				}
-			}
-			System.out.println("进来了");
+
+			System.out.println(System.currentTimeMillis()/1000);
+			System.out.println(System.currentTimeMillis()/1000 - 30 * 60);
+			System.out.println(LocalDateTime.ofEpochSecond(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli(), 0, ZoneOffset.ofHours(8)));
+			System.out.println(LocalDateTime.ofEpochSecond(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli() - 30 * 60 * 1000 , 0, ZoneOffset.ofHours(8)));
+
+			// 将localDateTime转换为时间戳
+			System.out.println(LocalDateTime.now().toInstant(ZoneOffset.of("+8")));
+			System.out.println( LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
 		}
 
 

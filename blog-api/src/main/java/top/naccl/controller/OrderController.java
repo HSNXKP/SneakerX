@@ -24,6 +24,7 @@ import top.naccl.util.JwtUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -88,55 +89,62 @@ public class OrderController {
                 if (order != null) {
                     if (order.getStatus() == 0) {
                         if (order.getUserId().equals(userDetails.getId())) {
-                            AlipayClient alipayClient = new DefaultAlipayClient(
-                                    PaymentConstants.serverUrl,
-                                    PaymentConstants.APP_ID,
-                                    PaymentConstants.PRIVATE_KEY,
-                                    "json",
-                                    "UTF-8",
-                                    PaymentConstants.PUBLIC_KEY, "RSA2");
-                            AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
-                            //异步接收地址，仅支持http/https，公网可访问
-                            request.setNotifyUrl(PaymentConstants.notifyUrl);
-                            //同步跳转地址，仅支持http/https
-                            request.setReturnUrl(PaymentConstants.returnUrl);
-                            /******必传参数******/
-                            JSONObject bizContent = new JSONObject();
-                            //商户订单号，商家自定义，保持唯一性
-                            bizContent.put("out_trade_no", order.getOrderNumber());
-                            //支付金额，最小值0.01元
-                            bizContent.put("total_amount", order.getAmount());
-                            //订单标题，不可使用特殊符号
-                            bizContent.put("subject", "SneakerX订单");
-                            //电脑网站支付场景固定传值FAST_INSTANT_TRADE_PAY
-                            bizContent.put("product_code", "FAST_INSTANT_TRADE_PAY");
+                            // 创建时间后的30分钟内有效
+                            if (order.getCreateTime().toEpochSecond(ZoneOffset.ofHours(8)) + 30 * 60 > System.currentTimeMillis()/1000) {
+                                AlipayClient alipayClient = new DefaultAlipayClient(
+                                        PaymentConstants.serverUrl,
+                                        PaymentConstants.APP_ID,
+                                        PaymentConstants.PRIVATE_KEY,
+                                        "json",
+                                        "UTF-8",
+                                        PaymentConstants.PUBLIC_KEY, "RSA2");
+                                AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
+                                //异步接收地址，仅支持http/https，公网可访问
+                                request.setNotifyUrl(PaymentConstants.notifyUrl);
+                                //同步跳转地址，仅支持http/https
+                                request.setReturnUrl(PaymentConstants.returnUrl);
+                                /******必传参数******/
+                                JSONObject bizContent = new JSONObject();
+                                //商户订单号，商家自定义，保持唯一性
+                                bizContent.put("out_trade_no", order.getOrderNumber());
+                                //支付金额，最小值0.01元
+                                bizContent.put("total_amount", order.getAmount());
+                                //订单标题，不可使用特殊符号
+                                bizContent.put("subject", "SneakerX订单");
+                                //电脑网站支付场景固定传值FAST_INSTANT_TRADE_PAY
+                                bizContent.put("product_code", "FAST_INSTANT_TRADE_PAY");
 
-                            /******可选参数******/
-                            //bizContent.put("time_expire", "2022-08-01 22:00:00");
+                                /******可选参数******/
+                                //bizContent.put("time_expire", "2022-08-01 22:00:00");
 
-                            //// 商品明细信息，按需传入
-                            //JSONArray goodsDetail = new JSONArray();
-                            //JSONObject goods1 = new JSONObject();
-                            //goods1.put("goods_id", "goodsNo1");
-                            //goods1.put("goods_name", "子商品1");
-                            //goods1.put("quantity", 1);
-                            //goods1.put("price", 0.01);
-                            //goodsDetail.add(goods1);
-                            //bizContent.put("goods_detail", goodsDetail);
+                                //// 商品明细信息，按需传入
+                                //JSONArray goodsDetail = new JSONArray();
+                                //JSONObject goods1 = new JSONObject();
+                                //goods1.put("goods_id", "goodsNo1");
+                                //goods1.put("goods_name", "子商品1");
+                                //goods1.put("quantity", 1);
+                                //goods1.put("price", 0.01);
+                                //goodsDetail.add(goods1);
+                                //bizContent.put("goods_detail", goodsDetail);
 
-                            //// 扩展信息，按需传入
-                            //JSONObject extendParams = new JSONObject();
-                            //extendParams.put("sys_service_provider_id", "2088511833207846");
-                            //bizContent.put("extend_params", extendParams);
-                            request.setBizContent(bizContent.toString());
-                            AlipayTradePagePayResponse response = alipayClient.pageExecute(request);
-                            if (response.isSuccess()) {
-                                System.out.println(response.getBody());
-                                System.out.println("调用成功");
-                            } else {
-                                System.out.println("调用失败");
+                                //// 扩展信息，按需传入
+                                //JSONObject extendParams = new JSONObject();
+                                //extendParams.put("sys_service_provider_id", "2088511833207846");
+                                //bizContent.put("extend_params", extendParams);
+                                request.setBizContent(bizContent.toString());
+                                AlipayTradePagePayResponse response = alipayClient.pageExecute(request);
+                                if (response.isSuccess()) {
+                                    System.out.println(response.getBody());
+                                    System.out.println("调用成功");
+                                } else {
+                                    System.out.println("调用失败");
+                                }
+                                return Result.ok("支付订单生成", response.getBody());
                             }
-                            return Result.ok("支付订单生成", response.getBody());
+                                 // 订单过期
+                                 order.setStatus(4L);
+                                 orderMapper.updateOrder(order);
+                            return Result.error("订单已过期");
                         }
                         return Result.error("您没有此订单的权限");
                     }

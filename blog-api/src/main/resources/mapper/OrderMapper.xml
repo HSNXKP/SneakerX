@@ -19,39 +19,95 @@
     <!--更新订单状态    -->
     <update id="updateOrder" parameterType="top.naccl.entity.Order">
         update order_table
-        set user_id= #{userId},
-            product_id = #{productId},
-            price = #{price},
-            size = #{size},
-            quantity = #{quantity},
-            amount = #{amount},
-            address_id = #{addressId},
-            status = #{status},
-            pay_type = #{payType},
-            pay_time = #{payTime},
-            delivery_time = #{deliveryTime},
-            delivery = #{delivery},
-            order_remarks = #{orderRemarks},
-            express = #{express},
-            finish_time = #{finishTime},
-            cancel_time = #{cancelTime},
-            refund_time = #{refundTime},
-            refund_reason = #{refundReason},
-            refund_status = #{refundStatus},
-            refund_amount = #{refundAmount},
-            refund_no = #{refundNo},
-            refund_time_limit = #{refundTimeLimit},
-            refund_remarks = #{refundRemarks},
-            create_time = #{createTime},
-            update_time = #{updateTime}
+        <set>
+            <if test="userId != null">
+                user_id= #{userId},
+            </if>
+            <if test="productId != null">
+                product_id= #{productId},
+            </if>
+            <if test="price != null">
+                price= #{price},
+            </if>
+            <if test="size != null">
+                size= #{size},
+            </if>
+            <if test="quantity != null">
+                quantity= #{quantity},
+            </if>
+            <if test="amount != null">
+                amount= #{amount},
+            </if>
+            <if test="addressId != null">
+                address_id= #{addressId},
+            </if>
+            <if test="status != null">
+                status= #{status},
+            </if>
+            <if test="payType != null">
+                pay_type= #{payType},
+            </if>
+            <if test="payTime != null">
+                pay_time= #{payTime},
+            </if>
+            <if test="deliveryTime != null">
+                delivery_time= #{deliveryTime},
+            </if>
+            <if test="delivery != null">
+                delivery= #{delivery},
+            </if>
+            <if test="orderRemarks != null">
+                order_remarks= #{orderRemarks},
+            </if>
+            <if test="express != null">
+                express= #{express},
+            </if>
+            <if test="finishTime != null">
+                finish_time= #{finishTime},
+            </if>
+            <if test="cancelTime != null">
+                cancel_time= #{cancelTime},
+            </if>
+            <if test="refundTime != null">
+                refund_time= #{refundTime},
+            </if>
+            <if test="refundReason != null">
+                refund_reason= #{refundReason},
+            </if>
+            <if test="refundStatus != null">
+                refund_status= #{refundStatus},
+            </if>
+            <if test="refundAmount != null">
+                refund_amount= #{refundAmount},
+            </if>
+            <if test="refundNo != null">
+                refund_no= #{refundNo},
+            </if>
+            <if test="refundTimeLimit != null">
+                refund_time_limit= #{refundTimeLimit},
+            </if>
+            <if test="refundRemarks != null">
+                refund_remarks= #{refundRemarks},
+            </if>
+            <if test="orderNumber != null">
+                order_number= #{orderNumber},
+            </if>
+            <if test="createTime != null">
+                create_time= #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time= #{updateTime},
+            </if>
+        </set>
         where order_number = #{orderNumber}
     </update>
-    <!--查询当前用户下单的单个商品的数量    -->
+    <!--查询当前用户下单的单个商品的数量  支付的订单   -->
     <select id="getProductOrderCountByUserId" resultType="java.lang.Integer" parameterType="java.lang.Long">
         select count(*)
         from order_table
         where user_id = #{userId}
           and product_id = #{productId}
+        <![CDATA[and status < 4 ]]>
     </select>
 
     <!--查询当前订单号的订单    -->
