@@ -64,6 +64,13 @@ public class OrderController {
         }
     }
 
+    @GetMapping("/cancelOrder")
+    public Result cancelOrder(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
+                              @RequestParam("orderNumber") String orderNumber) throws Exception {
+        return orderService.cancelOrder(jwt, orderNumber);
+    }
+
+
     @PostMapping("/order/{orderNumber}")
     public Result getOrderByOrderNumber(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
                                         @PathVariable("orderNumber") String orderNumber) {

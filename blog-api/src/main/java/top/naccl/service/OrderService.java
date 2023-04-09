@@ -12,4 +12,6 @@ public interface OrderService {
     Result getOrderByOrderNumber(String jwt,String orderNumber);
 
     int updateOrder(Order order);
+
+    Result cancelOrder(String jwt,String orderNumber);
 }

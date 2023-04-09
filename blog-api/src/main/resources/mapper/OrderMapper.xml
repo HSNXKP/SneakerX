@@ -103,10 +103,10 @@
     </update>
     <!--查询当前用户下单的单个商品的数量  支付的订单   -->
     <select id="getProductOrderCountByUserId" resultType="java.lang.Integer" parameterType="java.lang.Long">
-        select sum(quantity)
+        select sum(ifnull(quantity,0))
         from order_table
-        where user_id = #{userId}
-          and product_id = #{productId}
+        where user_id = 3
+        and product_id =5
         <![CDATA[and status < 4 ]]>
     </select>
 

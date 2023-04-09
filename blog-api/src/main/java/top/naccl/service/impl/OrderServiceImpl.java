@@ -73,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
                             Product product = productService.getProductById(orderVo.getProductId());
                             if (productOrderCount < product.getPurchaseRestrictions()) {
                                 // 判断当前下单的商品数量是否超过限购数量
-                                if (orderVo.getQuantity() + productOrderCount < product.getPurchaseRestrictions()){
+                                if (orderVo.getQuantity() + productOrderCount <= product.getPurchaseRestrictions()){
                                     if (orderVo.getIsDefaultAddress()) {
                                         addressMapper.setOtherAddressNotDefault(orderVo.getUserId());
                                         addressMapper.setAddressDefault(orderVo.getAddress());
@@ -200,5 +200,41 @@ public class OrderServiceImpl implements OrderService {
             return 1;
         }
         return 0;
+    }
+
+    @Override
+    public Result cancelOrder(String jwt, String orderNumber) {
+        try {
+            if (JwtUtils.judgeTokenIsExist(jwt)) {
+                // 比对当前的token和id是否一致
+                String subject = JwtUtils.getTokenBody(jwt).getSubject();
+                String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
+                //判断token是否为blogToken
+                User userDetails = (User) userService.loadUserByUsername(username);
+                if (userDetails != null) {
+                    Order order = orderMapper.getOrderByOrderNumber(orderNumber);
+                    if (order != null) {
+                        if (order.getUserId().equals(userDetails.getId())){
+                            if (order.getStatus() == 0L){
+                                order.setUpdateTime(LocalDateTime.now());
+                                order.setCancelTime(LocalDateTime.now());
+                                order.setStatus(4L);
+                                if (orderMapper.updateOrder(order) == 1){
+                                    return Result.ok("取消订单成功");
+                                }
+                                return Result.error("取消订单失败");
+                            }
+                            return Result.error("订单异常");
+                        }
+                        return Result.error("您没有此订单的权限");
+                    }
+                    return Result.error("没有该订单");
+                }
+                return Result.error("token无效，请重新登录");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return Result.error("token无效，请重新登录");
     }
 }
