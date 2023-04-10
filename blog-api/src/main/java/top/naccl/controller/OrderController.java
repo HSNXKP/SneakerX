@@ -24,6 +24,7 @@ import top.naccl.util.JwtUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,6 +86,7 @@ public class OrderController {
     @GetMapping("/pay")
     public Result pay(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
                       String orderNumber) throws Exception {
+        //TODO 没有校验UserId和token的关系
         if (JwtUtils.judgeTokenIsExist(jwt)) {
             // 比对当前的token和id是否一致
             String subject = JwtUtils.getTokenBody(jwt).getSubject();
@@ -222,6 +224,31 @@ public class OrderController {
             System.out.println("调用失败");
         }
         return response;
+    }
+
+
+    @GetMapping("/getOrder")
+    public Result getOrderByUserId(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
+                                   @RequestParam("id")Long id){
+        try {
+            if (JwtUtils.judgeTokenIsExist(jwt)) {
+                // 比对当前的token和id是否一致
+                String subject = JwtUtils.getTokenBody(jwt).getSubject();
+                String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
+                //判断token是否为blogToken
+                User userDetails = (User) userService.loadUserByUsername(username);
+                if (userDetails != null) {
+                    if (userDetails.getId().equals(id)){
+                       return orderService.getOrderListByUserId(id);
+                    }
+                    return Result.error("token无效，请重新登陆");
+                }
+                return Result.error("token无效，请重新登录");
+            }
+            return Result.error("token无效，请重新登录");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

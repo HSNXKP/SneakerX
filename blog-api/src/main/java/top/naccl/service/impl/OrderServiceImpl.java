@@ -10,6 +10,7 @@ import top.naccl.exception.NotFoundException;
 import top.naccl.mapper.AddressMapper;
 import top.naccl.mapper.OrderMapper;
 import top.naccl.mapper.ProductSizeMapper;
+import top.naccl.model.vo.OrderListVo;
 import top.naccl.model.vo.OrderVo;
 import top.naccl.model.vo.Result;
 import top.naccl.service.AddressService;
@@ -132,6 +133,8 @@ public class OrderServiceImpl implements OrderService {
                                     order.setRefundTimeLimit(null);
                                     // 设置退款备注
                                     order.setRefundRemarks(null);
+                                    // 当前是单个商品提交
+                                    order.setParentId(-1L);
                                     // 提交订单
                                     if (orderMapper.summitOrder(order) == 1) {
                                         // 提交订单成功后，减少商品的库存
@@ -237,4 +240,28 @@ public class OrderServiceImpl implements OrderService {
         }
         return Result.error("token无效，请重新登录");
     }
+
+    @Override
+    public Result getOrderListByUserId(Long userId) {
+        try {
+            List<OrderListVo> orderList = getOrderListByUserId(userId, -1L);
+            return Result.ok("获取成功",orderList);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    List<OrderListVo> getOrderListByUserId(Long userId,Long parentId){
+        List<OrderListVo> orderList = orderMapper.getOrderListByUserId(userId,parentId);
+        for (OrderListVo orderListVo : orderList) {
+            List<OrderListVo> orderListByUser = orderMapper.getOrderListByUserId(userId, orderListVo.getId());
+            if (orderListByUser == null){
+                orderListVo.setChildren(null);
+            }
+            orderListVo.setChildren(orderListByUser);
+        }
+        return orderList;
+    }
+
 }

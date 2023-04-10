@@ -46,6 +46,7 @@ public class Order {
     private String orderNumber;// 订单编号
     private LocalDateTime createTime;//创始时间
     private LocalDateTime updateTime;//更新时间
+    private Long parentId;// 多个商品 否-1
 
     private Address address;//收货地址
     private Product product;//商品

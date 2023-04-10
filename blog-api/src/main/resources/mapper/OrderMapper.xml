@@ -9,11 +9,11 @@
                                  delivery_time, delivery, order_remarks, express, finish_time, cancel_time, refund_time,
                                  refund_reason, refund_status, refund_amount, refund_no, refund_time_limit,
                                  refund_remarks,
-                                 order_number, create_time, update_time)
+                                 order_number, create_time, update_time,parent_id)
         values (#{userId}, #{productId}, #{price}, #{size}, #{quantity}, #{amount}, #{addressId}, #{status}, #{payType},
                 #{payTime}, #{deliveryTime}, #{delivery}, #{orderRemarks}, #{express}, #{finishTime}, #{cancelTime},
                 #{refundTime}, #{refundReason}, #{refundStatus}, #{refundAmount}, #{refundNo}, #{refundTimeLimit},
-                #{refundRemarks}, #{orderNumber}, #{createTime}, #{updateTime})
+                #{refundRemarks}, #{orderNumber}, #{createTime}, #{updateTime},#{parentId})
     </insert>
 
     <!--更新订单状态    -->
@@ -98,6 +98,9 @@
             <if test="updateTime != null">
                 update_time= #{updateTime},
             </if>
+            <if test="parentId != null">
+                parent_id= #{parentId},
+            </if>
         </set>
         where order_number = #{orderNumber}
     </update>
@@ -115,6 +118,16 @@
         select *
         from order_table
         where order_number = #{orderNumber}
+    </select>
+
+    <select id="getOrderListByUserId" resultType="top.naccl.model.vo.OrderListVo">
+        select o.id,o.order_number, p.name,p.image, p.code, o.price, o.quantity, o.size, o.amount,o.parent_id,o.status
+        from order_table as o
+                 left join product as p on p.id = o.product_id
+        where o.user_id = #{userId}
+        <if test="parentId != null">
+            and o.parent_id = #{parentId}
+        </if>
     </select>
 
 

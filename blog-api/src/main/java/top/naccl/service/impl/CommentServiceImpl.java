@@ -73,6 +73,7 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	private List<PageComment> getPageCommentListByPageAndParentCommentId(Integer page, Long blogId, Long parentCommentId) {
+		//TODO 存在没有子评论的情况但是还是需要查询数据库
 		List<PageComment> comments = commentMapper.getPageCommentListByPageAndParentCommentId(page, blogId, parentCommentId);
 		for (PageComment c : comments) {
 			List<PageComment> replyComments = getPageCommentListByPageAndParentCommentId(page, blogId, c.getId());
