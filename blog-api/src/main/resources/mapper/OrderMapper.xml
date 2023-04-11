@@ -113,11 +113,17 @@
         <![CDATA[and status < 4 ]]>
     </select>
 
+
+
     <!--查询当前订单号的订单    -->
-    <select id="getOrderByOrderNumber" resultType="top.naccl.entity.Order" parameterType="java.lang.String">
+    <select id="getOrderByOrderNumberWithUserId" resultType="top.naccl.entity.Order" parameterType="java.lang.String">
         select *
         from order_table
         where order_number = #{orderNumber}
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        and parent_id = #{parentId}
     </select>
 
     <select id="getOrderListByUserId" resultType="top.naccl.model.vo.OrderListVo">
@@ -128,6 +134,10 @@
         <if test="parentId != null">
             and o.parent_id = #{parentId}
         </if>
+    </select>
+    <!--查询订单号下的订单信息    -->
+    <select id="getOrderListByOrderNumberWithUserId" resultType="top.naccl.entity.Order">
+        select * from order_table where order_number = #{orderNumber} and parent_id = #{parentId} and user_id = #{userId}
     </select>
 
 

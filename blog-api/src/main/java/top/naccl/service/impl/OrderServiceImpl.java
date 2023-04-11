@@ -50,6 +50,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 提交订单
+     *
      * @param orderVo
      * @param jwt
      * @return
@@ -74,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
                             Product product = productService.getProductById(orderVo.getProductId());
                             if (productOrderCount < product.getPurchaseRestrictions()) {
                                 // 判断当前下单的商品数量是否超过限购数量
-                                if (orderVo.getQuantity() + productOrderCount <= product.getPurchaseRestrictions()){
+                                if (orderVo.getQuantity() + productOrderCount <= product.getPurchaseRestrictions()) {
                                     if (orderVo.getIsDefaultAddress()) {
                                         addressMapper.setOtherAddressNotDefault(orderVo.getUserId());
                                         addressMapper.setAddressDefault(orderVo.getAddress());
@@ -164,7 +165,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result getOrderByOrderNumber(String jwt,String orderNumber) {
+    public Result getOrderByOrderNumber(String jwt, String orderNumber) {
         try {
             if (JwtUtils.judgeTokenIsExist(jwt)) {
                 // 比对当前的token和id是否一致
@@ -173,13 +174,26 @@ public class OrderServiceImpl implements OrderService {
                 //判断token是否为blogToken
                 User userDetails = (User) userService.loadUserByUsername(username);
                 if (userDetails != null) {
-                    Order order = orderMapper.getOrderByOrderNumber(orderNumber);
+                    Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userDetails.getId(), -1L);
                     if (order != null) {
-                        if (order.getUserId().equals(userDetails.getId())){
+                        if (order.getUserId().equals(userDetails.getId())) {
+                            List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId("-1", userDetails.getId(), order.getId());
+                            // orderList空的话就是单个商品
+                            if (orderList.size() == 0) {
+                                order.setChildren(null);
+                                // 设置订单的收货地址
+                                order.setAddress(addressMapper.getAddressByID(order.getAddressId()));
+                                // 设置订单的商品
+                                order.setProduct(productService.getProductById(order.getProductId()));
+                                return Result.ok("查询成功", order);
+                            }
                             // 设置订单的收货地址
                             order.setAddress(addressMapper.getAddressByID(order.getAddressId()));
                             // 设置商品名称
-                            order.setProduct(productService.getProductById(order.getProductId()));
+                            for (Order one : orderList) {
+                                one.setProduct(productService.getProductById(one.getProductId()));
+                            }
+                            order.setChildren(orderList);
                             return Result.ok("查询成功", order);
                         }
                         return Result.error("您没有此订单的权限");
@@ -199,7 +213,7 @@ public class OrderServiceImpl implements OrderService {
         order.setPayTime(LocalDateTime.now());
         order.setUpdateTime(LocalDateTime.now());
         order.setStatus(1L);
-        if (orderMapper.updateOrder(order) == 1){
+        if (orderMapper.updateOrder(order) == 1) {
             return 1;
         }
         return 0;
@@ -215,14 +229,14 @@ public class OrderServiceImpl implements OrderService {
                 //判断token是否为blogToken
                 User userDetails = (User) userService.loadUserByUsername(username);
                 if (userDetails != null) {
-                    Order order = orderMapper.getOrderByOrderNumber(orderNumber);
+                    Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userDetails.getId(), -1L);
                     if (order != null) {
-                        if (order.getUserId().equals(userDetails.getId())){
-                            if (order.getStatus() == 0L){
+                        if (order.getUserId().equals(userDetails.getId())) {
+                            if (order.getStatus() == 0L) {
                                 order.setUpdateTime(LocalDateTime.now());
                                 order.setCancelTime(LocalDateTime.now());
                                 order.setStatus(4L);
-                                if (orderMapper.updateOrder(order) == 1){
+                                if (orderMapper.updateOrder(order) == 1) {
                                     return Result.ok("取消订单成功");
                                 }
                                 return Result.error("取消订单失败");
@@ -245,18 +259,18 @@ public class OrderServiceImpl implements OrderService {
     public Result getOrderListByUserId(Long userId) {
         try {
             List<OrderListVo> orderList = getOrderListByUserId(userId, -1L);
-            return Result.ok("获取成功",orderList);
+            return Result.ok("获取成功", orderList);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    List<OrderListVo> getOrderListByUserId(Long userId,Long parentId){
-        List<OrderListVo> orderList = orderMapper.getOrderListByUserId(userId,parentId);
+    List<OrderListVo> getOrderListByUserId(Long userId, Long parentId) {
+        List<OrderListVo> orderList = orderMapper.getOrderListByUserId(userId, parentId);
         for (OrderListVo orderListVo : orderList) {
             List<OrderListVo> orderListByUser = orderMapper.getOrderListByUserId(userId, orderListVo.getId());
-            if (orderListByUser == null){
+            if (orderListByUser == null) {
                 orderListVo.setChildren(null);
             }
             orderListVo.setChildren(orderListByUser);

@@ -9,6 +9,7 @@ import org.apache.tomcat.jni.Time;
 import top.naccl.util.upload.channel.LocalChannel;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author: wdd
@@ -50,5 +51,6 @@ public class Order {
 
     private Address address;//收货地址
     private Product product;//商品
+    private List<Order> children;// 多商品下单
 
 }

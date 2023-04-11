@@ -94,7 +94,7 @@ public class OrderController {
             //判断token是否为blogToken
             User userDetails = (User) userService.loadUserByUsername(username);
             if (userDetails != null) {
-                Order order = orderMapper.getOrderByOrderNumber(orderNumber);
+                Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber,userDetails.getId(),-1L);
                 if (order != null) {
                     if (order.getStatus() == 0) {
                         if (order.getUserId().equals(userDetails.getId())) {
@@ -186,7 +186,7 @@ public class OrderController {
                 if (queryResponse.getTotalAmount().equals(map.get("total_amount"))) {
                     if (map.get("trade_status").equals("TRADE_SUCCESS")) {
                         String out_trade_no = map.get("out_trade_no");
-                        Order order = orderMapper.getOrderByOrderNumber(out_trade_no);
+                        Order order = orderMapper.getOrderByOrderNumberWithUserId(out_trade_no,null,-1L);
                         // 更新订单状态
                         if (orderService.updateOrder(order) == 1) {
                             return "success";

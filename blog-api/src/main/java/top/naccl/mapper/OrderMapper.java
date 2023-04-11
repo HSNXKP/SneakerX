@@ -19,9 +19,11 @@ public interface OrderMapper {
 
     int getProductOrderCountByUserId(@Param("userId") Long userId, @Param("productId") Long productId);
 
-    Order getOrderByOrderNumber(String orderNumber);
+    Order getOrderByOrderNumberWithUserId(@Param("orderNumber") String orderNumber,@Param("userId") Long userId,@Param("parentId")Long parentId);
 
     int updateOrder(Order order);
 
     List<OrderListVo> getOrderListByUserId(@Param("userId")Long userId,@Param("parentId")Long parentId);
+
+    List<Order> getOrderListByOrderNumberWithUserId(@Param("orderNumber")String orderNumber,@Param("userId")Long userId,@Param("parentId")Long parentId);
 }
