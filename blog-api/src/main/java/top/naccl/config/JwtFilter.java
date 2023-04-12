@@ -40,10 +40,7 @@ public class JwtFilter extends GenericFilterBean  {
     private static final String[] AUTH_WHITELIST = {
             // admin接口是后台管理接口
             "/admin",
-            // 动态接口
-            "/bolgTitleById",
-            // 日志接口
-            "/archives",
+            // user接口是前台接口
             "/user"
     };
 

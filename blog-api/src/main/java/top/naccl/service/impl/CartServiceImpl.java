@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author: wdd
@@ -139,10 +140,12 @@ public class CartServiceImpl implements CartService {
                         if (cartList.size() > 0){
                             Cart cartCategory = new Cart();
                             List<Cart> carts = new ArrayList<>();
+                            // 通过商品分类id来判断是否是同一个分类
                             Long productCategoryId = null;
                             for (Cart cart : cartList) {
                                 if (cart.getProductCategoryId() != null){
                                     if (!cart.getProductCategoryId().equals(productCategoryId)){
+                                        // 将上一个分类的商品加入到集合中 并且将当前的分类id、分类名赋值给当前的cart中
                                         productCategoryId = cart.getProductCategoryId();
                                         List<Cart> cartListByProductCategoryId = cartMapper.getCartByProductCategoryId(cart.getProductCategoryId());
                                         cartCategory.setProductCategoryName(cart.getProductCategoryName());
@@ -152,6 +155,17 @@ public class CartServiceImpl implements CartService {
                                     }
                                 }
                             }
+                            // 判断当前分类下的所有商品是否被选中
+                            carts.forEach(cart ->{
+                                Boolean checkedTrue = true;
+                                // 设置当前分类下的所有商品是否被选中
+                                for (Cart oneCart : cart.getCartList()) {
+                                    if (!oneCart.getChecked()){
+                                        checkedTrue = false;
+                                    }
+                                }
+                                cart.setChecked(checkedTrue);
+                            });
                             return Result.ok("获取成功",carts);
                         }
                         return Result.ok("购物车没有商品",cartList);
@@ -164,5 +178,42 @@ public class CartServiceImpl implements CartService {
             throw new RuntimeException(e);
         }
         return Result.error("token无效，请重新登录");
+    }
+
+    @Override
+    public Result addQuantityById(Long id) {
+        if (cartMapper.addQuantityById(id) == 1){
+            return Result.ok("成功+1");
+        }
+        return Result.error("失败");
+    }
+
+    @Override
+    public Result downQuantityById(Long id) {
+        Cart cart = cartMapper.getCartById(id);
+        if (cart.getQuantity() == 1){
+            if (cartMapper.deleteCartById(id) == 1){
+                return Result.ok("成功删除商品");
+            }
+        }
+        if (cartMapper.downQuantityById(id) == 1){
+            return Result.ok("成功-1");
+        }
+        return Result.error("失败");
+    }
+
+    @Override
+    public Result changeChecked(Long id, String type,Boolean checked, Long userId) {
+        if(type.equals("productCategoryId")){
+            // 当前端点击全部按钮后 需要改变当前分类下的所有商品的选中状态
+            //TODO 有问题
+           cartMapper.changeChecked(id,null,userId,checked);
+                return Result.ok("成功");
+        }else {
+            if (cartMapper.changeChecked(null,id,userId,checked) == 1){
+                return Result.ok("成功");
+            }
+           return Result.error("失败");
+        }
     }
 }

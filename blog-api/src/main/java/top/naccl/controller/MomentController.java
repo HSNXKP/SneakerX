@@ -84,7 +84,7 @@ public class MomentController {
 	 * 通过userId获得内容的标题
 	 * @return
 	 */
-	@GetMapping("/bolgTitleById")
+	@GetMapping("/user/bolgTitleById")
 	public Result bolgById(@RequestParam Long id,
 						   @RequestParam(defaultValue = "1") Integer pageNum){
 		List<BlogWithMomentView> blogs = momentService.getBolgTitleById(id,pageNum);

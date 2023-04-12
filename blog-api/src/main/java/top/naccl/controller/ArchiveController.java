@@ -27,7 +27,7 @@ public class ArchiveController {
 	 * @return
 	 */
 	@VisitLogger(VisitBehavior.ARCHIVE)
-	@GetMapping("/archives")
+	@GetMapping("/user/archives")
 	public Result archives(@RequestParam Long id) {
 		Map<String, Object> archiveBlogMap = blogService.getArchiveBlogAndCountByIsPublished(id);
 		return Result.ok("请求成功", archiveBlogMap);

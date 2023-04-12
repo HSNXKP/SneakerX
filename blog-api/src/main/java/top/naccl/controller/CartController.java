@@ -28,4 +28,27 @@ public class CartController {
                                   @RequestParam Long id){
         return cartService.getCartByUserId(jwt,id);
     }
+
+    @GetMapping("/user/addQuantity")
+    public Result addQuantityById(@RequestParam("id") Long id){
+        return cartService.addQuantityById(id);
+    }
+
+    @GetMapping("/user/downQuantity")
+    public Result downQuantityById(@RequestParam("id") Long id){
+        return cartService.downQuantityById(id);
+    }
+
+    /**
+     * 修改购物车商品选中状态 当前是productCategory时，修改所有productCategory下的商品选中状态 当前是product时，修改所有product下的商品选中状态
+     * @param id
+     * @param type
+     * @param checked
+     * @param userId
+     * @return
+     */
+    @GetMapping("/user/changeChecked")
+    public Result changeChecked(@RequestParam("id") Long id, @RequestParam("type") String type,@RequestParam("checked")Boolean checked,@RequestParam("userId") Long userId){
+            return cartService.changeChecked(id,type,checked,userId);
+    }
 }

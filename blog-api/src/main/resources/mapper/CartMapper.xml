@@ -4,45 +4,123 @@
 
     <!--加入购物车    -->
     <insert id="addCart" parameterType="top.naccl.entity.Cart">
-        insert into cart(user_id, name, product_category_name, code, image, product_size_id, product_id, product_category_id, quantity, checked, price, size, amount, create_time,
+        insert into cart(user_id, name, product_category_name, code, image, product_size_id, product_id,
+                         product_category_id, quantity, checked, price, size, amount, create_time,
                          update_time)
-        values (#{userId}, #{name}, #{productCategoryName}, #{code}, #{image}, #{productSizeId}, #{productId}, #{productCategoryId}, #{quantity}, #{checked}, #{price}, #{size}, #{amount},
+        values (#{userId}, #{name}, #{productCategoryName}, #{code}, #{image}, #{productSizeId}, #{productId},
+                #{productCategoryId}, #{quantity}, #{checked}, #{price}, #{size}, #{amount},
                 #{createTime}, #{updateTime})
     </insert>
+    <!--数量加1    -->
+    <update id="addQuantityById" parameterType="java.lang.Long">
+        update cart
+        set quantity = quantity + 1,
+            amount   = amount + price
+        where id = #{id}
+    </update>
 
     <!--更新购物车    -->
     <update id="updateCart" parameterType="top.naccl.entity.Cart">
-        update cart set user_id = #{userId},
-                        name = #{name},
-                        product_category_name = #{productCategoryName},
-                        code = #{code},
-                        image =#{image},
-                        product_size_id = #{productSizeId},
-                        product_id = #{productId},
-                        product_category_id = #{productCategoryId},
-                        quantity = #{quantity},
-                        checked = #{checked},
-                        price = #{price},
-                        size = #{size},
-                        amount = #{amount},
-                        create_time = #{createTime},
-                        update_time = #{updateTime} where id = #{id}
+        update cart
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="productCategoryName != null">
+                product_category_name = #{productCategoryName},
+            </if>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+            <if test="productSizeId != null">
+                product_size_id = #{productSizeId},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId},
+            </if>
+            <if test="productCategoryId != null">
+                product_category_id = #{productCategoryId},
+            </if>
+            <if test="quantity != null">
+                quantity = #{quantity},
+            </if>
+            <if test="checked != null">
+                checked = #{checked},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="size != null">
+                size = #{size},
+            </if>
+            <if test="amount != null">
+                amount = #{amount},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+            where id = #{id}
     </update>
-
+    <!--数量减1    -->
+    <update id="downQuantityById" parameterType="java.lang.Long">
+        update cart
+        set quantity = quantity - 1,
+            amount   = amount - price
+        where id = #{id}
+    </update>
+    <!--改变购物车商品改变状态    -->
+    <update id="changeChecked">
+        update cart set checked = #{checked} where user_id = #{userId}
+        <if test="cartId != null">
+            and id = #{cartId}
+        </if>
+        <if test="productCategoryId != null">
+            and product_category_id = #{productCategoryId}
+        </if>
+    </update>
+    <!--删除购物车    -->
+    <delete id="deleteCartById" parameterType="java.lang.Long">
+        delete
+        from cart
+        where id = #{id}
+    </delete>
 
 
     <!--通过尺码价格Id查询购物车    -->
     <select id="getCartByProductSizeId" resultType="top.naccl.entity.Cart">
-        select * from cart where product_size_id = #{productSizeId} and user_id = #{userId}
+        select *
+        from cart
+        where product_size_id = #{productSizeId}
+          and user_id = #{userId}
     </select>
 
     <!--通过用户Id查询购物车列表    -->
     <select id="getCartByUserId" resultType="top.naccl.entity.Cart" parameterType="java.lang.Long">
-        select * from cart where user_id = #{userId};
+        select *
+        from cart
+        where user_id = #{userId};
     </select>
     <!--通过商品分类id获取购物车列表    -->
     <select id="getCartByProductCategoryId" resultType="top.naccl.entity.Cart" parameterType="java.lang.Long">
-        select * from cart where product_category_id = #{productCategoryId};
+        select *
+        from cart
+        where product_category_id = #{productCategoryId};
+    </select>
+    <!--通过id查询购物车   -->
+    <select id="getCartById" resultType="top.naccl.entity.Cart" parameterType="java.lang.Long">
+        select *
+        from cart
+        where id = #{id};
     </select>
 
 </mapper>
