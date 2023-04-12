@@ -19,6 +19,7 @@ public class Cart {
     private Long id;// 购物车ID
     private Long userId;// 用户ID
     private Long productId;// 商品ID
+    private Long productCategoryId;// 商品分类ID
     private Long quantity;// 数量
     private Boolean checked;// 是否选中
     private String productPrice;// 商品价格
