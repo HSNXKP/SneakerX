@@ -1,9 +1,8 @@
 package top.naccl.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import top.naccl.model.vo.OrderVo;
 import top.naccl.model.vo.Result;
 import top.naccl.service.CartService;
 
@@ -18,9 +17,15 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @GetMapping("/addCart")
+    @PostMapping("/addCart")
     public Result addCart(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
-                          String productId, String userId) {
-        return cartService.addCart(jwt,productId, userId);
+                          @RequestBody OrderVo orderVo) {
+        return cartService.addCart(jwt,orderVo);
+    }
+
+    @GetMapping("/cart")
+    public Result getCartByUserId(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
+                                  @RequestParam Long id){
+        return cartService.getCartByUserId(jwt,id);
     }
 }

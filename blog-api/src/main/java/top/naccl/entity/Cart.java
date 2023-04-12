@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author: wdd
@@ -17,14 +18,21 @@ import java.time.LocalDateTime;
 @ToString
 public class Cart {
     private Long id;// 购物车ID
+    private String name;// 商品名称
+    private String productCategoryName;// 商品分类名称
+    private String code;// 设置货号
+    private String image;// 设置商品图片
     private Long userId;// 用户ID
     private Long productId;// 商品ID
     private Long productCategoryId;// 商品分类ID
+    private Long productSizeId;// 商品尺码价格ID
     private Long quantity;// 数量
     private Boolean checked;// 是否选中
-    private String productPrice;// 商品价格
-    private Double amount;// 总价格
-    private LocalDateTime createdTime;//创建时间
+    private Long price;// 商品价格
+    private String size;// 尺码
+    private Long amount;// 单个总价格
+    private LocalDateTime createTime;//创建时间
     private LocalDateTime updateTime;//更新时间
 
+    private List<Cart> cartList;
 }

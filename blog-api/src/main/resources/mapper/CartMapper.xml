@@ -2,5 +2,47 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.naccl.mapper.CartMapper">
 
-    <insert id="addCart"></insert>
+    <!--加入购物车    -->
+    <insert id="addCart" parameterType="top.naccl.entity.Cart">
+        insert into cart(user_id, name, product_category_name, code, image, product_size_id, product_id, product_category_id, quantity, checked, price, size, amount, create_time,
+                         update_time)
+        values (#{userId}, #{name}, #{productCategoryName}, #{code}, #{image}, #{productSizeId}, #{productId}, #{productCategoryId}, #{quantity}, #{checked}, #{price}, #{size}, #{amount},
+                #{createTime}, #{updateTime})
+    </insert>
+
+    <!--更新购物车    -->
+    <update id="updateCart" parameterType="top.naccl.entity.Cart">
+        update cart set user_id = #{userId},
+                        name = #{name},
+                        product_category_name = #{productCategoryName},
+                        code = #{code},
+                        image =#{image},
+                        product_size_id = #{productSizeId},
+                        product_id = #{productId},
+                        product_category_id = #{productCategoryId},
+                        quantity = #{quantity},
+                        checked = #{checked},
+                        price = #{price},
+                        size = #{size},
+                        amount = #{amount},
+                        create_time = #{createTime},
+                        update_time = #{updateTime} where id = #{id}
+    </update>
+
+
+
+    <!--通过尺码价格Id查询购物车    -->
+    <select id="getCartByProductSizeId" resultType="top.naccl.entity.Cart">
+        select * from cart where product_size_id = #{productSizeId} and user_id = #{userId}
+    </select>
+
+    <!--通过用户Id查询购物车列表    -->
+    <select id="getCartByUserId" resultType="top.naccl.entity.Cart" parameterType="java.lang.Long">
+        select * from cart where user_id = #{userId};
+    </select>
+    <!--通过商品分类id获取购物车列表    -->
+    <select id="getCartByProductCategoryId" resultType="top.naccl.entity.Cart" parameterType="java.lang.Long">
+        select * from cart where product_category_id = #{productCategoryId};
+    </select>
+
 </mapper>
