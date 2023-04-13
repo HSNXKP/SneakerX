@@ -54,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.authorizeRequests()
 				// 前台需要登录的接口
-				.antMatchers("/archives","/bolgTitleById","/user/**").hasAnyRole("common","admin")
+				.antMatchers("/user/**").hasAnyRole("common","admin")
 				//放行获取网页标题后缀的请求
 				.antMatchers("/admin/webTitleSuffix").permitAll()
 				//任何 /admin 开头的路径下的请求都需要经过JWT验证

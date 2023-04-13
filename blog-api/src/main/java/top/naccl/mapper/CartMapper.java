@@ -18,17 +18,20 @@ public interface CartMapper {
 
     int updateCart(Cart cart);
 
-    List<Cart> getCartByUserId(@Param("userId") Long userId);
+    List<Cart> getCartByUserId(@Param("userId") Long userId,@Param("checked") Boolean checked);
 
     List<Cart> getCartByProductCategoryId(@Param("productCategoryId") Long productCategoryId);
 
-    int addQuantityById(@Param("id") Long id);
+    int addQuantityById(@Param("id") Long id,@Param("userId")Long userId);
 
-    int downQuantityById(@Param("id") Long id);
+    int downQuantityById(@Param("id") Long id,@Param("userId")Long userId);
 
-    Cart getCartById(Long id);
+    Cart getCartById(@Param("id") Long id,@Param("userId")Long userId);
 
-    int deleteCartById(Long id);
+    int deleteCartById(@Param("id") Long id,@Param("userId")Long userId);
 
     int changeChecked(@Param("productCategoryId") Long productCategoryId,@Param("cartId") Long cartId,@Param("userId") Long userId,@Param("checked") Boolean checked);
+
+    int deleteCartByProductCategoryId(Long userId);
+
 }

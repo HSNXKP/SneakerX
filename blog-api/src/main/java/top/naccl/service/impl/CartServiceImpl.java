@@ -126,7 +126,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Result getCartByUserId(String jwt, Long id) {
+    public Result getCartByUserId(String jwt, Long userId) {
         try {
             if (JwtUtils.judgeTokenIsExist(jwt)) {
                 // 比对当前的token和id是否一致
@@ -135,8 +135,8 @@ public class CartServiceImpl implements CartService {
                 //判断token是否为blogToken
                 User userDetails = (User) userService.loadUserByUsername(username);
                 if (userDetails != null) {
-                    if (userDetails.getId().equals(id)) {
-                        List<Cart> cartList = cartMapper.getCartByUserId(id);
+                    if (userDetails.getId().equals(userId)) {
+                        List<Cart> cartList = cartMapper.getCartByUserId(userId,null);
                         if (cartList.size() > 0){
                             Cart cartCategory = new Cart();
                             List<Cart> carts = new ArrayList<>();
@@ -181,22 +181,22 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Result addQuantityById(Long id) {
-        if (cartMapper.addQuantityById(id) == 1){
+    public Result addQuantityById(Long id,Long userId) {
+        if (cartMapper.addQuantityById(id,userId) == 1){
             return Result.ok("成功+1");
         }
         return Result.error("失败");
     }
 
     @Override
-    public Result downQuantityById(Long id) {
-        Cart cart = cartMapper.getCartById(id);
+    public Result downQuantityById(Long id,Long userId) {
+        Cart cart = cartMapper.getCartById(id,userId);
         if (cart.getQuantity() == 1){
-            if (cartMapper.deleteCartById(id) == 1){
+            if (cartMapper.deleteCartById(id,userId) == 1){
                 return Result.ok("成功删除商品");
             }
         }
-        if (cartMapper.downQuantityById(id) == 1){
+        if (cartMapper.downQuantityById(id,userId) == 1){
             return Result.ok("成功-1");
         }
         return Result.error("失败");
@@ -206,14 +206,38 @@ public class CartServiceImpl implements CartService {
     public Result changeChecked(Long id, String type,Boolean checked, Long userId) {
         if(type.equals("productCategoryId")){
             // 当前端点击全部按钮后 需要改变当前分类下的所有商品的选中状态
-            //TODO 有问题
-           cartMapper.changeChecked(id,null,userId,checked);
+            //TODO 有问题 加上if语句会执行成功但是会报错
+                cartMapper.changeChecked(id,null,userId,checked);
                 return Result.ok("成功");
         }else {
             if (cartMapper.changeChecked(null,id,userId,checked) == 1){
                 return Result.ok("成功");
             }
-           return Result.error("失败");
         }
+        return Result.error("失败");
+    }
+
+    @Override
+    public Result deleteCart(Long id, Long userId,String type) {
+        if (type.equals("deleteCartByCartId")){
+            if (cartMapper.deleteCartById(id,userId) == 1){
+                return Result.ok("删除成功");
+            }
+        }else {
+            List<Cart> cartList = cartMapper.getCartByUserId(userId,true);
+            if (cartList != null){
+                if (cartMapper.deleteCartByProductCategoryId(userId) == 1){
+                    return Result.ok("删除成功");
+                }
+            }
+            return Result.error("未选中商品");
+        }
+        return Result.error("删除失败");
+    }
+
+    @Override
+    public Result getCartListByUserIdIsChecked(Long userId) {
+        List<Cart> cartList = cartMapper.getCartByUserId(userId, true);
+        return Result.ok("获取成功",cartList);
     }
 }

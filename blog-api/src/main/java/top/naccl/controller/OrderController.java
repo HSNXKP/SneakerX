@@ -55,7 +55,7 @@ public class OrderController {
      * @return
      */
     @AccessLimit(seconds = 10, maxCount = 1, msg = "10秒内只能提交一次订单")
-    @PostMapping("/order")
+    @PostMapping("user/order")
     public Result summitOrder(@RequestBody OrderVo order,
                               @RequestHeader(value = "Authorization", defaultValue = "") String jwt) {
         try {
@@ -65,14 +65,14 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/cancelOrder")
+    @GetMapping("user/cancelOrder")
     public Result cancelOrder(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
                               @RequestParam("orderNumber") String orderNumber) throws Exception {
         return orderService.cancelOrder(jwt, orderNumber);
     }
 
 
-    @PostMapping("/order/{orderNumber}")
+    @PostMapping("user/order/{orderNumber}")
     public Result getOrderByOrderNumber(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
                                         @PathVariable("orderNumber") String orderNumber) {
         try {
@@ -227,7 +227,7 @@ public class OrderController {
     }
 
 
-    @GetMapping("/getOrder")
+    @GetMapping("user/getOrder")
     public Result getOrderByUserId(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
                                    @RequestParam("id")Long id){
         try {
@@ -250,5 +250,7 @@ public class OrderController {
             throw new RuntimeException(e);
         }
     }
+
+
 
 }

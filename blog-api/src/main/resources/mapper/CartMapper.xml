@@ -16,7 +16,7 @@
         update cart
         set quantity = quantity + 1,
             amount   = amount + price
-        where id = #{id}
+        where id = #{id} and user_id = #{userId}
     </update>
 
     <!--更新购物车    -->
@@ -76,7 +76,7 @@
         update cart
         set quantity = quantity - 1,
             amount   = amount - price
-        where id = #{id}
+        where id = #{id} and user_id = #{userId}
     </update>
     <!--改变购物车商品改变状态    -->
     <update id="changeChecked">
@@ -92,7 +92,13 @@
     <delete id="deleteCartById" parameterType="java.lang.Long">
         delete
         from cart
-        where id = #{id}
+        where id = #{id} and user_id = #{userId}
+    </delete>
+    <!--删除checked为true的情况    -->
+    <delete id="deleteCartByProductCategoryId" parameterType="java.lang.Long">
+        delete
+        from cart
+        where checked = true and user_id = #{userId}
     </delete>
 
 
@@ -108,7 +114,10 @@
     <select id="getCartByUserId" resultType="top.naccl.entity.Cart" parameterType="java.lang.Long">
         select *
         from cart
-        where user_id = #{userId};
+        where user_id = #{userId}
+        <if test="checked != null">
+          and checked = #{checked}
+         </if>
     </select>
     <!--通过商品分类id获取购物车列表    -->
     <select id="getCartByProductCategoryId" resultType="top.naccl.entity.Cart" parameterType="java.lang.Long">
@@ -120,7 +129,7 @@
     <select id="getCartById" resultType="top.naccl.entity.Cart" parameterType="java.lang.Long">
         select *
         from cart
-        where id = #{id};
+        where id = #{id} and user_id = #{userId};
     </select>
 
 </mapper>

@@ -127,6 +127,7 @@ public class MomentController {
 	 */
 	@GetMapping("/user/blog")
 	public Result getBlogById(@RequestParam Long id,@RequestHeader(value = "Authorization", defaultValue = "") String jwt){
+		//TODO 很多地方都没有使用userID是错的 后面统一修改
 		return momentService.getBlogById(id,jwt);
 	}
 
