@@ -160,9 +160,11 @@ public class OrderServiceImpl implements OrderService {
 
                     }else {
                             // 不是商品订单  就是购物车订单
-                            List<Cart> cartList = cartMapper.getCartByUserId(orderVo.getId(),true);
-                            Long quantity = null;
-                            Double amount = null;
+                            List<Cart> cartList = cartMapper.getCartByUserId(orderVo.getUserId(),true);
+                            Long quantity = 0L;
+                            Double amount = 0D;
+                            // 设置主单号提交
+                            Order order = new Order();
                             for (Cart cart : cartList) {
                                 ProductSize productSize = productSizeMapper.getProductSizeById(cart.getProductSizeId());
                                 // 商品的尺码价格不能为空
@@ -174,17 +176,19 @@ public class OrderServiceImpl implements OrderService {
                                         if (productOrderCount < product.getPurchaseRestrictions()) {
                                             // 判断当前下单的商品数量是否超过限购数量
                                             if (cart.getQuantity() + productOrderCount <= product.getPurchaseRestrictions()){
-                                                quantity = quantity +cart.getQuantity();
+                                                quantity = quantity + cart.getQuantity();
                                                 amount = amount + cart.getAmount();
+                                            }else {
+                                                return Result.error("该商品:"+product.getName()+"限购"+product.getPurchaseRestrictions()+"个");
                                             }
+
+                                        }else {
                                             return Result.error("该商品:"+product.getName()+"限购"+product.getPurchaseRestrictions()+"个");
                                         }
-                                        return Result.error("该商品:"+product.getName()+"限购"+product.getPurchaseRestrictions()+"个");
+                                }else {
+                                    return Result.error("当前商品已售罄");
                                 }
-                                return Result.error("当前商品已售罄");
                             }
-                            // 设置主单号提交
-                            Order order = new Order();
                             // 设置订单的用户id
                             order.setUserId(orderVo.getUserId());
                             // 设置订单的商品id
@@ -240,7 +244,7 @@ public class OrderServiceImpl implements OrderService {
                             order.setRefundRemarks(null);
                             // 当前是单个商品提交
                             order.setParentId(-1L);
-                            if (orderMapper.summitOrder(order) == 1) {
+                            if (orderMapper.summitOrder(order) == 1){
                                 // 拿出刚才插入的主订单
                                 Order orderParent = orderMapper.getOrderByOrderNumberWithUserId(order.getOrderNumber(), order.getUserId(), order.getParentId());
                                 // 如果都没有问题设置子订单
@@ -302,9 +306,12 @@ public class OrderServiceImpl implements OrderService {
                                     oneOrder.setParentId(orderParent.getId());
                                     // 循环插入
                                     orderMapper.summitOrder(oneOrder);
+                                    cartMapper.deleteCartById(cart.getId(),cart.getUserId());
                                 }
-                                return Result.ok("提交订单成功");
+                                // 删除购物车
+                                return Result.ok("提交订单成功",orderParent.getOrderNumber());
                             }
+                            return Result.error("提交订单失败");
                         }
 
                     }
@@ -387,12 +394,32 @@ public class OrderServiceImpl implements OrderService {
                     Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userDetails.getId(), -1L);
                     if (order != null) {
                         if (order.getUserId().equals(userDetails.getId())) {
-                            if (order.getStatus() == 0L) {
-                                order.setUpdateTime(LocalDateTime.now());
-                                order.setCancelTime(LocalDateTime.now());
-                                order.setStatus(4L);
-                                if (orderMapper.updateOrder(order) == 1) {
-                                    return Result.ok("取消订单成功");
+                            List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId("-1", order.getUserId(), order.getId());
+                            if(orderList.size() == 0){
+                                if (order.getStatus() == 0L) {
+                                    order.setUpdateTime(LocalDateTime.now());
+                                    order.setCancelTime(LocalDateTime.now());
+                                    order.setStatus(4L);
+                                    if (orderMapper.updateOrder(order) == 1) {
+                                        return Result.ok("取消订单成功");
+                                    }
+                                    return Result.error("取消订单失败");
+                                }
+                            }else {
+                                if (order.getStatus() == 0L) {
+                                    order.setUpdateTime(LocalDateTime.now());
+                                    order.setCancelTime(LocalDateTime.now());
+                                    order.setStatus(4L);
+                                    if (orderMapper.updateOrder(order) == 1) {
+                                        for (Order one : orderList) {
+                                            one.setUpdateTime(LocalDateTime.now());
+                                            one.setCancelTime(LocalDateTime.now());
+                                            one.setStatus(4L);
+                                            orderMapper.updateOrder(one);
+                                        }
+                                        return Result.ok("取消订单成功");
+                                    }
+                                    return Result.error("取消订单失败");
                                 }
                                 return Result.error("取消订单失败");
                             }

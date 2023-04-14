@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -30,6 +31,7 @@ public class OrderListVo {
     private Double amount;
     private Long parentId;
     private Long status;
+    private LocalDateTime createTime;
 
     private List<OrderListVo> children;
 

@@ -26,4 +26,5 @@ public interface OrderMapper {
     List<OrderListVo> getOrderListByUserId(@Param("userId")Long userId,@Param("parentId")Long parentId);
 
     List<Order> getOrderListByOrderNumberWithUserId(@Param("orderNumber")String orderNumber,@Param("userId")Long userId,@Param("parentId")Long parentId);
+
 }

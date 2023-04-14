@@ -98,19 +98,24 @@
             <if test="updateTime != null">
                 update_time= #{updateTime},
             </if>
-            <if test="parentId != null">
-                parent_id= #{parentId},
-            </if>
         </set>
-        where order_number = #{orderNumber}
+        where order_number = #{orderNumber} and parent_id = #{parentId}
     </update>
     <!--查询当前用户下单的单个商品的数量  支付的订单   -->
+<!--    <select id="getProductOrderCountByUserId" resultType="java.lang.Integer" parameterType="java.lang.Long">-->
+<!--        select sum(ifnull(quantity,0))-->
+<!--        from order_table-->
+<!--        where user_id = #{userId}-->
+<!--        and product_id =#{productId}-->
+<!--        <![CDATA[and status < 4 ]]>-->
+<!--    </select>-->
+    <!--查询当前用户下单的单个商品的数量  支付的订单   -->
     <select id="getProductOrderCountByUserId" resultType="java.lang.Integer" parameterType="java.lang.Long">
-        select sum(ifnull(quantity,0))
+        select count(quantity)
         from order_table
-        where user_id = 3
-        and product_id =5
-        <![CDATA[and status < 4 ]]>
+        where user_id = 1
+        and product_id =4
+         <![CDATA[and status < 4 ]]>
     </select>
 
 
@@ -127,13 +132,13 @@
     </select>
 
     <select id="getOrderListByUserId" resultType="top.naccl.model.vo.OrderListVo">
-        select o.id,o.order_number, p.name,p.image, p.code, o.price, o.quantity, o.size, o.amount,o.parent_id,o.status
+        select o.id,o.order_number, p.name,p.image, p.code, o.create_time,o.price, o.quantity, o.size, o.amount,o.parent_id,o.status
         from order_table as o
                  left join product as p on p.id = o.product_id
         where o.user_id = #{userId}
         <if test="parentId != null">
             and o.parent_id = #{parentId}
-        </if>
+        </if> order by o.create_time desc
     </select>
     <!--查询订单号下的订单信息    -->
     <select id="getOrderListByOrderNumberWithUserId" resultType="top.naccl.entity.Order">
