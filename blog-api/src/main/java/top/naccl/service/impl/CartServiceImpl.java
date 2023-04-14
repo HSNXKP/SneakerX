@@ -91,7 +91,7 @@ public class CartServiceImpl implements CartService {
                             // 设置尺码
                             cart.setSize(productSize.getName());
                             // 单个总价格
-                            cart.setAmount(productSize.getProductPrice() * orderVo.getQuantity());
+                            cart.setAmount((double) (productSize.getProductPrice() * orderVo.getQuantity()));
                             Product product = productMapper.getProductById(orderVo.getProductId());
                             // 通过商品Id找到分类ID 拿到父类Id 父类Id就是当前品牌查询出来即可
                                 ProductCategory productCategory = productCategoryMapper.getProductCategoryById(productCategoryMapper.getProductCategoryById(product.getProductCategoryId()).getParentId());

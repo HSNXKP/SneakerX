@@ -10,7 +10,7 @@
     <!--减少库存通过productSizeId    -->
     <update id="reduceProductCount" parameterType="java.lang.Long">
         update product_size
-        set product_count = product_count - 1
+        set product_count = product_count - #{quantity}
         where id = #{id}
     </update>
 

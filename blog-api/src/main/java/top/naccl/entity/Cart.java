@@ -30,7 +30,7 @@ public class Cart {
     private Boolean checked;// 是否选中
     private Long price;// 商品价格
     private String size;// 尺码
-    private Long amount;// 单个总价格
+    private Double amount;// 单个总价格
     private LocalDateTime createTime;//创建时间
     private LocalDateTime updateTime;//更新时间
 

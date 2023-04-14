@@ -23,5 +23,5 @@ public interface ProductSizeMapper {
 
     ProductSize getProductSizeById(@Param("id") Long id);
 
-    boolean reduceProductCount(@Param("id") Long id);
+    boolean reduceProductCount(@Param("id") Long id,@Param("quantity")Long quantity);
 }

@@ -27,4 +27,5 @@ public class OrderVo {
     private Long sizeWithPrice;//尺码和价格 对应ProductSizeId
     private Long address;//收货地址 对应addressId
     private String orderRemarks;// 订单说明（订单备注）
+    private String type;// 购物车订单：cartOrder 单个订单：order
 }
