@@ -100,11 +100,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public Result updateUser(User user) {
 		user.setUpdateTime(LocalDateTime.now());
-		userMapper.updateUser(user);
-		User currentUser = userMapper.findById(user.getId());
-		HashMap<Object, Object> map = new HashMap<>();
-		map.put("user",currentUser);
-		return Result.ok("更新成功",user);
+		if (userMapper.updateUser(user) == 1){
+			return Result.ok("更新成功");
+		}
+		return Result.error("更新失败");
 	}
 
 

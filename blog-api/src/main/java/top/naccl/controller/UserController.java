@@ -65,4 +65,12 @@ public class UserController {
         return userService.updateUser(user);
     }
 
+    @GetMapping("/getUser")
+    public Result getUser(@RequestParam("userId") Long userId){
+        return Result.ok("获取成功",userService.findUserById(userId));
+    }
+
+
+
+
 }
