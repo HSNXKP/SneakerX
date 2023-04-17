@@ -41,7 +41,7 @@ public interface MomentService {
 	 * @param id
 	 * @return
 	 */
-	Result deleteBlogById(Long id,String jwt);
+	Result deleteBlogById(Long id,String jwt,Long userId);
 
 	/**
 	 * 添加Blog
@@ -49,12 +49,12 @@ public interface MomentService {
 	 * @param type
 	 * @return
 	 */
-	Result editBlog(top.naccl.model.dto.Blog blog, String type,String jwt);
+	Result editBlog(top.naccl.model.dto.Blog blog, String type,String jwt,Long userId);
 
 	/**
 	 * 查询当前Id的Blog
 	 * @param id
 	 * @return
 	 */
-	Result getBlogById(Long id,String jwt);
+	Result getBlogById(Long id,String jwt,Long userId);
 }

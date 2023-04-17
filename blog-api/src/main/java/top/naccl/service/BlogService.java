@@ -67,7 +67,7 @@ public interface BlogService {
 
 	Boolean getPublishedByBlogId(Long blogId);
 
-	Result editBlog(top.naccl.model.dto.Blog blog,String type);
+	Result editBlog(top.naccl.model.dto.Blog blog,String type,Long userId);
 
 
 }

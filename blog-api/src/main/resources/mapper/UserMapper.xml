@@ -12,15 +12,27 @@
         <result column="update_time" property="updateTime" />
         <result column="role" property="role" />
         <result column="user_flag" property="userFlag" />
+        <result column="flag_color" property="flagColor" />
     </resultMap>
       <!--注册用户-->
     <insert id="registerUser" parameterType="top.naccl.entity.User">
-        insert into user(username,nickname,password,email,avatar,create_time,update_time,role,user_flag)
-        values(#{username},#{nickname},#{password},#{email},#{avatar},#{createTime},#{updateTime},#{role},#{userFlag})
+        insert into user(username,nickname,password,email,avatar,create_time,update_time,role,user_flag,flagColor,user_sign)
+        values(#{username},#{nickname},#{password},#{email},#{avatar},#{createTime},#{updateTime},#{role},#{userFlag},#{flag_color},#{userSign})
     </insert>
     <!--更新用户密码    -->
-    <update id="updateUser" >
+    <update id="updateUserPassword" >
         update user set password=#{password} where id=#{id}
+    </update>
+    <!--更新用户    -->
+    <update id="updateUser" parameterType="top.naccl.entity.User">
+        update user set username=#{username},
+                        nickname=#{nickname},
+                        email=#{email},
+                        update_time=#{updateTime},
+                        user_flag=#{userFlag},
+                        flag_color=#{flagColor},
+                        user_sign=#{userSign}
+                        where id=#{id}
     </update>
     <!--按用户名查询User-->
     <select id="findByUsername" resultType="top.naccl.entity.User">
@@ -39,4 +51,5 @@
     <select id="findByUsernameIsNull" resultType="java.lang.Integer">
         select count(user.id) from user where username=#{username}
     </select>
+
 </mapper>

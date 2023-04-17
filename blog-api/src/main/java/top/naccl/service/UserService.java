@@ -13,4 +13,5 @@ public interface UserService {
 
     Result getPasswordByUserId(NewPasswordVo newPasswordVo);
 
+    Result updateUser(User user);
 }

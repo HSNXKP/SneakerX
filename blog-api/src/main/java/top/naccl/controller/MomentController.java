@@ -106,8 +106,8 @@ public class MomentController {
 	 * @return
 	 */
 	@GetMapping("/user/deleteBlog")
-	public Result deleteBlogById(@RequestParam Long id,@RequestHeader(value = "Authorization", defaultValue = "") String jwt){
-		return momentService.deleteBlogById(id,jwt);
+	public Result deleteBlogById(@RequestParam Long id,@RequestHeader(value = "Authorization", defaultValue = "") String jwt,@RequestParam("userId")Long userId){
+		return momentService.deleteBlogById(id,jwt,userId);
 	}
 
 	/**
@@ -116,8 +116,8 @@ public class MomentController {
 	 * @return
 	 */
 	@PostMapping("/user/blog")
-	public Result saveBlog(@RequestBody top.naccl.model.dto.Blog blog,@RequestHeader(value = "Authorization", defaultValue = "") String jwt){
-		return momentService.editBlog(blog,"save",jwt);
+	public Result saveBlog(@RequestBody top.naccl.model.dto.Blog blog,@RequestHeader(value = "Authorization", defaultValue = "") String jwt,@RequestParam("userId") Long userId){
+		return momentService.editBlog(blog,"save",jwt,userId);
 	}
 
 	/**
@@ -126,9 +126,9 @@ public class MomentController {
 	 * @return
 	 */
 	@GetMapping("/user/blog")
-	public Result getBlogById(@RequestParam Long id,@RequestHeader(value = "Authorization", defaultValue = "") String jwt){
+	public Result getBlogById(@RequestParam Long id,@RequestHeader(value = "Authorization", defaultValue = "") String jwt,@RequestParam("userId")Long userId){
 		//TODO 很多地方都没有使用userID是错的 后面统一修改
-		return momentService.getBlogById(id,jwt);
+		return momentService.getBlogById(id,jwt,userId);
 	}
 
 
@@ -138,7 +138,7 @@ public class MomentController {
 	 * @return
 	 */
 	@PutMapping("/user/blog")
-	public Result updateBlog(@RequestBody top.naccl.model.dto.Blog blog,@RequestHeader(value = "Authorization", defaultValue = "") String jwt){
-		return momentService.editBlog(blog,"update",jwt);
+	public Result updateBlog(@RequestBody top.naccl.model.dto.Blog blog,@RequestHeader(value = "Authorization", defaultValue = "") String jwt,@RequestParam("userId") Long userId){
+		return momentService.editBlog(blog,"update",jwt,userId);
 	}
 }

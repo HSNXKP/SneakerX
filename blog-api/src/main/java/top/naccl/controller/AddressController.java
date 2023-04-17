@@ -44,7 +44,7 @@ public class AddressController {
     }
 
     /**
-     * 获取地址列表需要登录
+     * 通过userId获取地址列表需要登录
      */
     @GetMapping("/user/getAddressList")
     public Result getAddressList(@RequestParam("id") Long id) {

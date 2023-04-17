@@ -135,11 +135,11 @@ public class MomentServiceImpl implements MomentService {
 	}
 
 	@Override
-	public Result deleteBlogById(Long id,String jwt) {
+	public Result deleteBlogById(Long id,String jwt,Long userId) {
 		// 多用户登陆防止错误请求
 		if (JwtUtils.judgeTokenIsExist(jwt)){
 			User userDetails =getUserDetails(jwt);
-			if (blogMapper.getBlogById(id).getUser().getId().equals(userDetails.getId())){
+			if (blogMapper.getBlogById(id,userId).getUser().getId().equals(userDetails.getId())){
 				commentMapper.deleteCommentsByBlogId(id);
 				blogMapper.deleteBlogById(id);
 				blogMapper.deleteBlogTagByBlogId(id);
@@ -155,21 +155,21 @@ public class MomentServiceImpl implements MomentService {
 	}
 
 	@Override
-	public Result editBlog(top.naccl.model.dto.Blog blog, String type,String jwt) {
+	public Result editBlog(top.naccl.model.dto.Blog blog, String type,String jwt,Long userId) {
 		// 多用户登陆防止错误请求
 		if (JwtUtils.judgeTokenIsExist(jwt)){
-				return blogService.editBlog(blog,type);
+				return blogService.editBlog(blog,type,userId);
 		}
 		return Result.error("token无效,请检查是否登陆");
 
 	}
 
 	@Override
-	public Result getBlogById(Long id,String jwt) {
+	public Result getBlogById(Long id,String jwt,Long userId) {
 		if (JwtUtils.judgeTokenIsExist(jwt)){
 			User userDetails =getUserDetails(jwt);
-			if (blogMapper.getBlogById(id).getUser().getId().equals(userDetails.getId())){
-				Blog blog = blogMapper.getBlogById(id);
+			if (blogMapper.getBlogById(id,userId).getUser().getId().equals(userDetails.getId())){
+				Blog blog = blogMapper.getBlogById(id,userId);
 				if (blog == null) {
 					throw new NotFoundException("博客不存在");
 				}

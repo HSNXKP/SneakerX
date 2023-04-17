@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import top.naccl.entity.User;
+import top.naccl.model.vo.Result;
 
 /**
  * @Description: 用户持久层接口
@@ -23,6 +24,8 @@ public interface UserMapper {
 
     User getPasswordByUserId(Long id);
 
-	boolean updateUser(@Param("id") Long id,@Param("password") String password);
+	boolean updateUserPassword(@Param("id") Long id,@Param("password") String password);
+
+	Result updateUser(User user);
 
 }

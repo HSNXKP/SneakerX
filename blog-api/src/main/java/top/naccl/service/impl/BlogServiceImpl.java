@@ -335,7 +335,7 @@ public class BlogServiceImpl implements BlogService {
 
 	@Override
 	public Blog getBlogById(Long id) {
-		Blog blog = blogMapper.getBlogById(id);
+		Blog blog = blogMapper.getBlogById(id,null);
 		if (blog == null) {
 			throw new NotFoundException("博客不存在");
 		}
@@ -434,7 +434,7 @@ public class BlogServiceImpl implements BlogService {
 	 * @return
 	 */
 	@Override
-    public Result editBlog(top.naccl.model.dto.Blog blog, String type) {
+    public Result editBlog(top.naccl.model.dto.Blog blog, String type,Long userId) {
 		//验证普通字段
 		if (StringUtils.isEmpty(blog.getTitle(), blog.getFirstPicture(), blog.getContent(), blog.getDescription())
 				|| blog.getWords() == null || blog.getWords() < 0) {
@@ -451,7 +451,7 @@ public class BlogServiceImpl implements BlogService {
 			blog.setCategory(c);
 		} else if (cate instanceof String) {//添加新分类
 			// 非admin不能添加分类
-			if(userService.findUserById(blog.getId()).getRole().equals("ROLE_admin")){
+			if(userService.findUserById(userId).getRole().equals("ROLE_admin")){
 				//查询分类是否已存在
 				Category category = categoryService.getCategoryByName((String) cate);
 				if (category != null) {
@@ -505,7 +505,7 @@ public class BlogServiceImpl implements BlogService {
 			blog.setCreateTime(date);
 			blog.setUpdateTime(date);
 			User user = new User();
-			user.setId(blog.getId());//前端userId暂时放到id中
+			user.setId(userId);//前端userId暂时放到id中
 			blog.setUser(user);
 			blogService.saveBlog(blog);
 			//关联博客和标签(维护 blog_tag 表)

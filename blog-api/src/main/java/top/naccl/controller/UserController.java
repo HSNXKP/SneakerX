@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import top.naccl.entity.Category;
 import top.naccl.entity.Tag;
+import top.naccl.entity.User;
 import top.naccl.model.vo.NewPasswordVo;
 import top.naccl.model.vo.Result;
 import top.naccl.service.CategoryService;
@@ -58,5 +59,10 @@ public class UserController {
         return Result.ok("请求成功", map);
     }
 
+
+    @PostMapping("/updateUser")
+    public Result updateUser(@RequestBody User user){
+        return userService.updateUser(user);
+    }
 
 }

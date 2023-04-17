@@ -16,6 +16,7 @@ import top.naccl.util.HashUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 
 /**
  * @Description: 用户业务层接口实现类
@@ -89,11 +90,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		// HashUtil对比
 		if (HashUtils.matchBC(newPasswordVo.getOldPassword(),password)) {
 			// 通过userId修改密码
-			userMapper.updateUser(newPasswordVo.getId(),HashUtils.getBC(newPasswordVo.getNewPassword()));
+			userMapper.updateUserPassword(newPasswordVo.getId(),HashUtils.getBC(newPasswordVo.getNewPassword()));
 			return Result.ok("修改成功");
 		}
 		return Result.error("密码不正确,请重新填写");
 
+	}
+
+	@Override
+	public Result updateUser(User user) {
+		user.setUpdateTime(LocalDateTime.now());
+		userMapper.updateUser(user);
+		User currentUser = userMapper.findById(user.getId());
+		HashMap<Object, Object> map = new HashMap<>();
+		map.put("user",currentUser);
+		return Result.ok("更新成功",user);
 	}
 
 

@@ -164,8 +164,8 @@ public class BlogAdminController {
 	 */
 	@OperationLogger("发布博客")
 	@PostMapping("/blog")
-	public Result saveBlog(@RequestBody top.naccl.model.dto.Blog blog) {
-		return blogService.editBlog(blog,"save");
+	public Result saveBlog(@RequestBody top.naccl.model.dto.Blog blog,Long userId) {
+		return blogService.editBlog(blog,"save",userId);
 	}
 
 	/**
@@ -176,8 +176,8 @@ public class BlogAdminController {
 	 */
 	@OperationLogger("更新博客")
 	@PutMapping("/blog")
-	public Result updateBlog(@RequestBody top.naccl.model.dto.Blog blog) {
-		return blogService.editBlog(blog,"update");
+	public Result updateBlog(@RequestBody top.naccl.model.dto.Blog blog,Long userId) {
+		return blogService.editBlog(blog,"update",userId);
 	}
 
 
