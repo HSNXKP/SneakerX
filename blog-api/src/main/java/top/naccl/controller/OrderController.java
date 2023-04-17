@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -94,12 +95,12 @@ public class OrderController {
             //判断token是否为blogToken
             User userDetails = (User) userService.loadUserByUsername(username);
             if (userDetails != null) {
-                Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber,userDetails.getId(),-1L);
+                Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userDetails.getId(), -1L);
                 if (order != null) {
                     if (order.getStatus() == 0) {
                         if (order.getUserId().equals(userDetails.getId())) {
                             // 创建时间后的30分钟内有效
-                            if (order.getCreateTime().toEpochSecond(ZoneOffset.ofHours(8)) + 30 * 60 > System.currentTimeMillis()/1000) {
+                            if (order.getCreateTime().toEpochSecond(ZoneOffset.ofHours(8)) + 30 * 60 > System.currentTimeMillis() / 1000) {
                                 AlipayClient alipayClient = new DefaultAlipayClient(
                                         PaymentConstants.serverUrl,
                                         PaymentConstants.APP_ID,
@@ -150,9 +151,9 @@ public class OrderController {
                                 }
                                 return Result.ok("支付订单生成", response.getBody());
                             }
-                                 // 订单过期
-                                 order.setStatus(4L);
-                                 orderMapper.updateOrder(order);
+                            // 订单过期
+                            order.setStatus(4L);
+                            orderMapper.updateOrder(order);
                             return Result.error("订单已过期");
                         }
                         return Result.error("您没有此订单的权限");
@@ -186,12 +187,17 @@ public class OrderController {
                 if (queryResponse.getTotalAmount().equals(map.get("total_amount"))) {
                     if (map.get("trade_status").equals("TRADE_SUCCESS")) {
                         String out_trade_no = map.get("out_trade_no");
-                        Order order = orderMapper.getOrderByOrderNumberWithUserId(out_trade_no,null,-1L);
+                        Order order = orderMapper.getOrderByOrderNumberWithUserId(out_trade_no, null, -1L);
+                        List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId(out_trade_no, order.getUserId(), order.getId());
                         // 更新订单状态
-                        if (orderService.updateOrder(order) == 1) {
+                        orderService.updateOrder(order);
+                        if (orderList.size() > 0) {
+                            for (Order one : orderList) {
+                                orderMapper.updateOrder(one);
+                            }
                             return "success";
                         }
-                        return "failure";
+                        return "success";
                     }
                     return "failure";
                 }
@@ -229,7 +235,7 @@ public class OrderController {
 
     @GetMapping("user/getOrder")
     public Result getOrderByUserId(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
-                                   @RequestParam("id")Long id){
+                                   @RequestParam("id") Long id) {
         try {
             if (JwtUtils.judgeTokenIsExist(jwt)) {
                 // 比对当前的token和id是否一致
@@ -238,8 +244,8 @@ public class OrderController {
                 //判断token是否为blogToken
                 User userDetails = (User) userService.loadUserByUsername(username);
                 if (userDetails != null) {
-                    if (userDetails.getId().equals(id)){
-                       return orderService.getOrderListByUserId(id);
+                    if (userDetails.getId().equals(id)) {
+                        return orderService.getOrderListByUserId(id);
                     }
                     return Result.error("token无效，请重新登陆");
                 }
@@ -250,7 +256,6 @@ public class OrderController {
             throw new RuntimeException(e);
         }
     }
-
 
 
 }

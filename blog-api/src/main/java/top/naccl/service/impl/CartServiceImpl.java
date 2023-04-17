@@ -226,9 +226,8 @@ public class CartServiceImpl implements CartService {
         }else {
             List<Cart> cartList = cartMapper.getCartByUserId(userId,true);
             if (cartList != null){
-                if (cartMapper.deleteCartByProductCategoryId(userId) == 1){
+                    cartMapper.deleteCartByProductCategoryId(userId);
                     return Result.ok("删除成功");
-                }
             }
             return Result.error("未选中商品");
         }
