@@ -28,6 +28,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private UserMapper userMapper;
 
+	@Autowired
+	private UserServiceImpl userService;
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userMapper.findByUsername(username);
@@ -99,11 +102,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public Result updateUser(User user) {
-		user.setUpdateTime(LocalDateTime.now());
-		if (userMapper.updateUser(user) == 1){
-			return Result.ok("更新成功");
+		int userCount = userMapper.getUserByUserName(user.getUsername());
+		if (userCount == 1) {
+			user.setUpdateTime(LocalDateTime.now());
+			if (userMapper.updateUser(user) == 1){
+				return Result.ok("更新成功");
+			}
+			return Result.error("更新失败");
 		}
-		return Result.error("更新失败");
+		return Result.error("用户名已存在");
 	}
 
 

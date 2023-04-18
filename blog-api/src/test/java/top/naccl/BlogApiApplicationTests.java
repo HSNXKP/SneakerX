@@ -71,11 +71,20 @@ class BlogApiApplicationTests {
 
 	@Test
 	void test2(){
-		String str ="abc/123/$%@//";
-		for (int i = 0; i <4 ; i++) {
-			String[] split = str.split("/");
-			System.out.println(Arrays.toString(split));
+		// 拿到文件后戳
+		String osName = System.getProperties().getProperty("os.name");
+		if(osName.equals("Linux"))
+		{
+			System.out.println("running in Linux");
 		}
+		else
+		{
+			System.out.println("don't running in Linux");
+		}
+
+		String name = "asdas.ss";
+		String substring = name.substring(name.lastIndexOf("."));
+		System.out.printf(substring);
 	}
 
 	@Autowired

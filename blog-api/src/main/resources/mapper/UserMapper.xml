@@ -51,5 +51,8 @@
     <select id="findByUsernameIsNull" resultType="java.lang.Integer">
         select count(user.id) from user where username=#{username}
     </select>
+    <select id="getUserByUserName" resultType="java.lang.Integer">
+        select count(user.id) from user where username=#{username}
+    </select>
 
 </mapper>

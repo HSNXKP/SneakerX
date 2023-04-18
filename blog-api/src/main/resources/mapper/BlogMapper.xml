@@ -68,7 +68,7 @@
         select b.id, b.title, b.first_picture, b.create_time, b.update_time, b.is_published, b.is_recommend,
         b.is_appreciation,
         b.is_comment_enabled, b.is_top, b.password,
-        c.id as category_id, c.category_name,u.id as user_id,u.username
+        c.id as category_id, c.category_name,u.id as user_id,u.username,u.nickname
         from ((blog as b left join category as c on b.category_id=c.id) left join user as u on b.user_id=u.id) order by b.create_time asc
         <where>
             <if test="title!=null and title!=''">
@@ -138,6 +138,7 @@
         <association property="user" javaType="top.naccl.entity.User">
             <id property="id" column="user_id"/>
             <result property="username" column="username"/>
+            <result property="nickname" column="nickname"/>
         </association>
      </resultMap>
 
@@ -155,7 +156,8 @@
                c.category_name,
                b.likes,
                u.id as user_id,
-               u.username
+               u.username,
+               u.nickname
         from ((blog as b left join category as c on b.category_id = c.id )left join user as u on b.user_id=u.id)
         where b.is_published = true
     </select>
@@ -174,7 +176,8 @@
                b.likes,
                c.category_name,
                u.id as user_id,
-               u.username
+               u.username,
+               u.nickname
         from ((category as c left join blog as b on b.category_id = c.id) left join user as u on b.user_id=u.id)
         where c.category_name = #{categoryName}
           and b.is_published = true
@@ -194,7 +197,8 @@
                b.likes,
                c.category_name,
                u.id as user_id,
-               u.username
+               u.username,
+               u.nickname
         from ((((tag as t left join blog_tag as bt on t.id = bt.tag_id) left join blog as b
                 on bt.blog_id = b.id) left join category as c on b.category_id = c.id) left join user as u on b.user_id=u.id)
         where t.tag_name =#{tagName}
@@ -342,7 +346,8 @@
                t.tag_name as tag_name,
                t.color,
                u.id as user_id,
-               u.username
+               u.username,
+               u.nickname
         from ((((blog as b left join category as c on b.category_id = c.id) left join blog_tag as bt
                 on b.id = bt.blog_id) left join tag as t on bt.tag_id = t.id) left join user as u on b.user_id = u.id)
         where b.id = #{id}
@@ -379,6 +384,7 @@
         <association property="user" javaType="top.naccl.entity.User">
             <id property="id" column="user_id"/>
             <result property="username" column="username"/>
+            <result property="nickname" column="nickname"/>
         </association>
         <collection property="tags" javaType="top.naccl.entity.Tag">
             <result property="name" column="tag_name"/>
@@ -407,7 +413,8 @@
                t.tag_name as tag_name,
                t.color,
                u.id as user_id,
-               u.username
+               u.username,
+               u.nickname
         from ((((blog as b left join category as c on b.category_id = c.id) left join blog_tag as bt
                on b.id = bt.blog_id) left join tag as t on bt.tag_id = t.id) left join user as u on b.user_id = u.id)
         where b.id = #{id}
@@ -432,7 +439,8 @@
                t.tag_name as tag_name,
                t.color,
                u.id as user_id,
-               u.username
+               u.username,
+               u.nickname
         from ((((blog as b left join category as c on b.category_id = c.id) left join blog_tag as bt
                on b.id = bt.blog_id) left join tag as t on bt.tag_id = t.id) left join user as u on b.user_id = u.id)
         where b.id = #{id}
