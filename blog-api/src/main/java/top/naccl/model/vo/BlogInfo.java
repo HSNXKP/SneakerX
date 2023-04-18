@@ -34,6 +34,7 @@ public class BlogInfo {
 	private String password;//文章密码
 	private Boolean privacy;//是否私密文章
 	private Integer likes;//点赞数
+	private Integer comments;//评论数
 
 	private User user;
 	private Category category;//文章分类
