@@ -132,6 +132,7 @@
         <result property="top" column="is_top"/>
         <result property="password" column="password"/>
         <result property="likes" column="likes"/>
+        <result property="comments" column="comments"/>
         <association property="category" javaType="top.naccl.entity.Category">
             <result property="name" column="category_name"/>
         </association>
@@ -159,9 +160,10 @@
                u.id as user_id,
                u.username,
                u.nickname,
-               u.avatar
-        from ((blog as b left join category as c on b.category_id = c.id )left join user as u on b.user_id=u.id)
-        where b.is_published = true
+               u.avatar,
+               count(c2.id) as comments
+        from (((blog as b left join category as c on b.category_id = c.id )left join user as u on b.user_id=u.id)left join comment as c2 on b.id=c2.blog_id)
+        where b.is_published = true group by b.id;
     </select>
 
     <!--根据分类name查询公开博客List-->
@@ -389,6 +391,8 @@
             <id property="id" column="user_id"/>
             <result property="username" column="username"/>
             <result property="nickname" column="nickname"/>
+            <result property="avatar" column="avatar"/>
+            <result property="userSign" column="user_sign"/>
         </association>
         <collection property="tags" javaType="top.naccl.entity.Tag">
             <result property="name" column="tag_name"/>
@@ -418,7 +422,9 @@
                t.color,
                u.id as user_id,
                u.username,
-               u.nickname
+               u.nickname,
+               u.avatar,
+               u.user_sign
         from ((((blog as b left join category as c on b.category_id = c.id) left join blog_tag as bt
                on b.id = bt.blog_id) left join tag as t on bt.tag_id = t.id) left join user as u on b.user_id = u.id)
         where b.id = #{id}
@@ -444,7 +450,9 @@
                t.color,
                u.id as user_id,
                u.username,
-               u.nickname
+               u.nickname,
+               u.avatar,
+               u.user_sign
         from ((((blog as b left join category as c on b.category_id = c.id) left join blog_tag as bt
                on b.id = bt.blog_id) left join tag as t on bt.tag_id = t.id) left join user as u on b.user_id = u.id)
         where b.id = #{id}

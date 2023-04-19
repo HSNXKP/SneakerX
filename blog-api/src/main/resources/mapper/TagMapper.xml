@@ -15,7 +15,7 @@
 
     <!--获取所有标签List不查询id-->
     <select id="getTagListNotId" resultMap="tag">
-        select tag_name, color from tag order by id desc
+        select id,tag_name, color,count(bt.tag_id) as counts from tag left join blog_tag bt on tag.id = bt.tag_id group by bt.tag_id order by counts desc limit 10
     </select>
 
     <!--按博客id查询List-->

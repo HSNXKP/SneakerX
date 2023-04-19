@@ -46,12 +46,12 @@ public class BlogServiceImpl implements BlogService {
 	private UserService userService;
 
 
-	//随机博客显示5条
+	//随机动态显示5条
 	private static final int randomBlogLimitNum = 5;
-	//最新推荐博客显示3条
+	//最新推荐动态显示3条
 	private static final int newBlogPageSize = 3;
-	//每页显示5条博客简介
-	private static final int pageSize = 5;
+	//每页显示10条动态简介
+	private static final int pageSize = 10;
 	//博客简介列表排序方式
 	private static final String orderBy = "is_top desc, create_time desc";
 	//私密博客提示
