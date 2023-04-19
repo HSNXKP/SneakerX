@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import top.naccl.entity.UserFans;
 import top.naccl.exception.NotFoundException;
 import top.naccl.mapper.UserMapper;
 import top.naccl.entity.User;
@@ -111,6 +112,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			return Result.error("更新失败");
 		}
 		return Result.error("用户名已存在");
+	}
+
+    @Override
+    public Result addFans(Long userId, Long bloggerId) {
+		if (userMapper.getFansByUserIdAndBloggerId(userId,bloggerId) == 0){
+			if (!userId.equals(bloggerId)){
+				UserFans userFans = new UserFans();
+				userFans.setUserId(userId);
+				userFans.setFansId(bloggerId);
+				userFans.setCreateTime(LocalDateTime.now());
+				userMapper.addFans(userFans);
+				return Result.ok("关注成功");
+			}
+			return Result.error("不能关注自己");
+		}
+		return Result.error("已关注");
+    }
+
+	@Override
+	public Result isFans(Long userId, Long bloggerId) {
+		if (userMapper.getFansByUserIdAndBloggerId(userId,bloggerId) == 1){
+			return Result.ok("已关注",true);
+		}
+		return Result.ok("获取成功",false);
 	}
 
 

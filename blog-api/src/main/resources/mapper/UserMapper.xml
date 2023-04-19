@@ -19,6 +19,12 @@
         insert into user(username,nickname,password,email,avatar,create_time,update_time,role,user_flag,flagColor,user_sign)
         values(#{username},#{nickname},#{password},#{email},#{avatar},#{createTime},#{updateTime},#{role},#{userFlag},#{flag_color},#{userSign})
     </insert>
+    <insert id="addFans" parameterType="top.naccl.entity.UserFans">
+        insert into user_fans(user_id,fans_id,create_time)
+        values(#{userId},#{fansId},#{createTime})
+    </insert>
+    <!--添加粉丝-->
+
     <!--更新用户密码    -->
     <update id="updateUserPassword" >
         update user set password=#{password} where id=#{id}
@@ -53,6 +59,9 @@
     </select>
     <select id="getUserByUserName" resultType="java.lang.Integer">
         select count(user.id) from user where username=#{username}
+    </select>
+    <select id="getFansByUserIdAndBloggerId" resultType="java.lang.Integer">
+        select count(user_fans.id) from user_fans where user_id=#{userId} and fans_id=#{bloggerId}
     </select>
 
 </mapper>

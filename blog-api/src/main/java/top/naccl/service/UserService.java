@@ -14,4 +14,8 @@ public interface UserService {
     Result getPasswordByUserId(NewPasswordVo newPasswordVo);
 
     Result updateUser(User user);
+
+    Result addFans(Long userId, Long bloggerId);
+
+    Result isFans(Long userId, Long bloggerId);
 }

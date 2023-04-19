@@ -4,7 +4,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import top.naccl.entity.User;
+import top.naccl.entity.UserFans;
 import top.naccl.model.vo.Result;
+
+import java.time.LocalTime;
 
 /**
  * @Description: 用户持久层接口
@@ -30,4 +33,7 @@ public interface UserMapper {
 
 	int getUserByUserName(String username);
 
+    int addFans(UserFans userFans);
+
+	int getFansByUserIdAndBloggerId(@Param("userId") Long userId, @Param("bloggerId") Long bloggerId);
 }

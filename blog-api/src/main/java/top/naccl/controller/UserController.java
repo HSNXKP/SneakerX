@@ -70,6 +70,22 @@ public class UserController {
         return Result.ok("获取成功",userService.findUserById(userId));
     }
 
+    /**
+     * userId关注blogId blogId是作者 userId是粉丝
+     * @param userId
+     * @param bloggerId
+     * @return
+     */
+    @GetMapping("/addFans")
+    public Result addFans(@RequestParam("userId") Long userId,@RequestParam("bloggerId") Long bloggerId){
+        return userService.addFans(userId,bloggerId);
+    }
+
+    @GetMapping("/isFans")
+    public Result isFans(@RequestParam("userId") Long userId,@RequestParam("bloggerId") Long bloggerId){
+        return userService.isFans(userId,bloggerId);
+    }
+
 
 
 
