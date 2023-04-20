@@ -13,6 +13,8 @@
         <result column="role" property="role" />
         <result column="user_flag" property="userFlag" />
         <result column="flag_color" property="flagColor" />
+        <result column="fans" property="fans" />
+        <result column="follow" property="follow" />
     </resultMap>
       <!--注册用户-->
     <insert id="registerUser" parameterType="top.naccl.entity.User">
@@ -23,7 +25,13 @@
         insert into user_fans(user_id,fans_id,create_time)
         values(#{userId},#{fansId},#{createTime})
     </insert>
-    <!--添加粉丝-->
+    <!--增加账户的粉丝和关注数量    -->
+    <update id="addFansByUserId" parameterType="java.lang.Long">
+        update user set fans=fans+1 where id = #{id}
+    </update>
+    <update id="addFollowByUserId" parameterType="java.lang.Long">
+        update user set follow=follow+1 where id = #{id}
+    </update>
 
     <!--更新用户密码    -->
     <update id="updateUserPassword" >
@@ -60,8 +68,9 @@
     <select id="getUserByUserName" resultType="java.lang.Integer">
         select count(user.id) from user where username=#{username}
     </select>
+    <!--判断是否为粉丝，当前的登陆的账户需要反转    -->
     <select id="getFansByUserIdAndBloggerId" resultType="java.lang.Integer">
-        select count(user_fans.id) from user_fans where user_id=#{userId} and fans_id=#{bloggerId}
+        select count(user_fans.id) as fans from user_fans where user_id=#{bloggerId} and fans_id=#{userId}
     </select>
 
 </mapper>

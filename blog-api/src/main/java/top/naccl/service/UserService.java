@@ -18,4 +18,6 @@ public interface UserService {
     Result addFans(Long userId, Long bloggerId);
 
     Result isFans(Long userId, Long bloggerId);
+
+
 }

@@ -36,4 +36,7 @@ public interface UserMapper {
     int addFans(UserFans userFans);
 
 	int getFansByUserIdAndBloggerId(@Param("userId") Long userId, @Param("bloggerId") Long bloggerId);
+
+	Boolean addFansByUserId(Long userId);
+	Boolean addFollowByUserId(Long userId);
 }

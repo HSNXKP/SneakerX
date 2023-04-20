@@ -71,7 +71,7 @@ public class UserController {
     }
 
     /**
-     * userId关注blogId blogId是作者 userId是粉丝
+     * userId关注blogId bloggerId是userId userId是粉丝
      * @param userId
      * @param bloggerId
      * @return
@@ -81,10 +81,18 @@ public class UserController {
         return userService.addFans(userId,bloggerId);
     }
 
+    /**
+     * 判断userId是否为bloggerId的粉丝
+     * @param userId
+     * @param bloggerId
+     * @return
+     */
     @GetMapping("/isFans")
     public Result isFans(@RequestParam("userId") Long userId,@RequestParam("bloggerId") Long bloggerId){
         return userService.isFans(userId,bloggerId);
     }
+
+
 
 
 

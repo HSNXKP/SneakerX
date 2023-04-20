@@ -393,6 +393,8 @@
             <result property="nickname" column="nickname"/>
             <result property="avatar" column="avatar"/>
             <result property="userSign" column="user_sign"/>
+            <result property="follow" column="follow"/>
+            <result property="fans" column="fans"/>
         </association>
         <collection property="tags" javaType="top.naccl.entity.Tag">
             <result property="name" column="tag_name"/>
@@ -424,7 +426,9 @@
                u.username,
                u.nickname,
                u.avatar,
-               u.user_sign
+               u.user_sign,
+               u.fans,
+               u.follow
         from ((((blog as b left join category as c on b.category_id = c.id) left join blog_tag as bt
                on b.id = bt.blog_id) left join tag as t on bt.tag_id = t.id) left join user as u on b.user_id = u.id)
         where b.id = #{id}
@@ -452,7 +456,9 @@
                u.username,
                u.nickname,
                u.avatar,
-               u.user_sign
+               u.user_sign,
+               u.fans,
+               u.follow
         from ((((blog as b left join category as c on b.category_id = c.id) left join blog_tag as bt
                on b.id = bt.blog_id) left join tag as t on bt.tag_id = t.id) left join user as u on b.user_id = u.id)
         where b.id = #{id}

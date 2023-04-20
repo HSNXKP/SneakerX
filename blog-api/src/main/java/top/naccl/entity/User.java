@@ -36,6 +36,8 @@ public class User implements UserDetails {
 	private String userFlag;// 登陆后的前戳
 	private String flagColor;//前戳的颜色
 	private String userSign;//个人签名
+	private Long fans;//粉丝数量
+	private Long follow;//关注数量
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
 	private LocalDateTime createTime; //创建账号时间

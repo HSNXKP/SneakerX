@@ -114,15 +114,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return Result.error("用户名已存在");
 	}
 
-    @Override
+	/**
+	 * blogger是被关注的人 加的是粉丝数 userId是登陆的账户是粉丝
+	 * @param userId
+	 * @param bloggerId
+	 * @return
+	 */
+	@Override
     public Result addFans(Long userId, Long bloggerId) {
 		if (userMapper.getFansByUserIdAndBloggerId(userId,bloggerId) == 0){
 			if (!userId.equals(bloggerId)){
 				UserFans userFans = new UserFans();
-				userFans.setUserId(userId);
-				userFans.setFansId(bloggerId);
+				userFans.setUserId(bloggerId);
+				userFans.setFansId(userId);
 				userFans.setCreateTime(LocalDateTime.now());
+				// 对两边的账户进行增加粉丝处理
 				userMapper.addFans(userFans);
+				userMapper.addFansByUserId(bloggerId);
+				userMapper.addFollowByUserId(userId);
 				return Result.ok("关注成功");
 			}
 			return Result.error("不能关注自己");
