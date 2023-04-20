@@ -25,6 +25,11 @@
         insert into user_fans(user_id,fans_id,create_time)
         values(#{userId},#{fansId},#{createTime})
     </insert>
+    <!--收藏商品    -->
+    <insert id="addCollectProduct">
+        insert into user_product(user_id,product_id,create_time)
+        values(#{userId},#{productId},#{createTime})
+    </insert>
     <!--增加账户的粉丝和关注数量    -->
     <update id="addFansByUserId" parameterType="java.lang.Long">
         update user set fans=fans+1 where id = #{id}
@@ -48,6 +53,10 @@
                         user_sign=#{userSign}
                         where id=#{id}
     </update>
+    <!--撒取消收藏商品   -->
+    <delete id="deleteCollectProduct">
+        delete from user_product where user_id=#{userId} and product_id=#{productId}
+    </delete>
     <!--按用户名查询User-->
     <select id="findByUsername" resultType="top.naccl.entity.User">
         select * from user where username=#{username} limit 1
@@ -71,6 +80,10 @@
     <!--判断是否为粉丝，当前的登陆的账户需要反转    -->
     <select id="getFansByUserIdAndBloggerId" resultType="java.lang.Integer">
         select count(user_fans.id) as fans from user_fans where user_id=#{bloggerId} and fans_id=#{userId}
+    </select>
+    <!--判断商品是否收藏    -->
+    <select id="isCollectProductByUserIdAndProductId" resultType="java.lang.Integer">
+        select count(user_product.id) as collect from user_product where user_id=#{userId} and product_id=#{productId}
     </select>
 
 </mapper>

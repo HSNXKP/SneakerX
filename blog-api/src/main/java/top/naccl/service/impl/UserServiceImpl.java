@@ -147,5 +147,31 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return Result.ok("获取成功",false);
 	}
 
+	@Override
+	public Result collectProduct(Long userId, Long productId) {
+		if (userMapper.isCollectProductByUserIdAndProductId(userId,productId) == 0){
+			userMapper.addCollectProduct(userId,productId,LocalDateTime.now());
+			return Result.ok("收藏成功");
+		}
+		return Result.error("已收藏");
+	}
+
+	@Override
+	public Result isCollectProduct(Long userId, Long productId) {
+		if (userMapper.isCollectProductByUserIdAndProductId(userId,productId) == 0){
+			return Result.ok("未收藏",false);
+		}
+		return Result.ok("已收藏",true);
+	}
+
+	@Override
+	public Result cancelCollectProduct(Long userId, Long productId) {
+		if (userMapper.isCollectProductByUserIdAndProductId(userId,productId) == 1){
+			userMapper.deleteCollectProduct(userId,productId);
+			return Result.ok("取消收藏成功",false);
+		}
+		return Result.error("未收藏");
+	}
+
 
 }

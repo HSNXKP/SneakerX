@@ -93,6 +93,23 @@ public class UserController {
     }
 
 
+    @GetMapping("/collectProduct")
+    public Result collectProduct(@RequestParam("userId") Long userId,@RequestParam("productId") Long productId){
+        return userService.collectProduct(userId,productId);
+    }
+
+
+    @GetMapping("/cancelCollectProduct")
+    public Result cancelCollectProduct(@RequestParam("userId") Long userId,@RequestParam("productId") Long productId){
+        return userService.cancelCollectProduct(userId,productId);
+    }
+
+    @GetMapping("/isCollectProduct")
+    public Result isCollectProduct(@RequestParam("userId") Long userId,@RequestParam("productId") Long productId){
+        return userService.isCollectProduct(userId,productId);
+    }
+
+
 
 
 

@@ -20,4 +20,9 @@ public interface UserService {
     Result isFans(Long userId, Long bloggerId);
 
 
+    Result collectProduct(Long userId, Long productId);
+
+    Result isCollectProduct(Long userId, Long productId);
+
+    Result cancelCollectProduct(Long userId, Long productId);
 }
