@@ -14,6 +14,13 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+    <!--改变收藏商品的选中状态    -->
+    <update id="checkedProductCollect">
+        update user_product set checked=#{checked} where user_id=#{userId}
+        <if test="productId!=null">
+            and product_id=#{productId}
+        </if>
+    </update>
     <select id="getProductByProductCategoryId" resultType="top.naccl.entity.Product" parameterType="java.lang.Long">
         select *
         from product as p
@@ -22,11 +29,50 @@
     </select>
 
     <select id="getProductsIsRecommend" resultType="top.naccl.entity.Product">
-    select * from product where product.recommend = true
+        select *
+        from product
+        where product.recommend = true
+    </select>
+    <!--通过商品id获取商品详情    -->
+    <select id="getProductById" resultType="top.naccl.entity.Product" parameterType="java.lang.Long">
+        select *
+        from product
+        where product.id = #{id}
     </select>
 
-    <select id="getProductById" resultType="top.naccl.entity.Product" parameterType="java.lang.Long">
-    select * from product where product.id = #{id}
+    <!--取消收藏商品   -->
+    <delete id="deleteCollectProduct">
+        delete
+        from user_product
+        where user_id = #{userId}
+          and product_id = #{productId}
+    </delete>
+    <!--删除用户id下的所有checked=true收藏的商品   -->
+    <delete id="deleteAllProductCollectByUserId" parameterType="java.lang.Long">
+        delete
+        from user_product
+        where user_id = #{userId} and checked = true
+    </delete>
+
+    <!--收藏商品    -->
+    <insert id="addCollectProduct">
+        insert into user_product(user_id, product_id, create_time)
+        values (#{userId}, #{productId}, #{createTime})
+    </insert>
+
+    <!--判断商品是否收藏    -->
+    <select id="isCollectProductByUserIdAndProductId" resultType="java.lang.Integer">
+        select count(user_product.id) as collect
+        from user_product
+        where user_id = #{userId}
+          and product_id = #{productId}
+    </select>
+    <!--查询用户收藏的商品    -->
+    <select id="getProductCollect" resultType="top.naccl.entity.Product" parameterType="java.lang.Long">
+        select *
+        from product
+                 left join user_product on product.id = user_product.product_id
+        where user_product.user_id = #{userId}
     </select>
 
 </mapper>

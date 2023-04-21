@@ -1,9 +1,11 @@
 package top.naccl.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.naccl.entity.Category;
 import top.naccl.entity.Tag;
 import top.naccl.entity.User;
@@ -92,26 +94,10 @@ public class UserController {
         return userService.isFans(userId,bloggerId);
     }
 
-
-    @GetMapping("/collectProduct")
-    public Result collectProduct(@RequestParam("userId") Long userId,@RequestParam("productId") Long productId){
-        return userService.collectProduct(userId,productId);
+    @PostMapping("/uploadAvatarImage")
+    public Result uploadTongueImage(@RequestParam("file") MultipartFile file, @RequestParam("userId")Long userId){
+        return userService.uploadAvatarImage(file,userId);
     }
-
-
-    @GetMapping("/cancelCollectProduct")
-    public Result cancelCollectProduct(@RequestParam("userId") Long userId,@RequestParam("productId") Long productId){
-        return userService.cancelCollectProduct(userId,productId);
-    }
-
-    @GetMapping("/isCollectProduct")
-    public Result isCollectProduct(@RequestParam("userId") Long userId,@RequestParam("productId") Long productId){
-        return userService.isCollectProduct(userId,productId);
-    }
-
-
-
-
 
 
 }

@@ -1,11 +1,12 @@
 package top.naccl.service.impl;
 
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import top.naccl.config.properties.UploadProperties;
 import top.naccl.entity.UserFans;
 import top.naccl.exception.NotFoundException;
 import top.naccl.mapper.UserMapper;
@@ -15,9 +16,8 @@ import top.naccl.model.vo.Result;
 import top.naccl.service.UserService;
 import top.naccl.util.HashUtils;
 
+import java.io.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 
 /**
  * @Description: 用户业务层接口实现类
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	private UserMapper userMapper;
 
 	@Autowired
-	private UserServiceImpl userService;
+	private UploadProperties uploadProperties;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -147,31 +147,64 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return Result.ok("获取成功",false);
 	}
 
-	@Override
-	public Result collectProduct(Long userId, Long productId) {
-		if (userMapper.isCollectProductByUserIdAndProductId(userId,productId) == 0){
-			userMapper.addCollectProduct(userId,productId,LocalDateTime.now());
-			return Result.ok("收藏成功");
+    @Override
+    public Result uploadAvatarImage(MultipartFile file, Long userId) {
+		// 判断当前环境是linux还是window
+		String avatarPath = "";
+		String osName = System.getProperties().getProperty("os.name");
+		if(osName.equals("Linux")){
+			avatarPath = uploadProperties.getPath();
+		}else{
+			avatarPath = uploadProperties.getLinuxPath();
 		}
-		return Result.error("已收藏");
+		// 拿到前戳
+		String substring = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+		String fileName = userId + substring;
+		try {
+			saveFile(file.getInputStream(),fileName,avatarPath);
+			User user = userMapper.findById(userId);
+			user.setAvatar("http://localhost/" +avatarPath+ fileName);
+			userMapper.updateUser(user);
+			return Result.ok("上传成功",user);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+    }
+
+	private void saveFile(InputStream inputStream, String fileName, String filePath) {
+		OutputStream os = null;
+		try {
+			// 保存到临时文件
+			// 1K的数据缓冲
+			byte[] bs = new byte[1024];
+			// 读取到的数据长度
+			int len;
+			// 输出的文件流保存到本地文件
+			File tempFile = new File(filePath);
+			if (!tempFile.exists()) {
+				tempFile.mkdirs();
+			}
+			os = new FileOutputStream(tempFile.getPath() + File.separator + fileName);
+			// 开始读取
+			while ((len = inputStream.read(bs)) != -1) {
+				os.write(bs, 0, len);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// 完毕，关闭所有链接
+			try {
+				os.close();
+				inputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
-	@Override
-	public Result isCollectProduct(Long userId, Long productId) {
-		if (userMapper.isCollectProductByUserIdAndProductId(userId,productId) == 0){
-			return Result.ok("未收藏",false);
-		}
-		return Result.ok("已收藏",true);
-	}
-
-	@Override
-	public Result cancelCollectProduct(Long userId, Long productId) {
-		if (userMapper.isCollectProductByUserIdAndProductId(userId,productId) == 1){
-			userMapper.deleteCollectProduct(userId,productId);
-			return Result.ok("取消收藏成功",false);
-		}
-		return Result.error("未收藏");
-	}
 
 
 }

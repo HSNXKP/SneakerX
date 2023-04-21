@@ -1,5 +1,6 @@
 package top.naccl.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import top.naccl.entity.User;
 import top.naccl.model.vo.NewPasswordVo;
 import top.naccl.model.vo.Result;
@@ -20,9 +21,5 @@ public interface UserService {
     Result isFans(Long userId, Long bloggerId);
 
 
-    Result collectProduct(Long userId, Long productId);
-
-    Result isCollectProduct(Long userId, Long productId);
-
-    Result cancelCollectProduct(Long userId, Long productId);
+    Result uploadAvatarImage(MultipartFile file, Long userId);
 }

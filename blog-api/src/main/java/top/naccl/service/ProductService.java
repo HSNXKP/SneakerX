@@ -19,4 +19,19 @@ public interface ProductService {
 
 
     Product getProductById(Long id);
+
+    Result collectProduct(Long userId, Long productId);
+
+    Result isCollectProduct(Long userId, Long productId);
+
+    Result cancelCollectProduct(Long userId, Long productId);
+
+    Result getProductCollect(Long userId);
+
+    Result deleteProductCollectByProductId(Long productId, Long userId);
+
+    Result deleteAllProductCollectByUserId(Long userId);
+
+    Result checkedProductCollect(Long userId, Long productId, Boolean checked,String type);
+
 }

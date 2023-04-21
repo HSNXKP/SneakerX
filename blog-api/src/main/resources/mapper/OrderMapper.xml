@@ -101,6 +101,10 @@
         </set>
         where order_number = #{orderNumber} and parent_id = #{parentId}
     </update>
+    <delete id="deleteOrderByOrderNumber">
+        delete from order_table
+        where order_number = #{orderNumber} and parent_id = #{parentId} and user_id = #{userId}
+    </delete>
     <!--查询当前用户下单的单个商品的数量  支付的订单   -->
 <!--    <select id="getProductOrderCountByUserId" resultType="java.lang.Integer" parameterType="java.lang.Long">-->
 <!--        select sum(ifnull(quantity,0))-->

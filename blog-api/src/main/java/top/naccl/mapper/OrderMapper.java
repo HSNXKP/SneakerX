@@ -27,4 +27,5 @@ public interface OrderMapper {
 
     List<Order> getOrderListByOrderNumberWithUserId(@Param("orderNumber")String orderNumber,@Param("userId")Long userId,@Param("parentId")Long parentId);
 
+    int deleteOrderByOrderNumber(@Param("orderNumber")String orderNumber,@Param("userId") Long userId,@Param("parentId")Long parentId);
 }

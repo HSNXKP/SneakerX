@@ -43,4 +43,41 @@ public class ProductController {
         return Result.ok("获取成功",productService.getProductById(id));
     }
 
+    @GetMapping("/user/collectProduct")
+    public Result collectProduct(@RequestParam("userId") Long userId,@RequestParam("productId") Long productId){
+        return productService.collectProduct(userId,productId);
+    }
+
+    @GetMapping("/user/cancelCollectProduct")
+    public Result cancelCollectProduct(@RequestParam("userId") Long userId,@RequestParam("productId") Long productId){
+        return productService.cancelCollectProduct(userId,productId);
+    }
+
+    @GetMapping("/user/isCollectProduct")
+    public Result isCollectProduct(@RequestParam("userId") Long userId,@RequestParam("productId") Long productId){
+        return productService.isCollectProduct(userId,productId);
+    }
+
+    @GetMapping("/user/getProductCollect")
+    public Result getProductCollect(@RequestParam("userId") Long userId){
+        return productService.getProductCollect(userId);
+    }
+
+    @GetMapping("user/deleteProductCollectByProductId")
+    public Result deleteProductCollectByProductId(@RequestParam("productId") Long productId, @RequestParam("userId") Long userId){
+        return productService.deleteProductCollectByProductId(productId, userId);
+    }
+
+    //TODO 没有实现下面两个接口
+
+    @GetMapping("user/deleteAllProductCollectByUserId")
+    public Result deleteAllProductCollectByUserId(@RequestParam("userId") Long userId){
+        return productService.deleteAllProductCollectByUserId(userId);
+    }
+
+    @GetMapping("user/checkedProductCollect")
+    public Result checkedProductCollect(@RequestParam("userId") Long userId, @RequestParam("productId") Long productId, @RequestParam("checked") Boolean checked,String type){
+        return productService.checkedProductCollect(userId, productId, checked,type);
+    }
+
 }

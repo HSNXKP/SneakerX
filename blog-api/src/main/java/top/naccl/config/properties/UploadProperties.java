@@ -25,6 +25,10 @@ public class UploadProperties {
 	 */
 	private String path;
 	/**
+	 * 服务器地址储存
+	 */
+	private String linuxPath;
+	/**
 	 * 请求地址映射
 	 */
 	private String accessPath;

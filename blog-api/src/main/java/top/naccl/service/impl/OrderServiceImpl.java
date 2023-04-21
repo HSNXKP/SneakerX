@@ -371,7 +371,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int updateOrder(Order order) {
+    public int setOrderPayed(Order order) {
         order.setPayTime(LocalDateTime.now());
         order.setUpdateTime(LocalDateTime.now());
         order.setStatus(1L);
@@ -446,6 +446,23 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public Result deleteOrderByOrderNumber(String orderNumber, Long userId) {
+        Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userId, -1L);
+        if (order != null) {
+            if (order.getStatus() == 0L || order.getStatus() == 3L || order.getStatus() == 4L) {
+                if (orderMapper.deleteOrderByOrderNumber(orderNumber,userId,-1L) == 1) {
+                    // 关联的也全部删除
+                    orderMapper.deleteOrderByOrderNumber("-1",userId,order.getId());
+                    return Result.ok("删除成功");
+                }
+                return Result.error("删除失败");
+            }
+            return Result.error("订单正在进行中无法删除");
+        }
+        return Result.error("没有该订单");
     }
 
     List<OrderListVo> getOrderListByUserId(Long userId, Long parentId) {

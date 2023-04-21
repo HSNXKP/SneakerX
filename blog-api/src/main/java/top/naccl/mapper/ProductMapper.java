@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import top.naccl.entity.Product;
 import top.naccl.entity.ProductCategory;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -23,4 +24,17 @@ public interface ProductMapper {
     List<Product> getProductsIsRecommend();
 
     Product getProductById(Long id);
+
+
+    int isCollectProductByUserIdAndProductId(@Param("userId")Long userId, @Param("productId")Long productId);
+
+    int addCollectProduct(@Param("userId")Long userId, @Param("productId")Long productId, @Param("createTime") LocalDateTime createTime);
+
+    int deleteCollectProduct(@Param("userId")Long userId,@Param("productId") Long productId);
+
+    List<Product> getProductCollect(Long userId);
+
+    int deleteAllProductCollectByUserId(Long userId);
+
+    int checkedProductCollect(@Param("userId")Long userId,@Param("productId") Long productId, @Param("checked")Boolean checked);
 }

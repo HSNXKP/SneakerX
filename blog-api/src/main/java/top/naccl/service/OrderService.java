@@ -11,10 +11,11 @@ public interface OrderService {
 
     Result getOrderByOrderNumber(String jwt,String orderNumber);
 
-    int updateOrder(Order order);
+    int setOrderPayed(Order order);
 
     Result cancelOrder(String jwt,String orderNumber);
 
     Result getOrderListByUserId(Long id);
 
+    Result deleteOrderByOrderNumber(String orderNumber, Long userId);
 }

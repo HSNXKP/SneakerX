@@ -8,6 +8,7 @@ import top.naccl.mapper.ProductMapper;
 import top.naccl.model.vo.Result;
 import top.naccl.service.ProductService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -64,6 +65,73 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+
+
+    @Override
+    public Result collectProduct(Long userId, Long productId) {
+        if (productMapper.isCollectProductByUserIdAndProductId(userId,productId) == 0){
+            productMapper.addCollectProduct(userId,productId, LocalDateTime.now());
+            return Result.ok("收藏成功");
+        }
+        return Result.error("已收藏");
+    }
+
+    @Override
+    public Result isCollectProduct(Long userId, Long productId) {
+        if (productMapper.isCollectProductByUserIdAndProductId(userId,productId) == 0){
+            return Result.ok("未收藏",false);
+        }
+        return Result.ok("已收藏",true);
+    }
+
+    @Override
+    public Result cancelCollectProduct(Long userId, Long productId) {
+        if (productMapper.isCollectProductByUserIdAndProductId(userId,productId) == 1){
+            productMapper.deleteCollectProduct(userId,productId);
+            return Result.ok("取消收藏成功",false);
+        }
+        return Result.error("未收藏");
+    }
+
+    @Override
+    public Result getProductCollect(Long userId) {
+        List<Product> productCollectList = productMapper.getProductCollect(userId);
+        if (productCollectList != null){
+            return Result.ok("查询成功",productCollectList);
+        }
+        return Result.error("暂无商品收藏");
+    }
+
+    @Override
+    public Result deleteProductCollectByProductId(Long productId, Long userId) {
+        if (productMapper.isCollectProductByUserIdAndProductId(userId,productId) == 1){
+            productMapper.deleteCollectProduct(userId,productId);
+            return Result.ok("取消收藏成功");
+        }
+        return Result.error("收藏失败");
+    }
+
+    @Override
+    public Result deleteAllProductCollectByUserId(Long userId) {
+        if (productMapper.deleteAllProductCollectByUserId(userId) == 1){
+            return Result.ok("取消收藏成功");
+        }
+        return Result.error("收藏失败");
+    }
+
+    @Override
+    public Result checkedProductCollect(Long userId, Long productId, Boolean checked,String type) {
+        if (type.equals("all")){
+            productMapper.checkedProductCollect(userId,null,checked);
+            return Result.ok("操作成功");
+        }
+        if (productMapper.checkedProductCollect(userId,productId,checked) == 1){
+            return Result.ok("操作成功");
+        }
+        return Result.error("操作失败");
     }
 
 }

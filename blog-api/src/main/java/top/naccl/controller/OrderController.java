@@ -86,7 +86,7 @@ public class OrderController {
 
     @GetMapping("/pay")
     public Result pay(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
-                      String orderNumber) throws Exception {
+                      String orderNumber,String orderRemarks) throws Exception {
         //TODO 没有校验UserId和token的关系
         if (JwtUtils.judgeTokenIsExist(jwt)) {
             // 比对当前的token和id是否一致
@@ -143,6 +143,9 @@ public class OrderController {
                                 //bizContent.put("extend_params", extendParams);
                                 request.setBizContent(bizContent.toString());
                                 AlipayTradePagePayResponse response = alipayClient.pageExecute(request);
+                                // 增加订单备注
+                                order.setOrderRemarks(orderRemarks);
+                                orderMapper.updateOrder(order);
                                 if (response.isSuccess()) {
                                     System.out.println(response.getBody());
                                     System.out.println("调用成功");
@@ -189,8 +192,8 @@ public class OrderController {
                         String out_trade_no = map.get("out_trade_no");
                         Order order = orderMapper.getOrderByOrderNumberWithUserId(out_trade_no, null, -1L);
                         List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId(out_trade_no, order.getUserId(), order.getId());
-                        // 更新订单状态
-                        orderService.updateOrder(order);
+                        // 更新订单状态已支付
+                        orderService.setOrderPayed(order);
                         if (orderList.size() > 0) {
                             for (Order one : orderList) {
                                 orderMapper.updateOrder(one);
@@ -255,6 +258,11 @@ public class OrderController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("user/deleteOrderByOrderNumber")
+    public Result deleteOrderByOrderNumber(@RequestParam("orderNumber")String orderNumber,@RequestParam("userId") Long userId){
+        return orderService.deleteOrderByOrderNumber(orderNumber,userId);
     }
 
 

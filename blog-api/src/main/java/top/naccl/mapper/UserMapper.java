@@ -41,9 +41,6 @@ public interface UserMapper {
 	Boolean addFansByUserId(Long userId);
 	Boolean addFollowByUserId(Long userId);
 
-	int isCollectProductByUserIdAndProductId(@Param("userId")Long userId, @Param("productId")Long productId);
 
-	int addCollectProduct(@Param("userId")Long userId, @Param("productId")Long productId, @Param("createTime") LocalDateTime createTime);
 
-	int deleteCollectProduct(@Param("userId")Long userId,@Param("productId") Long productId);
 }
