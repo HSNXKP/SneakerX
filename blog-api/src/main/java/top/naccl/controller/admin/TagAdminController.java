@@ -87,7 +87,7 @@ public class TagAdminController {
 		if (tag1 != null && !tag1.getId().equals(tag.getId())) {
 			return Result.error("该标签已存在");
 		}
-		tag.setName("#"+tag.getName());
+		tag.setName(tag.getName());
 		if ("save".equals(type)) {
 			tagService.saveTag(tag);
 			return Result.ok("添加成功");
