@@ -85,7 +85,7 @@ public class MomentController {
 	 * @return
 	 */
 	@GetMapping("/user/bolgTitleById")
-	public Result bolgById(@RequestParam Long id,
+	public Result getBolgListById(@RequestParam Long id,
 						   @RequestParam(defaultValue = "1") Integer pageNum){
 		List<BlogWithMomentView> blogs = momentService.getBolgTitleById(id,pageNum);
 		for (BlogWithMomentView blog : blogs) {
@@ -95,6 +95,19 @@ public class MomentController {
 				blog.setPrivacy(true);
 			}
 		}
+		PageInfo<BlogWithMomentView> blogPageInfo = new PageInfo<>(blogs);
+		PageResult<BlogWithMomentView> blogPageResult = new PageResult<>(blogPageInfo.getPages(), blogPageInfo.getList());
+		return Result.ok("获取成功",blogPageResult);
+	}
+
+	/**
+	 * 查看博主的公开动态信息
+	 * @return
+	 */
+	@GetMapping("/bolgTitleById")
+	public Result getBolgListAnonymous(@RequestParam Long id,
+						   @RequestParam(defaultValue = "1") Integer pageNum){
+		List<BlogWithMomentView> blogs = momentService.getBolgListAnonymous(id,pageNum);
 		PageInfo<BlogWithMomentView> blogPageInfo = new PageInfo<>(blogs);
 		PageResult<BlogWithMomentView> blogPageResult = new PageResult<>(blogPageInfo.getPages(), blogPageInfo.getList());
 		return Result.ok("获取成功",blogPageResult);

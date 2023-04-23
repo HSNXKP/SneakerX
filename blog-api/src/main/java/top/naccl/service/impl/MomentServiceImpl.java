@@ -181,6 +181,13 @@ public class MomentServiceImpl implements MomentService {
 
 	}
 
+	@Override
+	public List<BlogWithMomentView> getBolgListAnonymous(Long userId, Integer pageNum) {
+		PageHelper.startPage(pageNum, pageSize);
+		List<BlogWithMomentView> bolgListAnonymous = blogMapper.getBolgListAnonymous(userId);
+		return bolgListAnonymous;
+	}
+
 	User getUserDetails(String jwt){
 		String subject = JwtUtils.getTokenBody(jwt).getSubject();
 		String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");

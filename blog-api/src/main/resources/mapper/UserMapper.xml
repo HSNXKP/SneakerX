@@ -18,8 +18,8 @@
     </resultMap>
       <!--注册用户-->
     <insert id="registerUser" parameterType="top.naccl.entity.User">
-        insert into user(username,nickname,password,email,avatar,create_time,update_time,role,user_flag,flagColor,user_sign)
-        values(#{username},#{nickname},#{password},#{email},#{avatar},#{createTime},#{updateTime},#{role},#{userFlag},#{flag_color},#{userSign})
+        insert into user(username,nickname,password,email,avatar,create_time,update_time,role,user_flag,flag_color,user_sign)
+        values(#{username},#{nickname},#{password},#{email},#{avatar},#{createTime},#{updateTime},#{role},#{userFlag},#{flagColor},#{userSign})
     </insert>
     <insert id="addFans" parameterType="top.naccl.entity.UserFans">
         insert into user_fans(user_id,fans_id,create_time)
@@ -43,6 +43,7 @@
         update user set username=#{username},
                         nickname=#{nickname},
                         email=#{email},
+                        avatar=#{avatar},
                         update_time=#{updateTime},
                         user_flag=#{userFlag},
                         flag_color=#{flagColor},

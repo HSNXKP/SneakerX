@@ -57,4 +57,12 @@ public interface MomentService {
 	 * @return
 	 */
 	Result getBlogById(Long id,String jwt,Long userId);
+
+	/**
+	 * 获得博主的公开信息
+	 * @param id
+	 * @param pageNum
+	 * @return
+	 */
+	List<BlogWithMomentView> getBolgListAnonymous(Long id, Integer pageNum);
 }

@@ -559,4 +559,16 @@
           and u.id = #{id}
         order by create_time desc
     </select>
+
+    <!--匿名通过userId获得公开动态标题列表-->
+    <select id="getBolgListAnonymous" resultType="top.naccl.model.vo.BlogWithMomentView">
+        select b.id, b.title, b.create_time, b.is_published,b.password,b.likes
+        from blog as b,
+             user as u
+        where u.id = b.user_id
+          and b.is_published = 1
+          and b.password = ''
+          and u.id = #{id}
+        order by create_time desc
+    </select>
 </mapper>

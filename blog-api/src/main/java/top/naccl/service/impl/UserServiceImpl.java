@@ -18,6 +18,7 @@ import top.naccl.util.HashUtils;
 
 import java.io.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * @Description: 用户业务层接口实现类
@@ -153,17 +154,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		String avatarPath = "";
 		String osName = System.getProperties().getProperty("os.name");
 		if(osName.equals("Linux")){
-			avatarPath = uploadProperties.getPath();
-		}else{
 			avatarPath = uploadProperties.getLinuxPath();
+		}else{
+			avatarPath = uploadProperties.getPath();
 		}
-		// 拿到前戳
+		// 拿到头像请求地址映射路径
+		String accessPath =  uploadProperties.getAccessPath();
+		// 拿到file的后戳
 		String substring = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-		String fileName = userId + substring;
+		String fileName = UUID.randomUUID() + substring;
 		try {
-			saveFile(file.getInputStream(),fileName,avatarPath);
 			User user = userMapper.findById(userId);
-			user.setAvatar("http://localhost/" +avatarPath+ fileName);
+			// 储存路径需要补一个/
+			String fileUploadPath =  avatarPath+user.getUsername()+"/";
+			// 头像映射路径
+			String avatarUploadPath = accessPath+ user.getUsername() + "/";
+			// 储存头像
+			saveFile(file.getInputStream(),fileName,fileUploadPath);
+			// 设置头像的映射路径 用户的用户名作为文件夹命名
+			user.setAvatar("http://localhost" + avatarUploadPath + fileName);
+			// 更新用户
 			userMapper.updateUser(user);
 			return Result.ok("上传成功",user);
 		} catch (IOException e) {

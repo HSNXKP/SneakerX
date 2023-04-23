@@ -359,7 +359,7 @@ public class BlogServiceImpl implements BlogService {
 		if (type.equals("isPublished")){
 			BlogDetail blog = blogMapper.getBlogByIdAndIsPublished(id);
 			if (blog == null) {
-				throw new NotFoundException("该博客不存在");
+				throw new NotFoundException("该动态不存在");
 			}
 			blog.setContent(MarkdownUtils.markdownToHtmlExtensions(blog.getContent()));
 			/**
@@ -373,7 +373,7 @@ public class BlogServiceImpl implements BlogService {
 		}
 		BlogDetail blog = blogMapper.getBlogByIdIsNotPublish(id);
 		if (blog == null) {
-			throw new NotFoundException("该博客不存在");
+			throw new NotFoundException("该动态不存在");
 		}
 		blog.setContent(MarkdownUtils.markdownToHtmlExtensions(blog.getContent()));
 		/**

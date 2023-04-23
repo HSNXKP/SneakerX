@@ -84,5 +84,7 @@ public interface BlogMapper {
 
 	List<BlogWithMomentView> getBolgTitleById(Long id);
 
+	List<BlogWithMomentView> getBolgListAnonymous(Long userId);
+
     Boolean addLikeByBlogId(Long id);
 }
