@@ -50,6 +50,18 @@
                         user_sign=#{userSign}
                         where id=#{id}
     </update>
+    <!--减去博主的粉丝    -->
+    <update id="subtractFans" parameterType="java.lang.Long">
+        update user set fans = fans -1 where id =#{id}
+    </update>
+    <!--减去用户的关注    -->
+    <update id="subtractFollow" parameterType="java.lang.Long">
+        update user set follow = follow -1 where id =#{id}
+    </update>
+    <!--取消关注    -->
+    <delete id="cancelFollow">
+        delete from user_fans where user_id=#{bloggerId} and fans_id=#{userId}
+    </delete>
 
     <!--按用户名查询User-->
     <select id="findByUsername" resultType="top.naccl.entity.User">

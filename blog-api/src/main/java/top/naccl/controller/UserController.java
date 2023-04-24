@@ -69,8 +69,13 @@ public class UserController {
 
     @GetMapping("/getUser")
     public Result getUser(@RequestParam("userId") Long userId){
-        return Result.ok("获取成功",userService.findUserById(userId));
+        User user = userService.findUserById(userId);
+        user.setPassword(null);
+        user.setRole(null);
+        return Result.ok("获取成功",user);
     }
+
+
 
     /**
      * userId关注blogId bloggerId是userId userId是粉丝
@@ -82,6 +87,12 @@ public class UserController {
     public Result addFans(@RequestParam("userId") Long userId,@RequestParam("bloggerId") Long bloggerId){
         return userService.addFans(userId,bloggerId);
     }
+
+    @GetMapping("/cancelFollow")
+    public Result cancelFollow(@RequestParam("userId") Long userId,@RequestParam("bloggerId") Long bloggerId){
+        return userService.cancelFollow(userId,bloggerId);
+    }
+
 
     /**
      * 判断userId是否为bloggerId的粉丝

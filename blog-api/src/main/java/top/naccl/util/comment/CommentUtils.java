@@ -255,7 +255,6 @@ public class CommentUtils {
 	public void setAdminCommentByTelegramAction(Comment comment) {
 		//查出博主信息，默认id为1的记录就是博主
 		User admin = userService.findUserById(1L);
-
 		setGeneralAdminComment(comment, admin);
 		comment.setIp("via Telegram");
 	}

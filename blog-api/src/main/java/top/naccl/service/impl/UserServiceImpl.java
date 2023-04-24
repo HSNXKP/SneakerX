@@ -19,6 +19,7 @@ import top.naccl.util.HashUtils;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 /**
  * @Description: 用户业务层接口实现类
@@ -181,6 +182,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
     }
 
+	/**
+	 * 保存文件
+	 * @param inputStream
+	 * @param fileName
+	 * @param filePath
+	 */
 	private void saveFile(InputStream inputStream, String fileName, String filePath) {
 		OutputStream os = null;
 		try {
@@ -213,6 +220,33 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	@Override
+	public Result getBlogger(Long bloggerId) {
+		User user = userMapper.findById(bloggerId);
+		user.setPassword(null);
+		user.setUserFlag(null);
+		user.setCreateTime(null);
+		user.setUpdateTime(null);
+		user.setRole(null);
+		return Result.ok("获取成功",user);
+	}
+
+
+	@Override
+	public Result cancelFollow(Long userId, Long bloggerId) {
+		// 判断是不是粉丝
+		if (userMapper.getFansByUserIdAndBloggerId(userId,bloggerId) == 1){
+			// 删除粉丝表
+			userMapper.cancelFollow(userId,bloggerId);
+			// 对应的博主粉丝和用户关注都要减去1
+			userMapper.subtractFans(bloggerId);
+			userMapper.subtractFollow(userId);
+			return Result.ok("成功取消关注");
+		}
+		return Result.error("未关注该用户");
 	}
 
 

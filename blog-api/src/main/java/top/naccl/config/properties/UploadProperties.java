@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 静态文件上传访问路径配置(目前用于评论中QQ头像的本地存储)
+ * 静态文件上传访问路径配置
  *
  * @author: wdd
  * @date: 2022-01-23
@@ -25,13 +25,25 @@ public class UploadProperties {
 	 */
 	private String path;
 	/**
+	 * blog本地路径
+	 */
+	private String blogPath;
+	/**
 	 * 服务器地址储存
 	 */
 	private String linuxPath;
 	/**
+	 * 服务器blog地址储存
+	 */
+	private String linuxBlogPath;
+	/**
 	 * 请求地址映射
 	 */
 	private String accessPath;
+	/**
+	 * blog请求地址映射
+	 */
+	private String accessBlogPath;
 	/**
 	 * 本地文件路径映射
 	 */

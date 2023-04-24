@@ -2,6 +2,7 @@ package top.naccl;
 
 import jdk.jfr.internal.Logger;
 import net.minidev.json.JSONObject;
+import org.checkerframework.checker.units.qual.A;
 import org.json.JSONString;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import top.naccl.entity.Blog;
 import top.naccl.entity.Url;
 import top.naccl.entity.User;
+import top.naccl.mapper.BlogMapper;
 import top.naccl.mapper.UrlMapper;
+import top.naccl.model.vo.BlogWithMomentView;
 import top.naccl.service.BlogService;
 import top.naccl.service.UrlService;
 import top.naccl.service.impl.UrlServiceImpl;
@@ -90,6 +93,9 @@ class BlogApiApplicationTests {
 	@Autowired
 	UrlMapper urlMapper;
 
+	@Autowired
+	BlogMapper blogMapper;
+
 
 
 	@Test
@@ -119,6 +125,10 @@ class BlogApiApplicationTests {
 		});
 		System.out.println(objectObjectHashMap);
 
+		List<BlogWithMomentView> bolgListAnonymous = blogMapper.getBolgListAnonymous(1L);
+		for (BlogWithMomentView listAnonymous : bolgListAnonymous) {
+			System.out.println(listAnonymous);
+		}
 	}
 
 	public static  class C{
@@ -141,6 +151,7 @@ class BlogApiApplicationTests {
 			// 将localDateTime转换为时间戳
 			System.out.println(LocalDateTime.now().toInstant(ZoneOffset.of("+8")));
 			System.out.println( LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+
 		}
 
 

@@ -22,4 +22,8 @@ public interface UserService {
 
 
     Result uploadAvatarImage(MultipartFile file, Long userId);
+
+    Result getBlogger(Long bloggerId);
+
+    Result cancelFollow(Long userId, Long bloggerId);
 }

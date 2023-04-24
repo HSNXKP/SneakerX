@@ -42,5 +42,9 @@ public interface UserMapper {
 	Boolean addFollowByUserId(Long userId);
 
 
+	int cancelFollow(@Param("userId") Long userId, @Param("bloggerId") Long bloggerId);
 
+	int subtractFans(Long id);
+
+	int subtractFollow(Long id);
 }

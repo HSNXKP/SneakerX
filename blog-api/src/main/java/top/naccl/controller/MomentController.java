@@ -41,31 +41,31 @@ public class MomentController {
 	 * @param jwt     博主访问Token
 	 * @return
 	 */
-	@VisitLogger(VisitBehavior.MOMENT)
-	@GetMapping("/moments")
-	public Result moments(@RequestParam(defaultValue = "1") Integer pageNum,
-	                      @RequestHeader(value = "Authorization", defaultValue = "") String jwt) {
-		// 定义当前用户的登录状态 true登录 false未登录
-		boolean adminIdentity = false;
-		if (JwtUtils.judgeTokenIsExist(jwt)) {
-			try {
-				String subject = JwtUtils.getTokenBody(jwt).getSubject();
-				if (subject.startsWith(JwtConstants.ADMIN_PREFIX)) {
-					//博主身份Token
-					String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
-					User admin = (User) userService.loadUserByUsername(username);
-					if (admin != null) {
-						adminIdentity = true;
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		PageInfo<Moment> pageInfo = new PageInfo<>(momentService.getMomentVOList(pageNum, adminIdentity));
-		PageResult<Moment> pageResult = new PageResult<>(pageInfo.getPages(), pageInfo.getList());
-		return Result.ok("获取成功", pageResult);
-	}
+//	@VisitLogger(VisitBehavior.MOMENT)
+//	@GetMapping("/moments")
+//	public Result moments(@RequestParam(defaultValue = "1") Integer pageNum,
+//	                      @RequestHeader(value = "Authorization", defaultValue = "") String jwt) {
+//		// 定义当前用户的登录状态 true登录 false未登录
+//		boolean adminIdentity = false;
+//		if (JwtUtils.judgeTokenIsExist(jwt)) {
+//			try {
+//				String subject = JwtUtils.getTokenBody(jwt).getSubject();
+//				if (subject.startsWith(JwtConstants.ADMIN_PREFIX)) {
+//					//博主身份Token
+//					String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
+//					User admin = (User) userService.loadUserByUsername(username);
+//					if (admin != null) {
+//						adminIdentity = true;
+//					}
+//				}
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		PageInfo<Moment> pageInfo = new PageInfo<>(momentService.getMomentVOList(pageNum, adminIdentity));
+//		PageResult<Moment> pageResult = new PageResult<>(pageInfo.getPages(), pageInfo.getList());
+//		return Result.ok("获取成功", pageResult);
+//	}
 
 
 	/**
@@ -81,7 +81,7 @@ public class MomentController {
 	}
 
 	/**
-	 * 通过userId获得内容的标题
+	 * 通过userId获得动态信息
 	 * @return
 	 */
 	@GetMapping("/user/bolgTitleById")
@@ -111,6 +111,16 @@ public class MomentController {
 		PageInfo<BlogWithMomentView> blogPageInfo = new PageInfo<>(blogs);
 		PageResult<BlogWithMomentView> blogPageResult = new PageResult<>(blogPageInfo.getPages(), blogPageInfo.getList());
 		return Result.ok("获取成功",blogPageResult);
+	}
+
+	/**
+	 * 获得博主的简要信息
+	 * @param bloggerId
+	 * @return
+	 */
+	@GetMapping("/getBlogger")
+	public Result getBlogger(@RequestParam("bloggerId") Long bloggerId){
+		return userService.getBlogger(bloggerId);
 	}
 
 	/**
@@ -154,4 +164,7 @@ public class MomentController {
 	public Result updateBlog(@RequestBody top.naccl.model.dto.Blog blog,@RequestHeader(value = "Authorization", defaultValue = "") String jwt,@RequestParam("userId") Long userId){
 		return momentService.editBlog(blog,"update",jwt,userId);
 	}
+
+
+
 }

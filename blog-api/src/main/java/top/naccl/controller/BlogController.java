@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import top.naccl.annotation.VisitLogger;
+import top.naccl.config.properties.UploadProperties;
 import top.naccl.constant.JwtConstants;
 import top.naccl.entity.Blog;
 import top.naccl.entity.User;
@@ -25,7 +27,12 @@ import top.naccl.service.impl.UserServiceImpl;
 import top.naccl.util.JwtUtils;
 import top.naccl.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @Description: 博客相关
@@ -41,6 +48,10 @@ public class BlogController {
 
 	@Autowired
 	private UserMapper userMapper;
+
+
+	@Autowired
+	private UploadProperties uploadProperties;
 
 	/**
 	 * 按置顶、创建时间排序 分页查询博客简要信息列表
@@ -165,6 +176,49 @@ public class BlogController {
 		List<SearchBlog> searchBlogs = blogService.getSearchBlogListByQueryAndIsPublished(query.trim());
 		return Result.ok("获取成功", searchBlogs);
 	}
+
+	@PostMapping("user/blog/upload")
+	public Result blog(MultipartHttpServletRequest multiRequest, HttpServletRequest request) {
+		String blogPath = "";
+		String osName = System.getProperties().getProperty("os.name");
+		if(osName.equals("Linux")){
+			blogPath = uploadProperties.getLinuxBlogPath();
+		}else{
+			blogPath = uploadProperties.getBlogPath();
+		}
+		String accessBlogPath = uploadProperties.getAccessBlogPath();
+		// blog储存地址
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); //生成日期格式
+		String datePrefix = dateFormat.format(new Date()); //生成当前日期作为前缀
+		String savePath = blogPath; // 存储路径
+		File folder = new File(savePath+datePrefix); //生成带当前日期的文件路径
+		if(!folder.isDirectory()){
+			folder.mkdirs();
+		}
+		String randomName = multiRequest.getFile("image").getOriginalFilename(); //获取图片名
+		//生成随机数确保唯一性，并加上图片后缀
+		String saveName = UUID.randomUUID() + randomName.substring(randomName.lastIndexOf("."),randomName.length());
+		String absolutePath = folder.getAbsolutePath(); //转换成绝对路径
+		try {
+			File fileToSave = new File(absolutePath + File.separator + saveName);
+			multiRequest.getFile("image").transferTo(fileToSave); //图片存储到服务端
+			// http://localhost:8090/blog/2023-04-24/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
+//			String returnPath = request.getScheme() + "://"
+//					+ request.getServerName()+":"+request.getServerPort()
+//					+ accessBlogPath + datePrefix +"/"+ saveName;
+			// http://localhost/blog/2023-04-24/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
+			String returnPath = request.getScheme() + "://"
+					+ request.getServerName() + accessBlogPath +  datePrefix + "/" + saveName;
+			return Result.ok("上传成功",returnPath);
+
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return Result.error("上传失败");
+	}
+
+
+
 
 
 
