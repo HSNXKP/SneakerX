@@ -153,27 +153,34 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public Result uploadAvatarImage(MultipartFile file, Long userId) {
 		// 判断当前环境是linux还是window
 		String avatarPath = "";
+		String path = "";
 		String osName = System.getProperties().getProperty("os.name");
 		if(osName.equals("Linux")){
 			avatarPath = uploadProperties.getLinuxPath();
+			path = uploadProperties.getLinuxNginx();
+
 		}else{
 			avatarPath = uploadProperties.getPath();
+			path = uploadProperties.getWindowNginx();
 		}
-		// 拿到头像请求地址映射路径
+		// 拿到头像回显地址/avatar/
 		String accessPath =  uploadProperties.getAccessPath();
 		// 拿到file的后戳
 		String substring = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
 		String fileName = UUID.randomUUID() + substring;
 		try {
 			User user = userMapper.findById(userId);
-			// 储存路径需要补一个/
-			String fileUploadPath =  avatarPath+user.getUsername()+"/";
-			// 头像映射路径
-			String avatarUploadPath = accessPath+ user.getUsername() + "/";
+			// 储存路径需要补一个/  window：D:/Resource/avatar/ linux: /www/image/avatar/
+			String fileUploadPath =  avatarPath + user.getUsername()+"/";
+			// 头像回显地址 /avatar/Admin/
+			String avatarUploadPath = accessPath + user.getUsername() + "/";
 			// 储存头像
 			saveFile(file.getInputStream(),fileName,fileUploadPath);
 			// 设置头像的映射路径 用户的用户名作为文件夹命名
-			user.setAvatar("http://localhost" + avatarUploadPath + fileName);
+			// 本地：http://localhost/avatar/Admin/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
+			// 服务器：http://43.138.9.213/image/avatar/Admin/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
+			// 示例： http://localhost + /avatar/Admin/ + 0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
+			user.setAvatar(path + avatarUploadPath + fileName);
 			// 更新用户
 			userMapper.updateUser(user);
 			return Result.ok("上传成功",user);

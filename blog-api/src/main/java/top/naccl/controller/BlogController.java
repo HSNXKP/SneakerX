@@ -178,20 +178,23 @@ public class BlogController {
 	}
 
 	@PostMapping("user/blog/upload")
-	public Result blog(MultipartHttpServletRequest multiRequest, HttpServletRequest request) {
+	public Result blog(MultipartHttpServletRequest multiRequest) {
 		String blogPath = "";
+		String path = "";
 		String osName = System.getProperties().getProperty("os.name");
 		if(osName.equals("Linux")){
 			blogPath = uploadProperties.getLinuxBlogPath();
+			path = uploadProperties.getLinuxNginx();
 		}else{
 			blogPath = uploadProperties.getBlogPath();
+			path = uploadProperties.getWindowNginx();
 		}
 		String accessBlogPath = uploadProperties.getAccessBlogPath();
 		// blog储存地址
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); //生成日期格式
 		String datePrefix = dateFormat.format(new Date()); //生成当前日期作为前缀
 		String savePath = blogPath; // 存储路径
-		File folder = new File(savePath+datePrefix); //生成带当前日期的文件路径
+		File folder = new File(savePath + datePrefix); //生成带当前日期的文件路径
 		if(!folder.isDirectory()){
 			folder.mkdirs();
 		}
@@ -202,13 +205,10 @@ public class BlogController {
 		try {
 			File fileToSave = new File(absolutePath + File.separator + saveName);
 			multiRequest.getFile("image").transferTo(fileToSave); //图片存储到服务端
-			// http://localhost:8090/blog/2023-04-24/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
-//			String returnPath = request.getScheme() + "://"
-//					+ request.getServerName()+":"+request.getServerPort()
-//					+ accessBlogPath + datePrefix +"/"+ saveName;
-			// http://localhost/blog/2023-04-24/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
-			String returnPath = request.getScheme() + "://"
-					+ request.getServerName() + accessBlogPath +  datePrefix + "/" + saveName;
+			// 本地：http://localhost/blog/2023-04-24/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
+			// 服务器：http://43.138.9.213/image/blog/2023-04-24/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
+			// 示例： http://localhost + /blog/ + 2023-04-24 + / + 0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
+			String returnPath = path +  accessBlogPath +  datePrefix + "/" + saveName;
 			return Result.ok("上传成功",returnPath);
 
 		}catch (Exception e){
