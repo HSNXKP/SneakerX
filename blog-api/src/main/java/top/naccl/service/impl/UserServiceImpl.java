@@ -1,23 +1,33 @@
 package top.naccl.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import top.naccl.config.properties.UploadProperties;
+import top.naccl.entity.Blog;
 import top.naccl.entity.UserFans;
 import top.naccl.exception.NotFoundException;
+import top.naccl.mapper.BlogMapper;
 import top.naccl.mapper.UserMapper;
 import top.naccl.entity.User;
 import top.naccl.model.vo.NewPasswordVo;
+import top.naccl.model.vo.PageResult;
 import top.naccl.model.vo.Result;
 import top.naccl.service.UserService;
 import top.naccl.util.HashUtils;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -33,6 +43,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Autowired
 	private UploadProperties uploadProperties;
+
+	@Autowired
+	private BlogMapper blogMapper;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -77,8 +90,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setRole("ROLE_common");
 		// 设置默认头像
 		user.setAvatar("http://localhost/QQ20221014224335.jpg");
-		// 设置默认登陆标识
-		user.setUserFlag("潮流教父");
+		// 设置默认登陆标识 + 随机五位数
+		Random random = new Random();
+		String randomNumber= String.valueOf((int)(random.nextDouble() * (99999 - 10000 + 1)) + 10000);
+		user.setUserFlag("幸运的卡卡"+ randomNumber);
+		//
 		// 设置默认前戳的颜色为黑色
 		user.setFlagColor("black");
 		// 设置默认签名
@@ -88,6 +104,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		return Result.error("注册失败");
     }
+
 
     @Override
     public Result getPasswordByUserId(NewPasswordVo newPasswordVo) {
@@ -256,6 +273,41 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return Result.error("未关注该用户");
 	}
 
+	@Override
+	public Result getAllUser(String name,Integer pageNum,Integer pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
+		List<User> allUser = userMapper.getAllUser(name);
+		PageInfo<User> pageInfo = new PageInfo<>(allUser);
+		return Result.ok("获取成功",pageInfo);
+	}
+
+	@Override
+	public Result editUser(User user) {
+		int i = userMapper.updateUserByAdmin(user);
+		if (i == 1){
+			return Result.ok("修改成功");
+		}
+		return Result.error("修改失败");
+	}
+
+	@Override
+	public Result deleteUser(Long id) {
+		List<Blog> blogByUserList = blogMapper.getBlogByUserId(id);
+		if (blogByUserList.size() == 0){
+			userMapper.deleteUser(id);
+			return Result.ok("删除成功");
+		}
+		return Result.error("该用户下含有动态，不能删除");
+	}
+
+    @Override
+    public Result getUser(Long id) {
+		User user = userMapper.findById(id);
+		if (user != null){
+			return Result.ok("获取成功",user);
+		}
+		return Result.error("未查询到该用户");
+	}
 
 
 }

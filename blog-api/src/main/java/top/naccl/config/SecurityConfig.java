@@ -68,8 +68,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
 				//未登录时，返回json，在前端执行重定向
 				.exceptionHandling().authenticationEntryPoint(myAuthenticationEntryPoint);
-
-
 	}
 
 

@@ -18,4 +18,7 @@ public interface OrderService {
     Result getOrderListByUserId(Long id);
 
     Result deleteOrderByOrderNumber(String orderNumber, Long userId);
+
+    Result getAllOrder();
+
 }

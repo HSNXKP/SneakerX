@@ -465,6 +465,12 @@ public class OrderServiceImpl implements OrderService {
         return Result.error("没有该订单");
     }
 
+    @Override
+    public Result getAllOrder() {
+        orderMapper.getAllOrder();
+        return null;
+    }
+
     List<OrderListVo> getOrderListByUserId(Long userId, Long parentId) {
         List<OrderListVo> orderList = orderMapper.getOrderListByUserId(userId, parentId);
         for (OrderListVo orderListVo : orderList) {

@@ -1,5 +1,6 @@
 package top.naccl.service;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import top.naccl.entity.User;
 import top.naccl.model.vo.NewPasswordVo;
@@ -26,4 +27,12 @@ public interface UserService {
     Result getBlogger(Long bloggerId);
 
     Result cancelFollow(Long userId, Long bloggerId);
+
+    Result getAllUser(String name,Integer pageNum,Integer pageSize);
+
+    Result editUser(User user);
+
+    Result deleteUser(Long id);
+
+    Result getUser(Long id);
 }

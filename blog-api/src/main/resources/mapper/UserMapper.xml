@@ -58,9 +58,26 @@
     <update id="subtractFollow" parameterType="java.lang.Long">
         update user set follow = follow -1 where id =#{id}
     </update>
+    <!--管理员更新用户    -->
+    <update id="updateUserByAdmin" parameterType="top.naccl.entity.User">
+        update user set username=#{username},
+                        nickname=#{nickname},
+                        email=#{email},
+                        avatar=#{avatar},
+                        update_time=#{updateTime},
+                        user_flag=#{userFlag},
+                        flag_color=#{flagColor},
+                        user_sign=#{userSign},
+                        role=#{role},
+                        password=#{password} where id=#{id}
+    </update>
     <!--取消关注    -->
     <delete id="cancelFollow">
         delete from user_fans where user_id=#{bloggerId} and fans_id=#{userId}
+    </delete>
+    <!--删除用户   -->
+    <delete id="deleteUser" parameterType="java.lang.Long">
+        delete from user where id = #{id}
     </delete>
 
     <!--按用户名查询User-->
@@ -86,6 +103,15 @@
     <!--判断是否为粉丝，当前的登陆的账户需要反转    -->
     <select id="getFansByUserIdAndBloggerId" resultType="java.lang.Integer">
         select count(user_fans.id) as fans from user_fans where user_id=#{bloggerId} and fans_id=#{userId}
+    </select>
+    <!--查询所有用户    -->
+    <select id="getAllUser" resultType="top.naccl.entity.User">
+        select * from user
+        <where>
+            <if test="name != null  and name!= ''">
+                 username=#{name} or nickname=#{name}
+            </if>
+        </where>
     </select>
 
 

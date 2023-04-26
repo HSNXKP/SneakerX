@@ -571,4 +571,8 @@
           and u.id = #{id}
         order by create_time desc
     </select>
+    <!--查询当前用户下有没有动态    -->
+    <select id="getBlogByUserId" resultType="top.naccl.entity.Blog" parameterType="java.lang.Long">
+        select * from blog left join user on  blog.user_id = user.id  where user.id=#{id}
+    </select>
 </mapper>

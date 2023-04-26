@@ -9,6 +9,7 @@ import top.naccl.model.vo.Result;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 /**
  * @Description: 用户持久层接口
@@ -47,4 +48,10 @@ public interface UserMapper {
 	int subtractFans(Long id);
 
 	int subtractFollow(Long id);
+
+    List<User> getAllUser(@Param("name") String name);
+
+	int deleteUser(Long id);
+
+	int updateUserByAdmin(User user);
 }

@@ -148,6 +148,10 @@
     <select id="getOrderListByOrderNumberWithUserId" resultType="top.naccl.entity.Order">
         select * from order_table where order_number = #{orderNumber} and parent_id = #{parentId} and user_id = #{userId}
     </select>
+    <!--查询所有订单    -->
+    <select id="getAllOrder" resultType="top.naccl.entity.Order">
+        select * from order_table
+    </select>
 
 
 </mapper>
