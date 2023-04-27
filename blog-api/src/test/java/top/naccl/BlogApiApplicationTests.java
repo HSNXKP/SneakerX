@@ -7,6 +7,7 @@ import org.json.JSONString;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import top.naccl.entity.Blog;
 import top.naccl.entity.Url;
 import top.naccl.entity.User;
@@ -27,6 +28,10 @@ class BlogApiApplicationTests {
 
 	@Autowired
 	private BlogService blogService;
+
+	@Autowired
+	PasswordEncoder passwordEncoder;
+
 
 	@Test
 	void contextLoads() {

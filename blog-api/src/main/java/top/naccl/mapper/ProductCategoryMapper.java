@@ -14,4 +14,11 @@ public interface ProductCategoryMapper {
 
     ProductCategory getProductCategoryById(@Param("id") Long id);
 
+    List<ProductCategory> getAllProductCategories(@Param("parentId")Long parentId,@Param("name") String name);
+
+    int updateProductCategory(ProductCategory productCategory);
+
+    int deleteProductCategory(Long id);
+
+    int addProductCategory(ProductCategory productCategory);
 }

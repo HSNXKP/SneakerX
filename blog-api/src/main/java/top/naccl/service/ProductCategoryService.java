@@ -13,4 +13,15 @@ public interface ProductCategoryService {
 
     List<ProductCategory> getProductCategoryByParentId(Long id);
 
+    Result getAllProductCategories(Long parentId,String name,Integer pageNum,Integer pageSize);
+
+
+    Result updateProductCategory(ProductCategory productCategory);
+
+    Result deleteProductCategory(Long id);
+
+    Result getProductCategory(Long id);
+
+    Result addProductCategory(ProductCategory productCategory);
+
 }

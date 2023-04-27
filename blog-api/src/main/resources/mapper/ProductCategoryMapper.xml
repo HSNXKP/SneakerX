@@ -7,22 +7,60 @@
         <result property="name" column="name"/>
         <result property="description" column="description"/>
         <result property="image" column="image"/>
-        <result property="parentId" column="parentId"/>
+        <result property="parentId" column="parent_id"/>
     </resultMap>
+    <!--增加分类    -->
+    <insert id="addProductCategory" parameterType="top.naccl.entity.ProductCategory">
+        insert into product_category(name, description, image, parent_id)
+        values (#{name}, #{description}, #{image}, #{parentId})
+    </insert>
+    <!--修改商品分类    -->
+    <update id="updateProductCategory" parameterType="top.naccl.entity.ProductCategory">
+        update product_category
+        <set>
+            <if test="name!=null and name!= '' ">
+                name = #{name},
+            </if>
+            <if test="description!=null and description!= '' ">
+                description = #{description},
+            </if>
+                image = #{image},
+            <if test="parentId!=null and parentId!= '' ">
+                parent_id = #{parentId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <!--删除分类    -->
+    <delete id="deleteProductCategory" parameterType="java.lang.Long">
+        delete from product_category where id = #{id}
+    </delete>
 
     <select id="getProductCategoryByParentId" resultType="top.naccl.entity.ProductCategory">
         select p1.id,
                p1.name,
                p1.image,
                p1.description,
-               p1.parentId,
+               p1.parent_id,
                p2.name as parentName
         from product_category as p1
-                 left join product_category as p2 on p1.parentId = p2.id where p1.parentId = #{parentId}
+                 left join product_category as p2 on p1.parent_id = p2.id where p1.parent_id = #{parentId}
     </select>
 
     <select id="getProductCategoryById" resultType="top.naccl.entity.ProductCategory">
     select * from  product_category as p where p.id=#{id}
+    </select>
+    <!--获取全部的品牌    -->
+    <select id="getAllProductCategories" resultType="top.naccl.entity.ProductCategory">
+        select * from product_category
+        <where>
+            <if test="parentId!=null and parentId!= '' ">
+             parent_id = #{parentId}
+            </if>
+            <if test="name!=null and name!= '' ">
+                 and name like concat('%',#{name},'%')
+            </if>
+        </where>
     </select>
 
 </mapper>
