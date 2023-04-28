@@ -1,5 +1,7 @@
 package top.naccl.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -466,10 +468,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result getAllOrder() {
-        orderMapper.getAllOrder();
-        return null;
+    public Result getAllOrder(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<OrderListVo> orderList = orderMapper.getAllOrderList(-1L);
+        for (OrderListVo orderListVo : orderList) {
+            List<OrderListVo> orderListByUser = orderMapper.getAllOrderList(orderListVo.getId());
+            if (orderListByUser == null) {
+                orderListVo.setChildren(null);
+            }
+            orderListVo.setChildren(orderListByUser);
+        }
+        PageInfo<OrderListVo> orderListVoPageInfo = new PageInfo<>(orderList);
+        return Result.ok("获取成功",orderListVoPageInfo);
     }
+
 
     List<OrderListVo> getOrderListByUserId(Long userId, Long parentId) {
         List<OrderListVo> orderList = orderMapper.getOrderListByUserId(userId, parentId);

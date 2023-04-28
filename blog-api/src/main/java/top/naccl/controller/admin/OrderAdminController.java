@@ -4,6 +4,7 @@ import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.naccl.model.vo.Result;
 import top.naccl.service.OrderService;
@@ -24,7 +25,7 @@ public class OrderAdminController {
 
 
     @GetMapping("/getAllOrder")
-    public Result getAllOrder(){
-        return orderService.getAllOrder();
+    public Result getAllOrder(@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize){
+        return orderService.getAllOrder(pageNum,pageSize);
     }
 }

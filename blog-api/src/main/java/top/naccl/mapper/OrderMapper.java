@@ -29,5 +29,6 @@ public interface OrderMapper {
 
     int deleteOrderByOrderNumber(@Param("orderNumber")String orderNumber,@Param("userId") Long userId,@Param("parentId")Long parentId);
 
-    List<Order>  getAllOrder();
+
+    List<OrderListVo> getAllOrderList(Long parentId);
 }

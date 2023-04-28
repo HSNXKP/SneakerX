@@ -19,6 +19,6 @@ public interface OrderService {
 
     Result deleteOrderByOrderNumber(String orderNumber, Long userId);
 
-    Result getAllOrder();
+    Result getAllOrder(Integer pageNum, Integer pageSize);
 
 }

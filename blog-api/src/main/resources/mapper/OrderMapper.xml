@@ -148,9 +148,12 @@
     <select id="getOrderListByOrderNumberWithUserId" resultType="top.naccl.entity.Order">
         select * from order_table where order_number = #{orderNumber} and parent_id = #{parentId} and user_id = #{userId}
     </select>
-    <!--查询所有订单    -->
-    <select id="getAllOrder" resultType="top.naccl.entity.Order">
-        select * from order_table
+    <!--    -->
+    <select id="getAllOrderList" resultType="top.naccl.model.vo.OrderListVo" parameterType="java.lang.Long">
+        select o.id,o.order_number, p.name,p.image, p.code, o.create_time,o.price, o.quantity, o.size, o.amount,o.parent_id,o.status
+        from order_table as o
+        left join product as p on p.id = o.product_id
+        where o.parent_id = #{parentId} order by o.create_time desc
     </select>
 
 
