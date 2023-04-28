@@ -237,7 +237,10 @@ public class CommentUtils {
 		comment.setUser_id(admin.getId());
 		comment.setUser_flag(admin.getUserFlag());
 		comment.setFlag_color(admin.getFlagColor());
-		comment.setAdminComment(true);
+		if (admin.getRole().equals("ROLE_ADMIN")){
+			comment.setAdminComment(true);
+		}
+		comment.setAdminComment(false);
 		comment.setCreateTime(new Date());
 		comment.setPublished(true);
 		comment.setAvatar(admin.getAvatar());
