@@ -60,6 +60,52 @@ public class UploadProperties {
 	private String accessBlogPath;
 
 	/**
+	 * 商品windows路径
+	 */
+	private String productBrandPath;
+
+	/**
+	 * 商品linux路径
+	 */
+	private String linuxProductBrandPath;
+
+	/**
+	 * 商品回显地址
+	 */
+	private String accessProductBrandPath;
+
+	/**
+	 * 商品windows路径
+	 */
+	private String productCategoryPath;
+
+	/**
+	 * 商品linux路径
+	 */
+	private String linuxProductCategoryPath;
+
+	/**
+	 * 商品回显地址
+	 */
+	private String accessProductCategoryPath;
+
+
+	/**
+	 * 商品windows路径
+	 */
+	private String productPath;
+
+	/**
+	 * 商品linux路径
+	 */
+	private String linuxProductPath;
+
+	/**
+	 * 商品回显地址
+	 */
+	private String accessProductPath;
+
+	/**
 	 * 本地文件路径映射
 	 */
 	private String resourcesLocations;

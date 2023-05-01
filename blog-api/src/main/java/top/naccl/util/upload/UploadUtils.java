@@ -13,6 +13,8 @@ import top.naccl.exception.BadRequestException;
 import top.naccl.util.upload.channel.ChannelFactory;
 import top.naccl.util.upload.channel.FileUploadChannel;
 
+import java.io.*;
+
 /**
  * @Description: 图片下载保存工具类
  * @Author: wdd
@@ -65,5 +67,45 @@ public class UploadUtils {
 			return new ImageResource(responseEntity.getBody(), responseEntity.getHeaders().getContentType().getSubtype());
 		}
 		throw new BadRequestException("response contentType unlike image");
+	}
+
+	/**
+	 * 保存图片到本地或者云存储
+	 * @param inputStream
+	 * @param fileName
+	 * @param filePath
+	 */
+	public static void saveFile(InputStream inputStream, String fileName, String filePath) {
+		OutputStream os = null;
+		try {
+			// 保存到临时文件
+			// 1K的数据缓冲
+			byte[] bs = new byte[1024];
+			// 读取到的数据长度
+			int len;
+			// 输出的文件流保存到本地文件
+			File tempFile = new File(filePath);
+			if (!tempFile.exists()) {
+				tempFile.mkdirs();
+			}
+			os = new FileOutputStream(tempFile.getPath() + File.separator + fileName);
+			// 开始读取
+			while ((len = inputStream.read(bs)) != -1) {
+				os.write(bs, 0, len);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// 完毕，关闭所有链接
+			try {
+				os.close();
+				inputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

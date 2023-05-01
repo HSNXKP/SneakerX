@@ -1,5 +1,6 @@
 package top.naccl.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import top.naccl.entity.Product;
 import top.naccl.model.vo.Result;
 
@@ -34,4 +35,9 @@ public interface ProductService {
 
     Result checkedProductCollect(Long userId, Long productId, Boolean checked,String type);
 
+    Result getAllProduct(Long productCategoryId, String name, Integer pageNum, Integer pageSize);
+
+    Result addProduct(Product product);
+
+    Result uploadProductImage(MultipartFile file);
 }

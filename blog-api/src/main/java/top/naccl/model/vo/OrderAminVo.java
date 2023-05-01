@@ -1,25 +1,24 @@
-package top.naccl.entity;
+package top.naccl.model.vo;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.apache.tomcat.jni.Local;
-import org.apache.tomcat.jni.Time;
-import top.naccl.util.upload.channel.LocalChannel;
+import top.naccl.entity.Order;
+import top.naccl.entity.Product;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * @author: wdd
- * @date: 2023/3/25 14:57
+ * @date: 2023/5/1 17:50
  */
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class Order {
+public class OrderAminVo {
     private Long id;// Id
     private Long userId;// 用户Id
     private Long productId;// 商品Id
@@ -49,7 +48,9 @@ public class Order {
     private LocalDateTime updateTime;//更新时间
     private Long parentId;// 多个商品 否-1
 
-    private Product product;//商品
-    private List<Order> children;// 多商品下单
+    private String name;// 商品
+    private String image;// 商品图片
+    private String code;// 商品货号
 
+    private List<OrderAminVo> children;// 多商品下单
 }

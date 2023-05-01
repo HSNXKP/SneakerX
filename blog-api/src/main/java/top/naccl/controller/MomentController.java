@@ -73,7 +73,7 @@ public class MomentController {
 	 * @param id
 	 * @return
 	 */
-	@AccessLimit(seconds = 86400, maxCount = 1, msg = "不可以重复点赞哦")
+	@AccessLimit(seconds = 10, maxCount = 6, msg = "10秒之内可以点赞哦")
 	@VisitLogger(VisitBehavior.LIKE_MOMENT)
 	@PostMapping("/moment/likeMoment/{id}")
 	public Result likeMoment(@PathVariable Long id){

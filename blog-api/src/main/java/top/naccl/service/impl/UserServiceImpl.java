@@ -21,6 +21,7 @@ import top.naccl.model.vo.PageResult;
 import top.naccl.model.vo.Result;
 import top.naccl.service.UserService;
 import top.naccl.util.HashUtils;
+import top.naccl.util.upload.UploadUtils;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -192,7 +193,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			// 头像回显地址 /avatar/Admin/
 			String avatarUploadPath = accessPath + user.getUsername() + "/";
 			// 储存头像
-			saveFile(file.getInputStream(),fileName,fileUploadPath);
+			UploadUtils.saveFile(file.getInputStream(),fileName,fileUploadPath);
 			// 设置头像的映射路径 用户的用户名作为文件夹命名
 			// 本地：http://localhost/avatar/Admin/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
 			// 服务器：http://43.138.9.213/image/avatar/Admin/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
@@ -205,46 +206,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			throw new RuntimeException(e);
 		}
     }
-
-	/**
-	 * 保存文件
-	 * @param inputStream
-	 * @param fileName
-	 * @param filePath
-	 */
-	private void saveFile(InputStream inputStream, String fileName, String filePath) {
-		OutputStream os = null;
-		try {
-			// 保存到临时文件
-			// 1K的数据缓冲
-			byte[] bs = new byte[1024];
-			// 读取到的数据长度
-			int len;
-			// 输出的文件流保存到本地文件
-			File tempFile = new File(filePath);
-			if (!tempFile.exists()) {
-				tempFile.mkdirs();
-			}
-			os = new FileOutputStream(tempFile.getPath() + File.separator + fileName);
-			// 开始读取
-			while ((len = inputStream.read(bs)) != -1) {
-				os.write(bs, 0, len);
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			// 完毕，关闭所有链接
-			try {
-				os.close();
-				inputStream.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 
 	@Override

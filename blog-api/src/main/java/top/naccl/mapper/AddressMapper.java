@@ -45,5 +45,5 @@ public interface AddressMapper {
      * @param addressId
      * @return
      */
-    Address getAddressByID(@Param("addressId") Long addressId);
+    Address getAddressById(@Param("addressId") Long addressId);
 }

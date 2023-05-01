@@ -13,6 +13,7 @@ import top.naccl.mapper.AddressMapper;
 import top.naccl.mapper.CartMapper;
 import top.naccl.mapper.OrderMapper;
 import top.naccl.mapper.ProductSizeMapper;
+import top.naccl.model.vo.OrderAminVo;
 import top.naccl.model.vo.OrderListVo;
 import top.naccl.model.vo.OrderVo;
 import top.naccl.model.vo.Result;
@@ -88,6 +89,7 @@ public class OrderServiceImpl implements OrderService {
                                         addressMapper.setOtherAddressNotDefault(orderVo.getUserId());
                                         addressMapper.setAddressDefault(orderVo.getAddress());
                                     }
+                                    Address address = addressMapper.getAddressById(orderVo.getAddress());
                                     Order order = new Order();
                                     // 设置订单的用户id
                                     order.setUserId(orderVo.getUserId());
@@ -113,7 +115,7 @@ public class OrderServiceImpl implements OrderService {
                                     // 设置订单的总价
                                     order.setAmount((double) (productSize.getProductPrice() * (orderVo.getQuantity())));
                                     // 设置订单的收货地址
-                                    order.setAddressId(orderVo.getAddress());
+                                    order.setAddress(address.getName() +  address.getPhone()+  "," + address.getAddress()  + address.getAddressDetail());
                                     // 设置订单的支付方式
                                     order.setPayType(orderVo.getPayType());
                                     // 设置支付时间
@@ -191,6 +193,7 @@ public class OrderServiceImpl implements OrderService {
                                     return Result.error("当前商品已售罄");
                                 }
                             }
+                            Address address = addressMapper.getAddressById(orderVo.getAddress());
                             // 设置订单的用户id
                             order.setUserId(orderVo.getUserId());
                             // 设置订单的商品id
@@ -215,7 +218,7 @@ public class OrderServiceImpl implements OrderService {
                             // 设置订单的总价
                             order.setAmount(amount);
                             // 设置订单的收货地址
-                            order.setAddressId(orderVo.getAddress());
+                            order.setAddress(address.getName() + "," +  address.getPhone()+  "," + address.getAddress() + "," + address.getAddressDetail());
                             // 设置订单的支付方式
                             order.setPayType(orderVo.getPayType());
                             // 设置支付时间
@@ -275,7 +278,7 @@ public class OrderServiceImpl implements OrderService {
                                     // 设置订单的总价
                                     oneOrder.setAmount(cart.getAmount());
                                     // 设置订单的收货地址
-                                    oneOrder.setAddressId(orderVo.getAddress());
+                                    oneOrder.setAddress(address.getName() + "," +  address.getPhone()+  "," + address.getAddress() + "," + address.getAddressDetail());
                                     // 设置订单的支付方式
                                     oneOrder.setPayType(orderVo.getPayType());
                                     // 设置支付时间
@@ -345,14 +348,10 @@ public class OrderServiceImpl implements OrderService {
                             // orderList空的话就是单个商品
                             if (orderList.size() == 0) {
                                 order.setChildren(null);
-                                // 设置订单的收货地址
-                                order.setAddress(addressMapper.getAddressByID(order.getAddressId()));
                                 // 设置订单的商品
                                 order.setProduct(productService.getProductById(order.getProductId()));
                                 return Result.ok("查询成功", order);
                             }
-                            // 设置订单的收货地址
-                            order.setAddress(addressMapper.getAddressByID(order.getAddressId()));
                             // 设置商品名称
                             for (Order one : orderList) {
                                 one.setProduct(productService.getProductById(one.getProductId()));
@@ -470,15 +469,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Result getAllOrder(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<OrderListVo> orderList = orderMapper.getAllOrderList(-1L);
-        for (OrderListVo orderListVo : orderList) {
-            List<OrderListVo> orderListByUser = orderMapper.getAllOrderList(orderListVo.getId());
+        List<OrderAminVo> orderList = orderMapper.getAllOrderList(-1L);
+        for (OrderAminVo orderListVo : orderList) {
+            List<OrderAminVo> orderListByUser = orderMapper.getAllOrderList(orderListVo.getId());
             if (orderListByUser == null) {
                 orderListVo.setChildren(null);
             }
             orderListVo.setChildren(orderListByUser);
         }
-        PageInfo<OrderListVo> orderListVoPageInfo = new PageInfo<>(orderList);
+        PageInfo<OrderAminVo> orderListVoPageInfo = new PageInfo<>(orderList);
         return Result.ok("获取成功",orderListVoPageInfo);
     }
 

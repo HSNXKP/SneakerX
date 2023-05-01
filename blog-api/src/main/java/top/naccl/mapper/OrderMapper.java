@@ -6,6 +6,7 @@ import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Repository;
 import top.naccl.entity.Order;
 import top.naccl.entity.ProductSize;
+import top.naccl.model.vo.OrderAminVo;
 import top.naccl.model.vo.OrderListVo;
 import top.naccl.model.vo.Result;
 
@@ -30,5 +31,5 @@ public interface OrderMapper {
     int deleteOrderByOrderNumber(@Param("orderNumber")String orderNumber,@Param("userId") Long userId,@Param("parentId")Long parentId);
 
 
-    List<OrderListVo> getAllOrderList(Long parentId);
+    List<OrderAminVo> getAllOrderList(Long parentId);
 }

@@ -59,6 +59,11 @@
         insert into user_product(user_id, product_id, create_time)
         values (#{userId}, #{productId}, #{createTime})
     </insert>
+    <!--添加商品    -->
+    <insert id="addProduct" parameterType="top.naccl.entity.Product">
+        insert into product(name, image, description,code, color,retail,price,imageUrl, recommend, published, purchaseRestrictions,product_category_id, create_time, update_time)
+        values (#{name}, #{image}, #{description},#{code}, #{color},#{retail},#{price}, #{imageUrl},#{recommend}, #{published}, #{purchaseRestrictions},#{productCategoryId}, #{createTime}, #{updateTime})
+    </insert>
 
     <!--判断商品是否收藏    -->
     <select id="isCollectProductByUserIdAndProductId" resultType="java.lang.Integer">
@@ -73,6 +78,11 @@
         from product
                  left join user_product on product.id = user_product.product_id
         where user_product.user_id = #{userId}
+    </select>
+    <!--获取商品分类的商品    -->
+    <select id="getAllProduct" resultType="top.naccl.entity.Product">
+        select *
+        from product where product_category_id = #{productCategoryId} <if test="name!=null and name!=''"> and name like concat('%',#{name},'%')</if>
     </select>
 
 </mapper>

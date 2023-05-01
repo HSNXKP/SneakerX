@@ -37,4 +37,9 @@ public interface ProductMapper {
     int deleteAllProductCollectByUserId(Long userId);
 
     int checkedProductCollect(@Param("userId")Long userId,@Param("productId") Long productId, @Param("checked")Boolean checked);
+
+    List<Product> getAllProduct(@Param("productCategoryId")Long productCategoryId, @Param("name")String name);
+
+    int addProduct(Product product);
+
 }

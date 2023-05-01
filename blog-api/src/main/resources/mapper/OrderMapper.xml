@@ -4,13 +4,13 @@
 
     <!--通过用户id提交订单列表    -->
     <insert id="summitOrder" parameterType="top.naccl.entity.Order">
-        insert into order_table (user_id, product_id, price, size, quantity, amount, address_id, status, pay_type,
+        insert into order_table (user_id, product_id, price, size, quantity, amount, address, status, pay_type,
                                  pay_time,
                                  delivery_time, delivery, order_remarks, express, finish_time, cancel_time, refund_time,
                                  refund_reason, refund_status, refund_amount, refund_no, refund_time_limit,
                                  refund_remarks,
                                  order_number, create_time, update_time,parent_id)
-        values (#{userId}, #{productId}, #{price}, #{size}, #{quantity}, #{amount}, #{addressId}, #{status}, #{payType},
+        values (#{userId}, #{productId}, #{price}, #{size}, #{quantity}, #{amount}, #{address}, #{status}, #{payType},
                 #{payTime}, #{deliveryTime}, #{delivery}, #{orderRemarks}, #{express}, #{finishTime}, #{cancelTime},
                 #{refundTime}, #{refundReason}, #{refundStatus}, #{refundAmount}, #{refundNo}, #{refundTimeLimit},
                 #{refundRemarks}, #{orderNumber}, #{createTime}, #{updateTime},#{parentId})
@@ -38,8 +38,8 @@
             <if test="amount != null">
                 amount= #{amount},
             </if>
-            <if test="addressId != null">
-                address_id= #{addressId},
+            <if test="address!= null">
+                address= #{address},
             </if>
             <if test="status != null">
                 status= #{status},
@@ -149,8 +149,8 @@
         select * from order_table where order_number = #{orderNumber} and parent_id = #{parentId} and user_id = #{userId}
     </select>
     <!--    -->
-    <select id="getAllOrderList" resultType="top.naccl.model.vo.OrderListVo" parameterType="java.lang.Long">
-        select o.id,o.order_number, p.name,p.image, p.code, o.create_time,o.price, o.quantity, o.size, o.amount,o.parent_id,o.status
+    <select id="getAllOrderList" resultType="top.naccl.model.vo.OrderAminVo" parameterType="java.lang.Long">
+        select o.*,p.name,p.image, p.code
         from order_table as o
         left join product as p on p.id = o.product_id
         where o.parent_id = #{parentId} order by o.create_time desc
