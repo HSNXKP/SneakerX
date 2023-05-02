@@ -40,4 +40,10 @@ public interface ProductService {
     Result addProduct(Product product);
 
     Result uploadProductImage(MultipartFile file);
+
+    Result deleteProduct(Long productId);
+
+    Result updateProduct(Product product);
+
+    Result changeRecommend(Long id, Boolean checked);
 }

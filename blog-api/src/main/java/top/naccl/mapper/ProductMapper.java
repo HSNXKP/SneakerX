@@ -42,4 +42,9 @@ public interface ProductMapper {
 
     int addProduct(Product product);
 
+    int deleteProduct(Long productId);
+
+    int updateProduct(Product product);
+
+    int changeRecommend(Long id, Boolean checked);
 }

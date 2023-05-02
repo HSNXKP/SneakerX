@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import top.naccl.config.properties.UploadProperties;
 import top.naccl.entity.Product;
+import top.naccl.entity.ProductSize;
 import top.naccl.entity.User;
 import top.naccl.exception.NotFoundException;
 import top.naccl.mapper.ProductMapper;
+import top.naccl.mapper.ProductSizeMapper;
 import top.naccl.model.vo.Result;
 import top.naccl.service.ProductService;
+import top.naccl.service.ProductSizeService;
 import top.naccl.util.upload.UploadUtils;
 
 import java.io.IOException;
@@ -34,6 +37,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private UploadProperties uploadProperties;
+
+    @Autowired
+    private ProductSizeMapper productSizeMapper;
 
     @Override
     public List<Product> getProductByProductCategoryId(Long id) {
@@ -66,7 +72,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductById(Long id) {
-
         try {
             Product product = productMapper.getProductById(id);
             if (product == null){
@@ -191,6 +196,35 @@ public class ProductServiceImpl implements ProductService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Result deleteProduct(Long productId) {
+        List<ProductSize> productSizeWithPriceByProductId = productSizeMapper.getProductSizeWithPriceByProductId(productId);
+        if (productSizeWithPriceByProductId.size() == 0){
+            if (productMapper.deleteProduct(productId) == 1){
+                return Result.ok("删除成功");
+            }
+            return Result.error("删除失败");
+        }
+        return Result.error("该商品正在上架，不能删除");
+    }
+
+    @Override
+    public Result updateProduct(Product product) {
+        product.setUpdateTime(product.getCreateTime());
+        if (productMapper.updateProduct(product) == 1){
+            return Result.ok("修改成功");
+        }
+        return Result.error("修改失败");
+    }
+
+    @Override
+    public Result changeRecommend(Long id, Boolean checked) {
+        if (productMapper.changeRecommend(id,checked) == 1){
+            return Result.ok("修改成功");
+        }
+        return Result.error("修改失败");
     }
 
 }

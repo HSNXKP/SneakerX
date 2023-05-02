@@ -35,10 +35,10 @@ public class ProductAdminController {
 
     @PostMapping("/addProduct")
     public Result addProduct(@RequestBody Product product) {
-        product.setCreateTime(LocalDateTime.now());
-        product.setUpdateTime(LocalDateTime.now());
+        product.setUpdateTime(product.getCreateTime());
         product.setPublished(true);
         product.setRecommend(false);
+        product.setImage(product.getImage());
         return productService.addProduct(product);
     }
 
@@ -46,6 +46,30 @@ public class ProductAdminController {
     public Result uploadProductImage(@RequestParam("file") MultipartFile file){
         return productService.uploadProductImage(file);
     }
+
+
+    @GetMapping("/deleteProduct")
+    public Result deleteProduct(@RequestParam("productId")Long productId) {
+        return productService.deleteProduct(productId);
+    }
+
+    @PostMapping("/updateProduct")
+    public Result updateProduct(@RequestBody Product product) {
+        return productService.updateProduct(product);
+    }
+
+    @GetMapping("/getProduct")
+    public Result getProduct(@RequestParam("productId") Long productId) {
+        Product product = productService.getProductById(productId);
+        return Result.ok("获取成功",product);
+    }
+
+    @GetMapping("/changeRecommend")
+    public Result changeRecommend(@RequestParam Long id,@RequestParam Boolean checked) {
+       return productService.changeRecommend(id,checked);
+    }
+
+
 
 
 

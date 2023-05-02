@@ -21,6 +21,59 @@
             and product_id=#{productId}
         </if>
     </update>
+    <!--修改商品    -->
+    <update id="updateProduct" parameterType="top.naccl.entity.Product">
+        update product
+        <set>
+            <if test="name!=null and name!=''">
+                name = #{name},
+            </if>
+            <if test="image!=null and image!=''">
+                image = #{image},
+            </if>
+            <if test="code!=null and code!=''">
+                code = #{code},
+            </if>
+            <if test="description!=null and description!=''">
+                description = #{description},
+            </if>
+            <if test="color!=null and color!=''">
+                color = #{color},
+            </if>
+            <if test="retail!=null and retail!=''">
+                retail = #{retail},
+            </if>
+            <if test="price!=null and price!= ''">
+                price = #{price},
+            </if>
+            <if test="imageUrl!=null and imageUrl!=''">
+                image = #{imageUrl},
+            </if>
+            <if test="recommend!=null">
+                recommend = #{recommend},
+            </if>
+            <if test="published!=null">
+                published = #{published},
+            </if>
+            <if test="productCategoryId!=null">
+                product_category_id = #{productCategoryId},
+            </if>
+            <if test="purchaseRestrictions!=null">
+                purchaseRestrictions = #{purchaseRestrictions},
+            </if>
+            <if test="createTime!=null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime!=null">
+                update_time = #{updateTime}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <!--是否上推荐    -->
+    <update id="changeRecommend">
+        update product set recommend=#{checked} where id=#{id}
+    </update>
     <select id="getProductByProductCategoryId" resultType="top.naccl.entity.Product" parameterType="java.lang.Long">
         select *
         from product as p
@@ -52,6 +105,12 @@
         delete
         from user_product
         where user_id = #{userId} and checked = true
+    </delete>
+    <!--删除商品    -->
+    <delete id="deleteProduct" parameterType="java.lang.Long">
+        delete
+        from product
+        where id = #{id}
     </delete>
 
     <!--收藏商品    -->
