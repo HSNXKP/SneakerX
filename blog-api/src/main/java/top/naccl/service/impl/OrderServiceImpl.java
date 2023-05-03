@@ -467,11 +467,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result getAllOrder(Integer pageNum, Integer pageSize) {
+    public Result getAllOrder(String startDate, String endDate,String orderNumber,Long status, Integer pageNum,Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<OrderAminVo> orderList = orderMapper.getAllOrderList(-1L);
+        List<OrderAminVo> orderList = orderMapper.getAllOrderList(startDate,endDate,orderNumber,status,-1L);
         for (OrderAminVo orderListVo : orderList) {
-            List<OrderAminVo> orderListByUser = orderMapper.getAllOrderList(orderListVo.getId());
+            List<OrderAminVo> orderListByUser = orderMapper.getAllOrderList(startDate,endDate,null,status,orderListVo.getId());
             if (orderListByUser == null) {
                 orderListVo.setChildren(null);
             }
@@ -479,6 +479,60 @@ public class OrderServiceImpl implements OrderService {
         }
         PageInfo<OrderAminVo> orderListVoPageInfo = new PageInfo<>(orderList);
         return Result.ok("获取成功",orderListVoPageInfo);
+    }
+
+    @Override
+    public Result deleteOrder(Long id) {
+        List<Order> order = orderMapper.getOrderById(id,null);
+        if (order.get(0).getParentId() == -1L){
+            if(order.get(0).getStatus() == 4L){
+                List<Order> orderList = orderMapper.getOrderById(null, order.get(0).getId());
+                if (orderList.size() == 0){
+                    if (orderMapper.deleteOrderById(id,-1L) == 1) {
+                        return Result.ok("删除成功");
+                    }
+                    return Result.error("删除失败");
+                }
+                if (orderMapper.deleteOrderById(id,null) == 1 && orderMapper.deleteOrderById(null,order.get(0).getId()) == 1) {
+                    return Result.ok("删除成功");
+                }
+                return Result.error("删除失败");
+            }
+            return Result.error("订单正在进行中无法删除");
+        }
+        return Result.error("选择的订单不是父订单无法删除");
+
+    }
+
+    @Override
+    public Result updateExpress(Long id, String express) {
+        List<Order> order = orderMapper.getOrderById(id,null);
+        if (order.get(0).getParentId() == -1L){
+            if(order.get(0).getStatus() == 1L){
+                    orderMapper.updateExpress(id,express,null);
+                    // 修改状态
+                    orderMapper.updateStatus(id,2L,null);
+                    // 关联的也全部修改
+                    orderMapper.updateExpress(null,express,id);
+                    orderMapper.updateStatus(null,2L,id);
+            }else if (order.get(0).getStatus() == 2L){
+                if (orderMapper.updateExpress(id,express,null) == 1) {
+                    return Result.ok("修改成功");
+                }
+                return Result.error("修改失败");
+            }
+            return Result.error("订单状态无法修改");
+        }else {
+            if(order.get(0).getStatus() == 2L){
+                if (orderMapper.updateExpress(id,express,null) == 1) {
+                    // 关联的也全部修改
+                    return Result.ok("修改成功");
+                }
+                return Result.error("修改失败");
+            }
+            return Result.error("请先将主订单的状态修改，再修改子订单");
+        }
+
     }
 
 

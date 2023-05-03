@@ -101,9 +101,54 @@
         </set>
         where order_number = #{orderNumber} and parent_id = #{parentId}
     </update>
+    <update id="updateExpress">
+        update order_table
+        <set>
+            <if test="express != null">
+                express= #{express},
+            </if>
+        </set>
+       <where>
+              <if test="parentId != null">
+                  parent_id= #{parentId},
+              </if>
+              <if test="id != null">
+                  and id = #{id},
+              </if>
+       </where>
+    </update>
+    <!--更新订单状态    -->
+    <update id="updateStatus">
+        update order_table
+        <set>
+            <if test="status != null">
+                status= #{status},
+            </if>
+        </set>
+        <where>
+            <if test="parentId != null">
+                parent_id= #{parentId},
+            </if>
+            <if test="id != null">
+                id = #{id},
+            </if>
+        </where>
+    </update>
     <delete id="deleteOrderByOrderNumber">
         delete from order_table
         where order_number = #{orderNumber} and parent_id = #{parentId} and user_id = #{userId}
+    </delete>
+    <!--通过id删除订单    -->
+    <delete id="deleteOrderById" parameterType="java.lang.Long">
+        delete from order_table
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="parentId != null">
+                and parent_id = #{parentId}
+            </if>
+        </where>
     </delete>
     <!--查询当前用户下单的单个商品的数量  支付的订单   -->
 <!--    <select id="getProductOrderCountByUserId" resultType="java.lang.Integer" parameterType="java.lang.Long">-->
@@ -153,7 +198,29 @@
         select o.*,p.name,p.image, p.code
         from order_table as o
         left join product as p on p.id = o.product_id
-        where o.parent_id = #{parentId} order by o.create_time desc
+        where o.parent_id = #{parentId}
+        <if test="startDate!=null and endDate!=null">
+            and o.create_time between #{startDate} and #{endDate}
+        </if>
+        <if test="orderNumber!=null and orderNumber!=''">
+            and o.order_number = #{orderNumber}
+        </if>
+        <if test="status!=null">
+            and o.status = #{status}
+        </if>
+        order by o.create_time desc
+    </select>
+    <!--通过id查询订单    -->
+    <select id="getOrderById" resultType="top.naccl.entity.Order" parameterType="java.lang.Long">
+        select * from order_table
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="parentId != null">
+                and parent_id = #{parentId}
+            </if>
+        </where>
     </select>
 
 

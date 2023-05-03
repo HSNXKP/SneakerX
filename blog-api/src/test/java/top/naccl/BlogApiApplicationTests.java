@@ -12,8 +12,10 @@ import top.naccl.entity.Blog;
 import top.naccl.entity.Url;
 import top.naccl.entity.User;
 import top.naccl.mapper.BlogMapper;
+import top.naccl.mapper.OrderMapper;
 import top.naccl.mapper.UrlMapper;
 import top.naccl.model.vo.BlogWithMomentView;
+import top.naccl.model.vo.OrderAminVo;
 import top.naccl.service.BlogService;
 import top.naccl.service.UrlService;
 import top.naccl.service.impl.UrlServiceImpl;
@@ -32,9 +34,14 @@ class BlogApiApplicationTests {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 
+	@Autowired
+	OrderMapper orderMapper;
+
 
 	@Test
 	void contextLoads() {
+		List<OrderAminVo> allOrderList = orderMapper.getAllOrderList(null, null, null, 0L, -1L);
+		allOrderList.forEach(System.out::println);
 	}
 
 	@Test

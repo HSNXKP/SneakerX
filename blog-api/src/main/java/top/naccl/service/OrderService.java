@@ -19,6 +19,10 @@ public interface OrderService {
 
     Result deleteOrderByOrderNumber(String orderNumber, Long userId);
 
-    Result getAllOrder(Integer pageNum, Integer pageSize);
+    Result getAllOrder(String startDate, String endDate,String orderNumber,Long status, Integer pageNum, Integer pageSize);
+
+    Result deleteOrder(Long id);
+
+    Result updateExpress(Long id, String express);
 
 }
