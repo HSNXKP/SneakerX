@@ -96,7 +96,7 @@
                 create_time= #{createTime},
             </if>
             <if test="updateTime != null">
-                update_time= #{updateTime},
+                update_time= #{updateTime}
             </if>
         </set>
         where order_number = #{orderNumber} and parent_id = #{parentId}
@@ -105,15 +105,15 @@
         update order_table
         <set>
             <if test="express != null">
-                express= #{express},
+                express= #{express}
             </if>
         </set>
        <where>
               <if test="parentId != null">
-                  parent_id= #{parentId},
+                  parent_id = #{parentId}
               </if>
               <if test="id != null">
-                  and id = #{id},
+                  and id = #{id}
               </if>
        </where>
     </update>
@@ -122,15 +122,15 @@
         update order_table
         <set>
             <if test="status != null">
-                status= #{status},
+                status= #{status}
             </if>
         </set>
         <where>
             <if test="parentId != null">
-                parent_id= #{parentId},
+                parent_id= #{parentId}
             </if>
             <if test="id != null">
-                id = #{id},
+                and id = #{id}
             </if>
         </where>
     </update>

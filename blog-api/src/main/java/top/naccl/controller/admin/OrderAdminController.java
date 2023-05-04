@@ -45,7 +45,7 @@ public class OrderAdminController {
     }
 
     @GetMapping("/updateExpress")
-    public Result updateOrder(@RequestParam Long id,@RequestParam String express){
+    public Result updateOrder(@RequestParam("id") Long id,@RequestParam("express") String express){
         return orderService.updateExpress(id,express);
     }
 }
