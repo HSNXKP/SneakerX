@@ -2,6 +2,7 @@ package top.naccl.controller.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.naccl.entity.ProductCategory;
 import top.naccl.model.vo.Result;
 import top.naccl.service.ProductCategoryService;
@@ -48,10 +49,9 @@ public class ProductCategoryAdminController {
         return productCategoryService.addProductCategory(productCategory);
     }
 
-
-
-
-
-
+    @PostMapping("/uploadProductCategoryImage")
+    public Result uploadProductImage(@RequestParam("file") MultipartFile file,@RequestParam("type")String type){
+        return productCategoryService.uploadProductCategoryImage(file,type);
+    }
 
 }

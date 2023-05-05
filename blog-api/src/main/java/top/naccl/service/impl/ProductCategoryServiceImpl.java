@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import top.naccl.config.properties.UploadProperties;
 import top.naccl.entity.Product;
 import top.naccl.entity.ProductCategory;
 import top.naccl.exception.NotFoundException;
@@ -13,8 +15,11 @@ import top.naccl.model.vo.Result;
 import top.naccl.service.ProductCategoryService;
 import top.naccl.util.HashUtils;
 import top.naccl.util.StringUtils;
+import top.naccl.util.upload.UploadUtils;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @Author wdd
@@ -31,6 +36,9 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Autowired
     private ProductMapper productMapper;
+
+    @Autowired
+    private UploadProperties uploadProperties;
 
     @Override
     public Result getProductCategories() {
@@ -134,6 +142,47 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             return Result.error("添加失败");
         }
         return Result.error("分类名称和描述不能为空");
+    }
+
+    @Override
+    public Result uploadProductCategoryImage(MultipartFile file,String type) {
+        // 判断当前环境是linux还是window
+        String categoryPath = "";
+        String path = "";
+        String accessPath = "";
+        String osName = System.getProperties().getProperty("os.name");
+        if(osName.equals("Linux")){
+            path = uploadProperties.getLinuxNginx();
+            if (type.equals("productBrandImage")){
+                accessPath = uploadProperties.getAccessProductBrandPath();
+                categoryPath = uploadProperties.getLinuxProductBrandPath();
+            }
+            accessPath = uploadProperties.getAccessProductCategoryPath();
+            categoryPath = uploadProperties.getLinuxProductCategoryPath();
+        }else{
+            path = uploadProperties.getWindowNginx();
+            if (type.equals("productBrandImage")){
+                accessPath = uploadProperties.getAccessProductBrandPath();
+                categoryPath = uploadProperties.getProductBrandPath();
+            }
+            categoryPath = uploadProperties.getProductCategoryPath();
+            accessPath = uploadProperties.getAccessProductCategoryPath();
+        }
+        // 拿到file的后戳
+        String substring = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String fileName = UUID.randomUUID() + substring;
+        try {
+            // 储存图片
+            UploadUtils.saveFile(file.getInputStream(),fileName,categoryPath);
+            // 设置商品的映射路径
+            // 本地：http://localhost/productBrand/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
+            // 服务器：http://43.138.9.213/image/productBrand/0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
+            // 示例： http://localhost + /productBrand/ + 0639b8e1-0978-499f-aa44-beb64b9a1d61.jpg
+            String backPath =  path + accessPath + fileName;
+            return Result.ok("上传成功",backPath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

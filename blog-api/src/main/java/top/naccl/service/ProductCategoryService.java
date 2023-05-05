@@ -1,5 +1,6 @@
 package top.naccl.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import top.naccl.entity.ProductCategory;
 import top.naccl.model.vo.Result;
 
@@ -23,5 +24,8 @@ public interface ProductCategoryService {
     Result getProductCategory(Long id);
 
     Result addProductCategory(ProductCategory productCategory);
+
+    Result uploadProductCategoryImage(MultipartFile file,String type);
+
 
 }
