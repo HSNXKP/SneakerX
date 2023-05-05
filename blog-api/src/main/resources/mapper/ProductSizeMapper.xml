@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.naccl.mapper.ProductSizeMapper">
+    <!--添加商品规格    -->
+    <insert id="addProductInventoryInfo" parameterType="top.naccl.entity.ProductSize">
+        insert into product_size (name, product_id, product_price, product_count)
+        values (#{name}, #{productId}, #{productPrice}, #{productCount})
+    </insert>
+    <!--下架商品规格    -->
+    <delete id="deleteProductInventory" parameterType="java.lang.Long">
+        delete from product_size
+        where id = #{id}
+    </delete>
 
     <!--通过商品Id查询当前商品的尺码和价格    -->
-    <select id="getProductSizeWithPriceByProductId" resultType="top.naccl.entity.ProductSize" parameterType="java.lang.Long">
+    <select id="getProductInventoryInfoByProductId" resultType="top.naccl.entity.ProductSize"
+            parameterType="java.lang.Long">
         select * from product_size where product_id = #{productId}
     </select>
 
@@ -13,6 +24,14 @@
         set product_count = product_count - #{quantity}
         where id = #{id}
     </update>
+    <!--修改商品规格    -->
+    <update id="updateProductInventoryInfo" parameterType="top.naccl.entity.ProductSize">
+        update product_size
+        set name = #{name},
+            product_price = #{productPrice},
+            product_count = #{productCount}
+        where id = #{id} and product_id = #{productId}
+    </update>
 
     <!--通过id获取提交订单的价格尺码    -->
     <select id="getProductSizeById" resultType="top.naccl.entity.ProductSize">
@@ -20,4 +39,18 @@
         FROM product_size
         WHERE id = #{id}
     </select>
+    <!--获得所有商品库存    -->
+    <select id="getAllProductSize" resultType="top.naccl.model.vo.ProductInventory">
+        select *
+        from (select p.id,count(ps.id) as quantity, p.name as productName, p.image, p.code, p.color
+        from product_size as ps
+        left join product as p on ps.product_id = p.id
+        group by ps.product_id) as pi
+        <where>
+            <if test="query != null">
+                pi.productName like concat('%',#{query},'%') or pi.code like concat('%',#{query},'%')
+            </if>
+        </where>
+    </select>
+
 </mapper>

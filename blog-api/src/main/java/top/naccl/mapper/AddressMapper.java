@@ -13,7 +13,7 @@ import java.util.List;
 public interface AddressMapper {
     int saveAddress(Address address);
 
-    int deleteAddress(@Param("id") Long id);
+    int deleteAddress(@Param("id") Long id,@Param("userId") Long userId);
 
     int updateAddress(Address address);
 

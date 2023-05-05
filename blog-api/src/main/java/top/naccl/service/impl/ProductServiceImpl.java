@@ -3,6 +3,7 @@ package top.naccl.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import top.naccl.config.properties.UploadProperties;
@@ -15,6 +16,7 @@ import top.naccl.mapper.ProductSizeMapper;
 import top.naccl.model.vo.Result;
 import top.naccl.service.ProductService;
 import top.naccl.service.ProductSizeService;
+import top.naccl.util.StringUtils;
 import top.naccl.util.upload.UploadUtils;
 
 import java.io.IOException;
@@ -200,7 +202,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Result deleteProduct(Long productId) {
-        List<ProductSize> productSizeWithPriceByProductId = productSizeMapper.getProductSizeWithPriceByProductId(productId);
+        List<ProductSize> productSizeWithPriceByProductId = productSizeMapper.getProductInventoryInfoByProductId(productId);
         if (productSizeWithPriceByProductId.size() == 0){
             if (productMapper.deleteProduct(productId) == 1){
                 return Result.ok("删除成功");
@@ -225,6 +227,17 @@ public class ProductServiceImpl implements ProductService {
             return Result.ok("修改成功");
         }
         return Result.error("修改失败");
+    }
+
+    @Override
+    public Result getAllProductByCodeOrName(String query, Integer pageNum, Integer pageSize) {
+        if (!StringUtils.isEmpty(query)){
+            PageHelper.startPage(pageNum,pageSize);
+            List<Product> productList = productMapper.getAllProductByCodeOrName(query);
+            PageInfo<Product> productPageInfo = new PageInfo<>(productList);
+            return Result.ok("查询成功",productPageInfo);
+        }
+        return Result.error("请填写查询条件");
     }
 
 }

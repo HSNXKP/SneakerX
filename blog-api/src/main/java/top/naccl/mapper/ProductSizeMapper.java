@@ -2,9 +2,12 @@ package top.naccl.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import top.naccl.entity.Order;
 import top.naccl.entity.ProductSize;
+import top.naccl.model.vo.ProductInventory;
+import top.naccl.model.vo.ProductInventoryInfo;
 import top.naccl.model.vo.Result;
 
 import java.util.List;
@@ -19,9 +22,18 @@ import java.util.List;
 @Mapper
 @Repository
 public interface ProductSizeMapper {
-    List<ProductSize> getProductSizeWithPriceByProductId(@Param("productId") Long productId);
 
     ProductSize getProductSizeById(@Param("id") Long id);
 
     boolean reduceProductCount(@Param("id") Long id,@Param("quantity")Long quantity);
+
+    List<ProductInventory> getAllProductSize(@Param("query") String query);
+
+    List<ProductSize> getProductInventoryInfoByProductId(@Param("productId")Long productId);
+
+    int addProductInventoryInfo(ProductSize productSize);
+
+    int updateProductInventoryInfo(ProductSize productSize);
+
+    int deleteProductInventory(Long id);
 }

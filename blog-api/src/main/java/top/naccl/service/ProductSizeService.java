@@ -1,5 +1,7 @@
 package top.naccl.service;
 
+import org.springframework.web.bind.annotation.RequestParam;
+import top.naccl.entity.ProductSize;
 import top.naccl.model.vo.Result;
 
 /**
@@ -12,4 +14,16 @@ import top.naccl.model.vo.Result;
 public interface ProductSizeService {
 
     Result getProductSizeWithPriceByProductId(Long id);
+
+    Result getAllProductSize(String query,Integer pageNum,Integer pageSize);
+
+    Result getProductInventoryInfoByProductId(Long productId, Integer pageNum, Integer pageSize);
+
+    Result addProductInventoryInfo(ProductSize productSize);
+
+    Result updateProductInventoryInfo(ProductSize productSize);
+
+    Result getProductInventory(Long id);
+
+    Result deleteProductInventory(Long id);
 }

@@ -143,5 +143,9 @@
         select *
         from product where product_category_id = #{productCategoryId} <if test="name!=null and name!=''"> and name like concat('%',#{name},'%')</if>
     </select>
+    <!--根据名称或者货号查询全部的商品    -->
+    <select id="getAllProductByCodeOrName" resultType="top.naccl.entity.Product" parameterType="java.lang.String">
+        select * from product as p where p.code like concat('%',#{query},'%') or p.name like concat('%',#{query},'%')
+    </select>
 
 </mapper>

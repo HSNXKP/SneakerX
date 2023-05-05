@@ -47,4 +47,6 @@ public interface ProductMapper {
     int updateProduct(Product product);
 
     int changeRecommend(Long id, Boolean checked);
+
+    List<Product> getAllProductByCodeOrName(String query);
 }

@@ -31,8 +31,8 @@ public class AddressController {
      * 删除地址需要登录
      */
     @GetMapping("/user/deleteAddress")
-    public Result deleteAddress(@RequestParam("id") Long id) {
-        return addressService.deleteAddress(id);
+    public Result deleteAddress(@RequestParam("id") Long id,@RequestParam("userId") Long userId) {
+        return addressService.deleteAddress(id,userId);
     }
 
     /**
@@ -50,4 +50,11 @@ public class AddressController {
     public Result getAddressList(@RequestParam("id") Long id) {
         return addressService.getAddressList(id);
     }
+
+    @GetMapping("/user/changeDefaultAddress")
+    public Result changeDefaultAddress(@RequestParam("id") Long id,@RequestParam("userId") Long userId) {
+        return addressService.changeDefaultAddress(id,userId);
+    }
+
+
 }

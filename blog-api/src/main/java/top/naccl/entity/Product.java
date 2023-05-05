@@ -24,7 +24,7 @@ public class Product {
     private String code;//商品货号
     private String color;//商品配色
     private String retail;//零售价
-    private String price;// 商品价格
+    private Long   price;// 商品价格
     private String imageUrl;// 商品链接
     private Boolean recommend;// 是否上推荐列表
     private Boolean published;// 是否上架

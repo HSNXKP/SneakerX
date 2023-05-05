@@ -46,4 +46,7 @@ public interface ProductService {
     Result updateProduct(Product product);
 
     Result changeRecommend(Long id, Boolean checked);
+
+    Result getAllProductByCodeOrName(String code, Integer pageNum, Integer pageSize);
+
 }

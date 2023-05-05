@@ -40,7 +40,7 @@
     </update>
 
     <delete id="deleteAddress">
-        delete from address where id = #{id}
+        delete from address where id = #{id} and user_id = #{userId}
     </delete>
 
     <!--输入的内容是否存在相同地址  -->

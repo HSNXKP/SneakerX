@@ -56,9 +56,9 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Result deleteAddress(Long id) {
+    public Result deleteAddress(Long id,Long userId) {
         try {
-            if (addressMapper.deleteAddress(id) != 1) {
+            if (addressMapper.deleteAddress(id,userId) != 1) {
                 throw new RuntimeException("删除地址成功");
             }
             return Result.ok("删除地址成功");
@@ -82,5 +82,18 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Result getAddressList(Long id) {
         return Result.ok("获取成功",addressMapper.getAddressList(id));
+    }
+
+    @Override
+    public Result changeDefaultAddress(Long id,Long userId) {
+        try {
+            // 设置其他地址为非默认地址
+            addressMapper.setOtherAddressNotDefault(userId);
+            // 设置当前地址为默认地址
+            addressMapper.setAddressDefault(id);
+            return Result.ok("设置默认地址成功");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

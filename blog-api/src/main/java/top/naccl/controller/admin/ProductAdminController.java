@@ -70,6 +70,14 @@ public class ProductAdminController {
     }
 
 
+    @GetMapping("/getAllProductByCodeOrName")
+    public Result getAllProductByCodeOrName(@RequestParam("query") String query,
+                                      @RequestParam(defaultValue = "1") Integer pageNum,
+                                      @RequestParam(defaultValue = "10") Integer pageSize) {
+        return productService.getAllProductByCodeOrName(query,pageNum,pageSize);
+    }
+
+
 
 
 
