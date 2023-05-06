@@ -156,17 +156,19 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             if (type.equals("productBrandImage")){
                 accessPath = uploadProperties.getAccessProductBrandPath();
                 categoryPath = uploadProperties.getLinuxProductBrandPath();
+            }else{
+                accessPath = uploadProperties.getAccessProductCategoryPath();
+                categoryPath = uploadProperties.getLinuxProductCategoryPath();
             }
-            accessPath = uploadProperties.getAccessProductCategoryPath();
-            categoryPath = uploadProperties.getLinuxProductCategoryPath();
         }else{
             path = uploadProperties.getWindowNginx();
             if (type.equals("productBrandImage")){
                 accessPath = uploadProperties.getAccessProductBrandPath();
                 categoryPath = uploadProperties.getProductBrandPath();
+            }else{
+                accessPath = uploadProperties.getAccessProductCategoryPath();
+                categoryPath = uploadProperties.getProductCategoryPath();
             }
-            categoryPath = uploadProperties.getProductCategoryPath();
-            accessPath = uploadProperties.getAccessProductCategoryPath();
         }
         // 拿到file的后戳
         String substring = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
