@@ -1,13 +1,16 @@
 package top.naccl.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
+import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradePagePayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.naccl.annotation.AccessLimit;
@@ -19,6 +22,7 @@ import top.naccl.mapper.OrderMapper;
 import top.naccl.model.vo.OrderVo;
 import top.naccl.model.vo.Result;
 import top.naccl.service.OrderService;
+import top.naccl.service.impl.OrderServiceImpl;
 import top.naccl.service.impl.UserServiceImpl;
 import top.naccl.util.JwtUtils;
 
@@ -68,23 +72,23 @@ public class OrderController {
 
     @GetMapping("user/cancelOrder")
     public Result cancelOrder(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
-                              @RequestParam("orderNumber") String orderNumber) throws Exception {
-        return orderService.cancelOrder(jwt, orderNumber);
+                              @RequestParam("orderNumber") String orderNumber,Long userId) throws Exception {
+        return orderService.cancelOrder(jwt, orderNumber,userId);
     }
 
 
     @PostMapping("user/order/{orderNumber}")
     public Result getOrderByOrderNumber(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
-                                        @PathVariable("orderNumber") String orderNumber) {
+                                        @PathVariable("orderNumber") String orderNumber,@RequestParam("userId") Long userId) {
         try {
-            return orderService.getOrderByOrderNumber(jwt, orderNumber);
+            return orderService.getOrderByOrderNumber(jwt, orderNumber,userId);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
 
-    @GetMapping("/pay")
+    @GetMapping("user/pay")
     public Result pay(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
                       String orderNumber,String orderRemarks) throws Exception {
         //TODO 没有校验UserId和token的关系
@@ -190,9 +194,11 @@ public class OrderController {
                 if (queryResponse.getTotalAmount().equals(map.get("total_amount"))) {
                     if (map.get("trade_status").equals("TRADE_SUCCESS")) {
                         String out_trade_no = map.get("out_trade_no");
+                        String trade_no = map.get("trade_no");
                         Order order = orderMapper.getOrderByOrderNumberWithUserId(out_trade_no, null, -1L);
                         List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId(out_trade_no, order.getUserId(), order.getId());
-                        // 更新订单状态已支付
+                        // 更新订单状态已支付 将支付宝交易号存入数据库
+                        order.setPayTradeNo(trade_no);
                         orderService.setOrderPayed(order);
                         if (orderList.size() > 0) {
                             for (Order one : orderList) {
@@ -238,7 +244,7 @@ public class OrderController {
 
     @GetMapping("user/getOrder")
     public Result getOrderByUserId(@RequestHeader(value = "Authorization", defaultValue = "") String jwt,
-                                   @RequestParam("id") Long id) {
+                                   @RequestParam("id") Long id,@RequestParam("status") Long status) {
         try {
             if (JwtUtils.judgeTokenIsExist(jwt)) {
                 // 比对当前的token和id是否一致
@@ -248,7 +254,7 @@ public class OrderController {
                 User userDetails = (User) userService.loadUserByUsername(username);
                 if (userDetails != null) {
                     if (userDetails.getId().equals(id)) {
-                        return orderService.getOrderListByUserId(id);
+                        return orderService.getOrderListByUserId(id,status);
                     }
                     return Result.error("token无效，请重新登陆");
                 }
@@ -264,6 +270,22 @@ public class OrderController {
     public Result deleteOrderByOrderNumber(@RequestParam("orderNumber")String orderNumber,@RequestParam("userId") Long userId){
         return orderService.deleteOrderByOrderNumber(orderNumber,userId);
     }
+
+    @GetMapping("user/requestRefund")
+    public Result requestRefund(@RequestParam("orderNumber")String orderNumber,@RequestParam("userId") Long userId){
+        return orderService.requestRefund(orderNumber,userId);
+    }
+
+    @GetMapping("user/cancelRefund")
+    public Result cancelRefund(@RequestParam("orderNumber")String orderNumber,@RequestParam("userId") Long userId){
+        return orderService.cancelRefund(orderNumber,userId);
+    }
+
+    @GetMapping("user/confirmReceipt")
+    public Result confirmReceipt(@RequestParam("orderNumber")String orderNumber,@RequestParam("userId") Long userId){
+        return orderService.confirmReceipt(orderNumber,userId);
+    }
+
 
 
 }

@@ -332,7 +332,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result getOrderByOrderNumber(String jwt, String orderNumber) {
+    public Result getOrderByOrderNumber(String jwt, String orderNumber,Long userId) {
         try {
             if (JwtUtils.judgeTokenIsExist(jwt)) {
                 // 比对当前的token和id是否一致
@@ -344,7 +344,7 @@ public class OrderServiceImpl implements OrderService {
                     Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userDetails.getId(), -1L);
                     if (order != null) {
                         if (order.getUserId().equals(userDetails.getId())) {
-                            List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId("-1", userDetails.getId(), order.getId());
+                            List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId("-1",userId, order.getId());
                             // orderList空的话就是单个商品
                             if (orderList.size() == 0) {
                                 order.setChildren(null);
@@ -383,7 +383,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result cancelOrder(String jwt, String orderNumber) {
+    public Result cancelOrder(String jwt, String orderNumber,Long userId) {
         try {
             if (JwtUtils.judgeTokenIsExist(jwt)) {
                 // 比对当前的token和id是否一致
@@ -392,10 +392,10 @@ public class OrderServiceImpl implements OrderService {
                 //判断token是否为blogToken
                 User userDetails = (User) userService.loadUserByUsername(username);
                 if (userDetails != null) {
-                    Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userDetails.getId(), -1L);
+                    Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userId, -1L);
                     if (order != null) {
                         if (order.getUserId().equals(userDetails.getId())) {
-                            List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId("-1", order.getUserId(), order.getId());
+                            List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId("-1", userId, order.getId());
                             if(orderList.size() == 0){
                                 if (order.getStatus() == 0L) {
                                     order.setUpdateTime(LocalDateTime.now());
@@ -439,9 +439,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result getOrderListByUserId(Long userId) {
+    public Result getOrderListByUserId(Long userId,Long status){
         try {
-            List<OrderListVo> orderList = getOrderListByUserId(userId, -1L);
+            List<OrderListVo> orderList = getOrderListByUserId(userId, -1L,status);
             return Result.ok("获取成功", orderList);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -535,11 +535,74 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+    @Override
+    public Result requestRefund(String orderNumber, Long userId) {
+        Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userId, -1L);
+        if (order != null) {
+            if (order.getStatus() == 1L || order.getStatus() == 2L || order.getStatus() == 3L) {
+                order.setStatus(5L);
+                orderMapper.updateOrder(order);
+                List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId(orderNumber, userId, order.getId());
+                for (Order oneOrder : orderList) {
+                    oneOrder.setStatus(5L);
+                    orderMapper.updateOrder(oneOrder);
+                }
+                return Result.ok("退款审核中，48小时内完成退款");
+            }
+            return Result.error("订单无法申请退款");
+        }
+        return Result.error("没有该订单");
+    }
 
-    List<OrderListVo> getOrderListByUserId(Long userId, Long parentId) {
-        List<OrderListVo> orderList = orderMapper.getOrderListByUserId(userId, parentId);
+    @Override
+    public Result confirmReceipt(String orderNumber, Long userId) {
+        Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userId, -1L);
+        if (order != null) {
+            if (order.getStatus() == 2L) {
+                order.setStatus(3L);
+                orderMapper.updateOrder(order);
+                List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId(orderNumber, userId, order.getId());
+                for (Order oneOrder : orderList) {
+                    oneOrder.setStatus(3L);
+                    orderMapper.updateOrder(oneOrder);
+                }
+                return Result.ok("确认收货成功");
+            }
+            return Result.error("订单无法确认收货");
+        }
+        return Result.error("没有该订单");
+    }
+
+    @Override
+    public Result cancelRefund(String orderNumber, Long userId) {
+        Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userId, -1L);
+        if (order != null) {
+            if (order.getStatus() == 5L) {
+                Long status = null;
+                if (order.getExpress() == null || order.getExpress().equals(" ")) {
+                    status = 1L;
+                } else {
+                    status = 2L;
+                }
+                order.setStatus(status);
+                orderMapper.updateOrder(order);
+                List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId(orderNumber, userId, order.getId());
+                for (Order oneOrder : orderList) {
+                    oneOrder.setStatus(status);
+                    orderMapper.updateOrder(oneOrder);
+                }
+                return Result.ok("取消退款成功");
+            }
+            return Result.error("订单无法取消退款");
+        }
+        return Result.error("没有该订单");
+    }
+
+
+    public List<OrderListVo> getOrderListByUserId(Long userId, Long parentId,Long status) {
+        List<OrderListVo> orderList = orderMapper.getOrderListByUserId(userId, parentId,status);
         for (OrderListVo orderListVo : orderList) {
-            List<OrderListVo> orderListByUser = orderMapper.getOrderListByUserId(userId, orderListVo.getId());
+            List<OrderListVo> orderListByUser = orderMapper.getOrderListByUserId(userId, orderListVo.getId(),status);
             if (orderListByUser == null) {
                 orderListVo.setChildren(null);
             }

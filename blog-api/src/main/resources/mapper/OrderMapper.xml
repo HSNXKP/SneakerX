@@ -9,11 +9,11 @@
                                  delivery_time, delivery, order_remarks, express, finish_time, cancel_time, refund_time,
                                  refund_reason, refund_status, refund_amount, refund_no, refund_time_limit,
                                  refund_remarks,
-                                 order_number, create_time, update_time,parent_id)
+                                 order_number, pay_trade_no,create_time, update_time,parent_id)
         values (#{userId}, #{productId}, #{price}, #{size}, #{quantity}, #{amount}, #{address}, #{status}, #{payType},
                 #{payTime}, #{deliveryTime}, #{delivery}, #{orderRemarks}, #{express}, #{finishTime}, #{cancelTime},
                 #{refundTime}, #{refundReason}, #{refundStatus}, #{refundAmount}, #{refundNo}, #{refundTimeLimit},
-                #{refundRemarks}, #{orderNumber}, #{createTime}, #{updateTime},#{parentId})
+                #{refundRemarks}, #{orderNumber}, #{payTradeNo},#{createTime}, #{updateTime},#{parentId})
     </insert>
 
     <!--更新订单状态    -->
@@ -61,6 +61,9 @@
             </if>
             <if test="express != null">
                 express= #{express},
+            </if>
+            <if test="payTradeNo != null">
+                pay_trade_no= #{payTradeNo},
             </if>
             <if test="finishTime != null">
                 finish_time= #{finishTime},
@@ -179,16 +182,21 @@
         </if>
         and parent_id = #{parentId}
     </select>
-
+    <!--查询当前用户下的订单信息    -->
     <select id="getOrderListByUserId" resultType="top.naccl.model.vo.OrderListVo">
-        select o.id,o.order_number, p.name,p.image, p.code, o.create_time,o.price, o.quantity, o.size, o.amount,o.parent_id,o.status
+        select o.id,o.order_number, p.name,p.image, p.code, o.create_time,o.price, o.quantity, o.size, o.amount,o.parent_id,o.status,o.express
         from order_table as o
                  left join product as p on p.id = o.product_id
         where o.user_id = #{userId}
         <if test="parentId != null">
             and o.parent_id = #{parentId}
-        </if> order by o.create_time desc
+        </if>
+        <if test="status != null">
+            and o.status = #{status}
+        </if>
+        order by o.create_time desc
     </select>
+
     <!--查询订单号下的订单信息    -->
     <select id="getOrderListByOrderNumberWithUserId" resultType="top.naccl.entity.Order">
         select * from order_table where order_number = #{orderNumber} and parent_id = #{parentId} and user_id = #{userId}

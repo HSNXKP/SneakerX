@@ -26,7 +26,7 @@ public interface OrderMapper {
 
     int updateOrder(Order order);
 
-    List<OrderListVo> getOrderListByUserId(@Param("userId")Long userId,@Param("parentId")Long parentId);
+    List<OrderListVo> getOrderListByUserId(@Param("userId")Long userId,@Param("parentId")Long parentId,@RequestParam("status") Long status);
 
     List<Order> getOrderListByOrderNumberWithUserId(@Param("orderNumber")String orderNumber,@Param("userId")Long userId,@Param("parentId")Long parentId);
 
@@ -42,4 +42,5 @@ public interface OrderMapper {
     int updateExpress(Long id, String express,Long parentId);
 
     void updateStatus(Long id, Long status,Long parentId);
+
 }

@@ -31,6 +31,7 @@ public class OrderListVo {
     private Double amount;
     private Long parentId;
     private Long status;
+    private String express;
     private LocalDateTime createTime;
 
     private List<OrderListVo> children;

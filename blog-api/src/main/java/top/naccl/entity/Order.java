@@ -28,7 +28,7 @@ public class Order {
     private Long quantity;// 数量
     private Double amount;// 总价格
     private String address;// 收货地址id
-    private Long status;// 订单状态 0:未支付 1:已支付 2:已发货 3:已完成 4:已取消
+    private Long status;// 订单状态 0:未支付 1:已支付 2:已发货 3:已完成 4:已取消 5:退款中 6:已退款
     private Long payType;// 支付方式 1:微信支付 2:支付宝支付
     private LocalDateTime payTime;// 支付时间
     private LocalDateTime deliveryTime;// 发货时间
@@ -45,6 +45,7 @@ public class Order {
     private String refundTimeLimit;// 退款时限
     private String refundRemarks;// 退款说明
     private String orderNumber;// 订单编号
+    private String payTradeNo;// 支付宝流水号
     private LocalDateTime createTime;//创始时间
     private LocalDateTime updateTime;//更新时间
     private Long parentId;// 多个商品 否-1
