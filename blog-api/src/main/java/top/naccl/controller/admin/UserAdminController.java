@@ -2,6 +2,7 @@ package top.naccl.controller.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.naccl.entity.User;
 import top.naccl.model.vo.Result;
 import top.naccl.service.UserService;
@@ -40,6 +41,11 @@ public class UserAdminController {
     @GetMapping("/getUser")
     public Result getUser(@RequestParam("id") Long id){
         return userService.getUser(id);
+    }
+
+    @PostMapping("/uploadAvatarImage")
+    public Result uploadTongueImage(@RequestParam("file") MultipartFile file, @RequestParam("userId")Long userId){
+        return userService.uploadAvatarImage(file,userId);
     }
 
 }

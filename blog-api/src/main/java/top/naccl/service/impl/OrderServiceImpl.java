@@ -542,9 +542,9 @@ public class OrderServiceImpl implements OrderService {
         if (selectOrder != null) {
             if (selectOrder.getStatus() == 1L || selectOrder.getStatus() == 2L || selectOrder.getStatus() == 3L) {
                 selectOrder.setStatus(5L);
-                selectOrder.setOrderRemarks(order.getOrderRemarks());
+                selectOrder.setRefundRemarks(order.getRefundRemarks());
                 selectOrder.setRefundReason(order.getRefundReason());
-                selectOrder.setRefundAmount(order.getAmount());
+                selectOrder.setRefundAmount(selectOrder.getAmount());
                 selectOrder.setRefundNo(UUID.randomUUID().toString().replace("-", ""));
                 orderMapper.updateOrder(selectOrder);
                 List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId(order.getOrderNumber(), order.getUserId(), order.getId());

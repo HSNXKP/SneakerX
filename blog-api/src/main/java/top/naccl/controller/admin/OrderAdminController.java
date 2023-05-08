@@ -35,8 +35,6 @@ public class OrderAdminController {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private OrderServiceImpl orderServiceImpl;
 
     @Autowired
     private OrderMapper orderMapper;
@@ -100,9 +98,12 @@ public class OrderAdminController {
         if(response.isSuccess()){
             order.setStatus(6L);
             orderMapper.updateOrder(order);
-            for (Order one : orderList) {
-                one.setStatus(6L);
-                orderMapper.updateOrder(one);
+            if (orderList.size() > 0){
+                for (Order one : orderList) {
+                    one.setStatus(6L);
+                    orderMapper.updateOrder(one);
+                }
+                return Result.ok("退款成功");
             }
             return Result.ok("退款成功");
         } else {
