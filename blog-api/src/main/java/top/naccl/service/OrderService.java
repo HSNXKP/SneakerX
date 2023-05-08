@@ -25,10 +25,11 @@ public interface OrderService {
 
     Result updateExpress(Long id, String express);
 
-    Result requestRefund(String orderNumber, Long userId);
+    Result requestRefund(Order order);
 
     Result confirmReceipt(String orderNumber, Long userId);
 
     Result cancelRefund(String orderNumber, Long userId);
 
+    Result refuseRefund(String orderNumber, Long userId);
 }

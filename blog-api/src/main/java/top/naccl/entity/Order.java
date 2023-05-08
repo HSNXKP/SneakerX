@@ -40,7 +40,7 @@ public class Order {
     private LocalDateTime refundTime;// 退款时间
     private String refundReason;// 退款原因
     private Long refundStatus;// 退款状态 0:未退款 1:已退款
-    private Long refundAmount;// 退款金额
+    private Double refundAmount;// 退款金额
     private String refundNo;// 退款单号
     private String refundTimeLimit;// 退款时限
     private String refundRemarks;// 退款说明

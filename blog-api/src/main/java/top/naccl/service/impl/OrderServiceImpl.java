@@ -2,6 +2,7 @@ package top.naccl.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.aspectj.weaver.ast.Or;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -536,13 +537,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result requestRefund(String orderNumber, Long userId) {
-        Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userId, -1L);
-        if (order != null) {
-            if (order.getStatus() == 1L || order.getStatus() == 2L || order.getStatus() == 3L) {
-                order.setStatus(5L);
-                orderMapper.updateOrder(order);
-                List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId(orderNumber, userId, order.getId());
+    public Result requestRefund(Order order) {
+        Order selectOrder = orderMapper.getOrderByOrderNumberWithUserId(order.getOrderNumber(), order.getUserId(), -1L);
+        if (selectOrder != null) {
+            if (selectOrder.getStatus() == 1L || selectOrder.getStatus() == 2L || selectOrder.getStatus() == 3L) {
+                selectOrder.setStatus(5L);
+                selectOrder.setOrderRemarks(order.getOrderRemarks());
+                selectOrder.setRefundReason(order.getRefundReason());
+                selectOrder.setRefundAmount(order.getAmount());
+                selectOrder.setRefundNo(UUID.randomUUID().toString().replace("-", ""));
+                orderMapper.updateOrder(selectOrder);
+                List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId(order.getOrderNumber(), order.getUserId(), order.getId());
                 for (Order oneOrder : orderList) {
                     oneOrder.setStatus(5L);
                     orderMapper.updateOrder(oneOrder);
@@ -594,6 +599,31 @@ public class OrderServiceImpl implements OrderService {
                 return Result.ok("取消退款成功");
             }
             return Result.error("订单无法取消退款");
+        }
+        return Result.error("没有该订单");
+    }
+
+    @Override
+    public Result refuseRefund(String orderNumber, Long userId) {
+        Order order = orderMapper.getOrderByOrderNumberWithUserId(orderNumber, userId, -1L);
+        if (order != null) {
+            if (order.getStatus() == 5L) {
+                Long status = null;
+                if (order.getExpress() == null || order.getExpress().equals(" ")) {
+                    status = 1L;
+                } else {
+                    status = 2L;
+                }
+                order.setStatus(status);
+                orderMapper.updateOrder(order);
+                List<Order> orderList = orderMapper.getOrderListByOrderNumberWithUserId(orderNumber, userId, order.getId());
+                for (Order oneOrder : orderList) {
+                    oneOrder.setStatus(status);
+                    orderMapper.updateOrder(oneOrder);
+                }
+                return Result.ok("拒绝退款成功");
+            }
+            return Result.error("订单无法拒绝退款");
         }
         return Result.error("没有该订单");
     }

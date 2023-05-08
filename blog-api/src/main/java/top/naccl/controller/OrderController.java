@@ -266,21 +266,44 @@ public class OrderController {
         }
     }
 
+    /**
+     * 删除订单
+     * @param orderNumber
+     * @param userId
+     * @return
+     */
     @GetMapping("user/deleteOrderByOrderNumber")
     public Result deleteOrderByOrderNumber(@RequestParam("orderNumber")String orderNumber,@RequestParam("userId") Long userId){
         return orderService.deleteOrderByOrderNumber(orderNumber,userId);
     }
 
-    @GetMapping("user/requestRefund")
-    public Result requestRefund(@RequestParam("orderNumber")String orderNumber,@RequestParam("userId") Long userId){
-        return orderService.requestRefund(orderNumber,userId);
+    /**
+     * 申请退款
+     * @param order
+     * @return
+     */
+    @PostMapping("user/requestRefund")
+    public Result requestRefund(@RequestBody Order order){
+        return orderService.requestRefund(order);
     }
 
+    /**
+     * 取消退款
+     * @param orderNumber
+     * @param userId
+     * @return
+     */
     @GetMapping("user/cancelRefund")
     public Result cancelRefund(@RequestParam("orderNumber")String orderNumber,@RequestParam("userId") Long userId){
         return orderService.cancelRefund(orderNumber,userId);
     }
 
+    /**
+     * 确认收货
+     * @param orderNumber
+     * @param userId
+     * @return
+     */
     @GetMapping("user/confirmReceipt")
     public Result confirmReceipt(@RequestParam("orderNumber")String orderNumber,@RequestParam("userId") Long userId){
         return orderService.confirmReceipt(orderNumber,userId);

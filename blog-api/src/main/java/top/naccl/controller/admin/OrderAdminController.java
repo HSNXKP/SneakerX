@@ -110,4 +110,10 @@ public class OrderAdminController {
         }
     }
 
+
+    @GetMapping("/refuseRefund")
+    public Result refuseRefund(@RequestParam("orderNumber")String orderNumber,@RequestParam("userId") Long userId){
+        return orderService.refuseRefund(orderNumber,userId);
+    }
+
 }
