@@ -552,7 +552,7 @@ public class OrderServiceImpl implements OrderService {
                     oneOrder.setStatus(5L);
                     orderMapper.updateOrder(oneOrder);
                 }
-                return Result.ok("退款审核中，48小时内完成退款");
+                return Result.ok("退款审核中，审核通过后48小时内完成退款");
             }
             return Result.error("订单无法申请退款");
         }
