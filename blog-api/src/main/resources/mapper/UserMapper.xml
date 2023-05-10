@@ -50,6 +50,19 @@
                         user_sign=#{userSign}
                         where id=#{id}
     </update>
+    <!--更新用户    -->
+    <update id="updateAdmin" parameterType="top.naccl.entity.User">
+        update user set username=#{username},
+                        password=#{password},
+                        nickname=#{nickname},
+                        email=#{email},
+                        avatar=#{avatar},
+                        update_time=#{updateTime},
+                        user_flag=#{userFlag},
+                        flag_color=#{flagColor},
+                        user_sign=#{userSign}
+        where id=#{id}
+    </update>
     <!--减去博主的粉丝    -->
     <update id="subtractFans" parameterType="java.lang.Long">
         update user set fans = fans -1 where id =#{id}

@@ -32,6 +32,7 @@ public interface UserMapper {
 	boolean updateUserPassword(@Param("id") Long id,@Param("password") String password);
 
 	int updateUser(User user);
+	int updateAdmin(User user);
 
 	int getUserByUserName(String username);
 

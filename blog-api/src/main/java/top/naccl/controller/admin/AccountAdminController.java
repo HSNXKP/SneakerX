@@ -2,10 +2,7 @@ package top.naccl.controller.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.naccl.entity.User;
 import top.naccl.mapper.UserMapper;
 import top.naccl.model.vo.Result;
@@ -27,11 +24,11 @@ public class AccountAdminController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/account")
-    public Result account(User user){
+    public Result account(@RequestBody User user){
         User admin = userMapper.findByUsername(user.getUsername());
         if (admin.getRole().equals("ROLE_admin")){
             admin.setPassword(passwordEncoder.encode(user.getPassword()));
-            userMapper.updateUser(user);
+            userMapper.updateAdmin(admin);
             return Result.ok("修改成功");
         }
         return Result.error("修改失败，您没有权限");
