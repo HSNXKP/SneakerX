@@ -77,17 +77,25 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 		String jwt = JwtUtils.generateToken(authResult.getName(), authResult.getAuthorities());
 		response.setContentType("application/json;charset=utf-8");
 		User user = (User) authResult.getPrincipal();
-		user.setPassword(null);
-		Map<String, Object> map = new HashMap<>(4);
-		map.put("user", user);
-		map.put("token", jwt);
-		Result result = Result.ok("后台登录成功", map);
+		Result result = null;
+		if (!user.getRole().equals("ROLE_admin")) {
+			result = Result.create(403, "权限不足");
+			LoginLog log = handleLog(request, false, "权限不足");
+			loginLogService.saveLoginLog(log);
+		}else {
+			user.setPassword(null);
+			Map<String, Object> map = new HashMap<>(4);
+			map.put("user", user);
+			map.put("token", jwt);
+			result = Result.ok("后台登录成功", map);
+			LoginLog log = handleLog(request, true, "后台登录成功");
+			loginLogService.saveLoginLog(log);
+		}
 		PrintWriter out = response.getWriter();
 		out.write(JacksonUtils.writeValueAsString(result));
 		out.flush();
 		out.close();
-		LoginLog log = handleLog(request, true, "后台登录成功");
-		loginLogService.saveLoginLog(log);
+
 	}
 
 	@Override
