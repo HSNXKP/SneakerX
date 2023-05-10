@@ -26,6 +26,7 @@ public class Introduction {
 	private String bilibili;
 	private String netease;
 	private String email;
+	private String anonymousAvatarUrl;
 
 	private List<String> rollText = new ArrayList<>();
 	private List<Favorite> favorites = new ArrayList<>();

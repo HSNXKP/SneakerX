@@ -115,6 +115,8 @@ public class SiteSettingServiceImpl implements SiteSettingService {
                         case SiteSettingConstants.EMAIL:
                             introduction.setEmail(s.getValue());
                             break;
+                        case SiteSettingConstants.ANONYMOUS_AVATAR:
+                            introduction.setAnonymousAvatarUrl(s.getValue());
                         case SiteSettingConstants.FAVORITE:
                             Favorite favorite = JacksonUtils.readValue(s.getValue(), Favorite.class);
                             favorites.add(favorite);
