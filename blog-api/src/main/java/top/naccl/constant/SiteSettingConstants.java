@@ -18,4 +18,5 @@ public class SiteSettingConstants {
 	public static final String EMAIL = "email";
 	public static final String FAVORITE = "favorite";
 	public static final String ROLL_TEXT = "rollText";
+	public static final String ANONYMOUS_AVATAR = "anonymousAvatarUrl";
 }

@@ -19,6 +19,7 @@ import top.naccl.entity.User;
 import top.naccl.model.vo.NewPasswordVo;
 import top.naccl.model.vo.PageResult;
 import top.naccl.model.vo.Result;
+import top.naccl.service.SiteSettingService;
 import top.naccl.service.UserService;
 import top.naccl.util.HashUtils;
 import top.naccl.util.upload.UploadUtils;
@@ -26,10 +27,7 @@ import top.naccl.util.upload.UploadUtils;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -47,6 +45,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Autowired
 	private BlogMapper blogMapper;
+
+	@Autowired
+	private SiteSettingService siteSettingService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -89,8 +90,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		// 密码加密
 		user.setPassword(HashUtils.getBC(user.getPassword()));
 		user.setRole("ROLE_common");
+		siteSettingService.getAnonymousAvatar();
 		// 设置默认头像
-		user.setAvatar("http://localhost/QQ20221014224335.jpg");
+		user.setAvatar(siteSettingService.getAnonymousAvatar());
 		// 设置默认登陆标识 + 随机五位数
 		Random random = new Random();
 		String randomNumber= String.valueOf((int)(random.nextDouble() * (99999 - 10000 + 1)) + 10000);
