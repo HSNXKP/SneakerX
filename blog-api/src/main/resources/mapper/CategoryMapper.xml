@@ -31,6 +31,10 @@
     <select id="getCategoryByName" resultMap="category">
         select id, category_name from category where category_name=#{name}
     </select>
+    <!--获得全部分类     -->
+    <select id="getAllCategory" resultType="top.naccl.entity.Category">
+        select * from category
+    </select>
 
     <!--按id删除分类-->
     <delete id="deleteCategoryById">

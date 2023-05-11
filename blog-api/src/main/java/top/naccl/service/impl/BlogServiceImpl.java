@@ -440,11 +440,15 @@ public class BlogServiceImpl implements BlogService {
 				|| blog.getWords() == null || blog.getWords() < 0) {
 			return Result.error("参数有误");
 		}
-
+		List<Category> allCategory = categoryService.getAllCategory();
+		// 生成随机分类id
+		Random random = new Random();
+		int index = random.nextInt(allCategory.size());
+		Integer categoryId = Math.toIntExact(allCategory.get(index).getId());
 		//处理分类
 		Object cate = blog.getCate();
 		if (cate == null) {
-			return Result.error("分类不能为空");
+			cate = categoryId;
 		}
 		if (cate instanceof Integer) {//选择了已存在的分类
 			Category c = categoryService.getCategoryById(((Integer) cate).longValue());

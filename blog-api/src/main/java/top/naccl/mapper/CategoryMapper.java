@@ -27,4 +27,7 @@ public interface CategoryMapper {
 	int deleteCategoryById(Long id);
 
 	int updateCategory(Category category);
+
+    List<Category> getAllCategory();
+
 }

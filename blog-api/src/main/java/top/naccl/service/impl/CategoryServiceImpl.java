@@ -87,4 +87,9 @@ public class CategoryServiceImpl implements CategoryService {
 		//修改了分类名，可能有首页文章关联了分类，也要更新首页缓存
 		redisService.deleteCacheByKey(RedisKeyConstants.HOME_BLOG_INFO_LIST);
 	}
+
+    @Override
+    public List<Category> getAllCategory() {
+		return categoryMapper.getAllCategory();
+    }
 }
