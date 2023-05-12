@@ -127,11 +127,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public Result updateUser(User user) {
 		int userCount = userMapper.getUserByUserName(user.getUsername());
 		if (userCount == 1) {
-			user.setUpdateTime(LocalDateTime.now());
-			if (userMapper.updateUser(user) == 1){
-				return Result.ok("更新成功");
+			User userByUserFlag = userMapper.getUserByUserFlag(user.getUserFlag());
+			if (userByUserFlag == null){
+				user.setUpdateTime(LocalDateTime.now());
+				if (userMapper.updateUser(user) == 1){
+					return Result.ok("更新成功");
+				}
+				return Result.error("更新失败");
 			}
-			return Result.error("更新失败");
+			return Result.error("已存在当前的前戳");
 		}
 		return Result.error("用户名已存在");
 	}

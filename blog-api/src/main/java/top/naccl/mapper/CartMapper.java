@@ -20,7 +20,7 @@ public interface CartMapper {
 
     List<Cart> getCartByUserId(@Param("userId") Long userId,@Param("checked") Boolean checked);
 
-    List<Cart> getCartByProductCategoryId(@Param("productCategoryId") Long productCategoryId);
+    List<Cart> getCartByProductCategoryId(@Param("productCategoryId") Long productCategoryId,@Param("userId") Long userId);
 
     int addQuantityById(@Param("id") Long id,@Param("userId")Long userId);
 

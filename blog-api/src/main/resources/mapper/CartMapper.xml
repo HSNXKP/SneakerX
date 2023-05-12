@@ -123,7 +123,7 @@
     <select id="getCartByProductCategoryId" resultType="top.naccl.entity.Cart" parameterType="java.lang.Long">
         select *
         from cart
-        where product_category_id = #{productCategoryId};
+        where product_category_id = #{productCategoryId} and user_id = #{userId}
     </select>
     <!--通过id查询购物车   -->
     <select id="getCartById" resultType="top.naccl.entity.Cart" parameterType="java.lang.Long">

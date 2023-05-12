@@ -55,4 +55,6 @@ public interface UserMapper {
 	int deleteUser(Long id);
 
 	int updateUserByAdmin(User user);
+
+	User getUserByUserFlag(String userFlag);
 }

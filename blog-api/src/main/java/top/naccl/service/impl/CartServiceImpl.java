@@ -1,7 +1,5 @@
 package top.naccl.service.impl;
 
-import org.checkerframework.checker.units.qual.A;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.naccl.constant.JwtConstants;
@@ -17,10 +15,7 @@ import top.naccl.util.JwtUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author: wdd
@@ -141,20 +136,26 @@ public class CartServiceImpl implements CartService {
                             Cart cartCategory = new Cart();
                             List<Cart> carts = new ArrayList<>();
                             // 通过商品分类id来判断是否是同一个分类
-                            Long productCategoryId = null;
+                            // 创建一个数组
+                            List<Long> productCategoryList = new ArrayList<>();
+                            // 添加一个默认属性 时进行循环
+                            productCategoryList.add(-999L);
                             for (Cart cart : cartList) {
                                 if (cart.getProductCategoryId() != null){
-                                    if (!cart.getProductCategoryId().equals(productCategoryId)){
-                                        // 将上一个分类的商品加入到集合中 并且将当前的分类id、分类名赋值给当前的cart中
-                                        productCategoryId = cart.getProductCategoryId();
-                                        List<Cart> cartListByProductCategoryId = cartMapper.getCartByProductCategoryId(cart.getProductCategoryId());
-                                        cartCategory.setProductCategoryName(cart.getProductCategoryName());
-                                        cartCategory.setProductCategoryId(cart.getProductCategoryId());
-                                        cartCategory.setCartList(cartListByProductCategoryId);
-                                        carts.add(cartCategory);
-                                    }
+                                        for (Long category : productCategoryList) {
+                                            if (!cart.getProductCategoryId().equals(category)){
+                                                // 将上一个分类的商品加入到集合中 并且将当前的分类id、分类名赋值给当前的cart中
+                                                productCategoryList.add(cart.getProductCategoryId());
+                                                // 通过当前的分类id查询处理所有的商品，将商品放到这个分类下的child中:setCartList
+                                                List<Cart> cartListByProductCategoryId = cartMapper.getCartByProductCategoryId(cart.getProductCategoryId(),userId);
+                                                cartCategory.setProductCategoryName(cart.getProductCategoryName());
+                                                cartCategory.setProductCategoryId(cart.getProductCategoryId());
+                                                cartCategory.setCartList(cartListByProductCategoryId);
+                                                carts.add(cartCategory);
+                                            }
+                                        }
                                 }
-                            }
+                             }
                             // 判断当前分类下的所有商品是否被选中
                             carts.forEach(cart ->{
                                 Boolean checkedTrue = true;
