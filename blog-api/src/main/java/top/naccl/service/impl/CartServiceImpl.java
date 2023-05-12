@@ -138,24 +138,21 @@ public class CartServiceImpl implements CartService {
                             // 通过商品分类id来判断是否是同一个分类
                             // 创建一个数组
                             List<Long> productCategoryList = new ArrayList<>();
-                            // 添加一个默认属性 时进行循环
-                            productCategoryList.add(-999L);
-                            for (Cart cart : cartList) {
-                                if (cart.getProductCategoryId() != null){
-                                        for (Long category : productCategoryList) {
-                                            if (!cart.getProductCategoryId().equals(category)){
-                                                // 将上一个分类的商品加入到集合中 并且将当前的分类id、分类名赋值给当前的cart中
-                                                productCategoryList.add(cart.getProductCategoryId());
-                                                // 通过当前的分类id查询处理所有的商品，将商品放到这个分类下的child中:setCartList
-                                                List<Cart> cartListByProductCategoryId = cartMapper.getCartByProductCategoryId(cart.getProductCategoryId(),userId);
-                                                cartCategory.setProductCategoryName(cart.getProductCategoryName());
-                                                cartCategory.setProductCategoryId(cart.getProductCategoryId());
-                                                cartCategory.setCartList(cartListByProductCategoryId);
-                                                carts.add(cartCategory);
-                                            }
-                                        }
+                            // 将商品中所有的分类id拿出来进行去重
+                            cartList.stream().forEach(cart -> {
+                                if (!productCategoryList.contains(cart.getProductCategoryId())){
+                                    productCategoryList.add(cart.getProductCategoryId());
                                 }
-                             }
+                            });
+                            for (Long categoryId : productCategoryList) {
+                                List<Cart> cartProductCategoryList = cartMapper.getCartByProductCategoryId(categoryId,userId);
+                                cartCategory.setProductCategoryName(cartProductCategoryList.get(0).getProductCategoryName());
+                                cartCategory.setProductCategoryId(cartProductCategoryList.get(0).getProductCategoryId());
+                                cartCategory.setCartList(cartProductCategoryList);
+                                carts.add(cartCategory);
+                                // 清空cartCategory
+                                cartCategory = new Cart();
+                            }
                             // 判断当前分类下的所有商品是否被选中
                             carts.forEach(cart ->{
                                 Boolean checkedTrue = true;
