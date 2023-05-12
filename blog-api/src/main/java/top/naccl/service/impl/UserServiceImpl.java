@@ -128,6 +128,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		int userCount = userMapper.getUserByUserName(user.getUsername());
 		if (userCount == 1) {
 			User userFlag = userMapper.getUserByUserFlag(user.getUserFlag());
+			if(userFlag == null){
+				user.setUpdateTime(LocalDateTime.now());
+				if (userMapper.updateUser(user) == 1){
+					return Result.ok("更新成功");
+				}
+			}
 			if (userFlag.getId().equals(user.getId())){
 				user.setUpdateTime(LocalDateTime.now());
 				if (userMapper.updateUser(user) == 1){
