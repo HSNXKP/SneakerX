@@ -56,5 +56,5 @@ public interface UserMapper {
 
 	int updateUserByAdmin(User user);
 
-	User getUserByUserFlag(String userFlag);
+	User getUserByUserFlag(@Param("userFlag") String userFlag);
 }

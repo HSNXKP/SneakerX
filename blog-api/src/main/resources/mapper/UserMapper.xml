@@ -127,8 +127,8 @@
         </where>
     </select>
     <!--通过前戳标识拿到user    -->
-    <select id="getUserByUserFlag" resultType="top.naccl.entity.User" parameterType="java.lang.String">
-        select * from user where user_flag = #{userFlag}
+    <select id="getUserByUserFlag" parameterType="java.lang.String" resultType="top.naccl.entity.User">
+        select * from user where user_flag=#{userFlag}
     </select>
 
 
