@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 import top.naccl.entity.Blog;
 import top.naccl.entity.Url;
 import top.naccl.entity.User;
@@ -83,9 +84,13 @@ class BlogApiApplicationTests {
 
 
 	}
+	@Autowired
+	private SpringTemplateEngine templateEngine;
+
 
 	@Test
 	void test2(){
+		templateEngine.clearTemplateCache();
 		// 拿到文件后戳
 		String osName = System.getProperties().getProperty("os.name");
 		if(osName.equals("Linux"))

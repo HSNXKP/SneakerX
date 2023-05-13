@@ -2,6 +2,8 @@ package top.naccl.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,16 +11,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import top.naccl.config.properties.MailConstants;
 import top.naccl.config.properties.UploadProperties;
 import top.naccl.entity.Blog;
+import top.naccl.entity.MailLog;
 import top.naccl.entity.UserFans;
 import top.naccl.exception.NotFoundException;
 import top.naccl.mapper.BlogMapper;
+import top.naccl.mapper.MailLogMapper;
 import top.naccl.mapper.UserMapper;
 import top.naccl.entity.User;
 import top.naccl.model.vo.NewPasswordVo;
 import top.naccl.model.vo.PageResult;
 import top.naccl.model.vo.Result;
+import top.naccl.service.ScheduleJobService;
 import top.naccl.service.SiteSettingService;
 import top.naccl.service.UserService;
 import top.naccl.util.HashUtils;
@@ -48,6 +54,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Autowired
 	private SiteSettingService siteSettingService;
+
+	@Autowired
+	private RabbitTemplate rabbitTemplate;
+
+	@Autowired
+	private MailLogMapper mailLogMapper;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -103,6 +115,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		// 设置默认签名
 		user.setUserSign("这个人很懒，什么都没有留下");
 		if (userMapper.registerUser(user)){
+			User userMail = userMapper.findByUsername(user.getUsername());
+			// 唯一标识符UUID
+			String msgID = UUID.randomUUID().toString();
+			MailLog mailLog = new MailLog();
+			mailLog.setMsgId(msgID);
+			mailLog.setUserId(userMail.getId());
+			mailLog.setStatus(MailConstants.DELIVERING);
+			mailLog.setRouteKey(MailConstants.MAIL_ROUTING_KEY_NAME);
+			mailLog.setExchange(MailConstants.MAIL_EXCHANGE_NAME);
+			mailLog.setCount(0);
+			mailLog.setTryTime(LocalDateTime.now().plusMinutes(MailConstants.MSG_TIMEOUT));
+			mailLog.setCreateTime(LocalDateTime.now());
+			mailLog.setUpdateTime(LocalDateTime.now());
+			// 消息入库
+			mailLogMapper.insertMailLog(mailLog);
+			// 发送消息
+			rabbitTemplate.convertAndSend(MailConstants.MAIL_EXCHANGE_NAME,MailConstants.MAIL_ROUTING_KEY_NAME,userMail,new CorrelationData(msgID));
 			return Result.ok("注册成功");
 		}
 		return Result.error("注册失败");

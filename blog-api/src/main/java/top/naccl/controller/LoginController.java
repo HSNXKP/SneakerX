@@ -1,5 +1,6 @@
 package top.naccl.controller;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -33,6 +34,8 @@ public class LoginController {
 
 	@Autowired
 	private UserMapper userMapper;
+
+
 
 
 	/**

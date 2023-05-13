@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.theymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SneakerX</title>
+</head>
+<body>
+Hi:<span th:text="${nickname}"></span>欢迎加入SneakerX
+<table border="1">
+    <p>
+        球鞋潮流社区为球鞋爱好者提供一个交流的平台。在这个平台中，他们可以自由地讨论最新的球鞋潮流，分享自己的知识和经验，并了解其他人对球鞋的看法。<br><br>
+        球鞋潮流社区还可以为球鞋行业提供一个有效的营销渠道，让品牌和零售商可以向目标用户推广他们的产品和服务。<br><br>
+        球鞋潮流社区可以为球鞋爱好者提供一个交流的平台，为球鞋行业提供一个有效的营销渠道。我们值得被更多人关注，我们值得被更多人喜欢，我们值得被更多人支持。
+    </p>
+</table>
+<div style="display: flow">
+    <span style="float: start">
+        感谢<br>
+        SneakerX Team
+    </span>
+    <span style="float: right">
+        加入时间:<span th:text="${createTime}"></span>
+    </span>
+</div>
+
+
+
+
+</body>
+</html>

@@ -51,4 +51,9 @@ public class RedisKeyConstants {
 	 * QQ号与对应头像URL key
 	 */
 	public static final String QQ_AVATAR_URL_MAP = "qqAvatarUrlMap";
+
+	/**
+	 * 邮件发送msgId key
+	 */
+	public static final String MAIL_MSG_ID_MAP = "mailMsgIdMap";
 }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.naccl.mapper.MailLogMapper">
+
+    <resultMap id="mailLog" type="top.naccl.entity.MailLog">
+        <id property="msgId" column="msg_id"/>
+        <id property="userId" column="user_id"/>
+        <result property="status" column="status"/>
+        <result property="routeKey" column="route_key"/>
+        <result property="exchange" column="exchange"/>
+        <result property="count" column="count"/>
+        <result property="tryTime" column="try_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <!--增加邮件日志信息    -->
+    <insert id="insertMailLog" parameterType="top.naccl.entity.MailLog">
+        insert into mail_log (msg_id, user_id, status, route_key, exchange, count, try_time, create_time, update_time)
+        values (#{msgId}, #{userId}, #{status}, #{routeKey}, #{exchange}, #{count}, #{tryTime}, #{createTime}, #{updateTime})
+    </insert>
+    <!--更新mailLog状态    -->
+    <update id="updateMailStatus">
+        update mail_log set status = #{status}, update_time = #{updateTime} where msg_id = #{msgId}
+    </update>
+    <!--更新MailLog    -->
+    <update id="updateMail">
+        update mail_log set user_id = #{userId},
+                            status = #{status},
+                            route_key = #{routeKey},
+                            exchange = #{exchange},
+                            count = #{count},
+                            try_time = #{tryTime},
+                            create_time = #{createTime},
+                            update_time = #{updateTime} where msg_id = #{msgId}
+    </update>
+    <!--查询失败发送的邮件    -->
+<!--    符号替换
+<     &lt;
+<=    &lt;=
+>     &gt;
+>=    &gt;=
+&     &amp;
+'     &apos;
+"     &quot;
+-->
+    <select id="getStatusFailList" resultType="top.naccl.entity.MailLog">
+        select * from mail_log where status = #{status}
+    </select>
+
+
+</mapper>
