@@ -20,8 +20,8 @@ public class Cart {
     private Long id;// 购物车ID
     private String name;// 商品名称
     private String productCategoryName;// 商品分类名称
-    private String code;// 设置货号
-    private String image;// 设置商品图片
+    private String code;// 商品货号
+    private String image;// 商品图片
     private Long userId;// 用户ID
     private Long productId;// 商品ID
     private Long productCategoryId;// 商品分类ID

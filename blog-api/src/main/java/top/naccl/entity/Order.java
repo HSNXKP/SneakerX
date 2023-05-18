@@ -27,7 +27,7 @@ public class Order {
     private String size;// 商品尺码
     private Long quantity;// 数量
     private Double amount;// 总价格
-    private String address;// 收货地址id
+    private String address;// 收货地址
     private Long status;// 订单状态 0:未支付 1:已支付 2:已发货 3:已完成 4:已取消 5:退款中 6:已退款
     private Long payType;// 支付方式 1:微信支付 2:支付宝支付
     private LocalDateTime payTime;// 支付时间
