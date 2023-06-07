@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.naccl.mapper.CodeLogMapper">
+
+
+    <resultMap id="mailLog" type="top.naccl.entity.CodeLog">
+        <id property="msgId" column="msg_id"/>
+        <id property="email" column="email"/>
+        <result property="status" column="status"/>
+        <result property="routeKey" column="route_key"/>
+        <result property="exchange" column="exchange"/>
+        <result property="count" column="count"/>
+        <result property="tryTime" column="try_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <insert id="insertCodeLog" parameterType="top.naccl.entity.CodeLog">
+        insert into code_log (msg_id, email, status, route_key, exchange, count, try_time, create_time, update_time)
+        values (#{msgId}, #{email}, #{status}, #{routeKey}, #{exchange}, #{count}, #{tryTime}, #{createTime}, #{updateTime})
+    </insert>
+    <update id="updateCodeStatus">
+        update code_log set status = #{status}, update_time = #{updateTime} where msg_id = #{msgId}
+    </update>
+    <update id="updateCode" parameterType="top.naccl.entity.CodeLog">
+        update code_log set email = #{email},
+                            status = #{status},
+                            route_key = #{routeKey},
+                            exchange = #{exchange},
+                            count = #{count},
+                            try_time = #{tryTime},
+                            create_time = #{createTime},
+                            update_time = #{updateTime} where msg_id = #{msgId}
+    </update>
+    <select id="getStatusFailList" resultType="top.naccl.entity.CodeLog" parameterType="java.lang.Integer">
+        select * from code_log where status = #{status}
+    </select>
+
+
+</mapper>

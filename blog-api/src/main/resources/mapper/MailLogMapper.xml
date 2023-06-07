@@ -46,6 +46,9 @@
     <select id="getStatusFailList" resultType="top.naccl.entity.MailLog">
         select * from mail_log where status = #{status}
     </select>
+    <select id="getMailById" resultType="top.naccl.entity.MailLog" parameterType="java.lang.String">
+        select * from mail_log where msg_id = #{msgId}
+    </select>
 
 
 </mapper>

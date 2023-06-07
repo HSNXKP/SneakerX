@@ -33,6 +33,7 @@ public class User implements UserDetails {
 	private String nickname; //昵称
 	private String avatar; //头像
 	private String email; //邮箱
+	private String code; //邮箱验证码
 	private String userFlag;// 登陆后的前戳
 	private String flagColor;//前戳的颜色
 	private String userSign;//个人签名

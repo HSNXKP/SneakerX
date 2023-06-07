@@ -16,28 +16,22 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import top.naccl.config.properties.RabbitMQConstant;
 import top.naccl.constant.RedisKeyConstants;
-import top.naccl.entity.MailLog;
-import top.naccl.entity.User;
-import top.naccl.mapper.MailLogMapper;
 import top.naccl.service.RedisService;
-import top.naccl.service.UserService;
-
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Random;
 
-import static java.time.format.DateTimeFormatter.ofPattern;
 
 /**
- * @author: wdd 邮件发送
- * @date: 2023/5/13 17:36
+ * @author: wdd
+ * @date: 2023/5/18 18:18
  */
 @Component
-public class MailReceiver {
-
+public class CodeMAil {
     // 打印日志
-    private static final Logger LOGGER= LoggerFactory.getLogger(MailReceiver.class);
+    private static final Logger LOGGER= LoggerFactory.getLogger(CodeMAil.class);
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -52,32 +46,19 @@ public class MailReceiver {
     @Autowired
     private RedisService redisService;
 
-    @Autowired
-    private MailLogMapper mailLogMapper;
-
-    @Autowired
-    private UserService userService;
-
-    @RabbitListener(queues = RabbitMQConstant.MAIL_QUEUE_NAME)
+    @RabbitListener(queues = RabbitMQConstant.CODE_QUEUE_NAME)
     public void handler(Message message, Channel channel){
-        // 拿出用户
-        User user = (User) message.getPayload();
+        // 拿出邮箱
+        String email = (String) message.getPayload();
         MessageHeaders headers = message.getHeaders();
         // 消息号序列
         long tag = (long) headers.get(AmqpHeaders.DELIVERY_TAG);
-        // 拿出msgId
+        // 拿出codeId 就是email
         String data = (String) headers.get("spring_returned_message_correlation");
         String[] split = data.split(RabbitMQConstant.DOT);
-        MailLog mailUser = mailLogMapper.getMailById(split[1]);
-        if (user.getId() == null){
-            user = userService.findUserById(mailUser.getUserId());
-        }
         try {
-            if (redisService.getValueByHashKey(RedisKeyConstants.MAIL_MSG_ID_MAP,split[1])!= null){
+            if (redisService.getValueByHashKey(RedisKeyConstants.CODE_MSG_ID_MAP,email)!= null){
                 LOGGER.error("消息已经被消费======={}",split[1]);
-                /**
-                 * tag：消息序号
-                 */
                 return;
             }
             // 创建消息
@@ -86,24 +67,27 @@ public class MailReceiver {
             // 发件人
             helper.setFrom(mailProperties.getUsername());
             // 收件人
-            helper.setTo(user.getEmail());
+            helper.setTo(email);
             // 主题
-            helper.setSubject("SneakerX邮件");
+            helper.setSubject("SneakerX注册邮件");
             helper.setSentDate(new Date());
             // 邮件内容
+            // 生成5位数验证码
+            String code= String.valueOf((int)(new Random().nextDouble() * (99999 - 10000 + 1)) + 10000);
             Context context = new Context();
-            context.setVariable("nickname",user.getNickname());
-            context.setVariable("createTime",user.getCreateTime().format(ofPattern("yyyy-MM-dd HH:mm:ss")));
-            String mail = templateEngine.process("mail", context);
+            context.setVariable("email",email);
+            context.setVariable("code",code);
+            String mail = templateEngine.process("code", context);
             helper.setText(mail,true);
             // 发送邮件
             javaMailSender.send(msg);
-            LOGGER.info("注册邮件发送成功");
+            LOGGER.info("验证码邮件发送成功");
             // 更新到redis中
-            redisService.saveKVToHash(RedisKeyConstants.MAIL_MSG_ID_MAP,split[1], user.getId() + ":" + "成功发送邮件，用户名：" +user.getUsername() + "的邮箱" + "：" + user.getEmail());
+            redisService.saveKVToHash(RedisKeyConstants.CODE_MSG_ID_MAP,email,code);
             channel.basicAck(tag,false);
         } catch (MessagingException | IOException e) {
             try {
+                // 将消息重新放入队列
                 channel.basicNack(tag,false,true);
             } catch (IOException ex) {
                 LOGGER.error("邮件发送失败");
@@ -113,4 +97,5 @@ public class MailReceiver {
 
 
     }
+
 }

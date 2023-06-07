@@ -9,32 +9,27 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import top.naccl.config.properties.MailConstants;
+import top.naccl.config.properties.RabbitMQConstant;
 import top.naccl.config.properties.UploadProperties;
-import top.naccl.entity.Blog;
-import top.naccl.entity.MailLog;
-import top.naccl.entity.UserFans;
+import top.naccl.constant.RedisKeyConstants;
+import top.naccl.entity.*;
 import top.naccl.exception.NotFoundException;
 import top.naccl.mapper.BlogMapper;
+import top.naccl.mapper.CodeLogMapper;
 import top.naccl.mapper.MailLogMapper;
 import top.naccl.mapper.UserMapper;
-import top.naccl.entity.User;
 import top.naccl.model.vo.NewPasswordVo;
-import top.naccl.model.vo.PageResult;
 import top.naccl.model.vo.Result;
-import top.naccl.service.ScheduleJobService;
+import top.naccl.service.RedisService;
 import top.naccl.service.SiteSettingService;
 import top.naccl.service.UserService;
 import top.naccl.util.HashUtils;
 import top.naccl.util.upload.UploadUtils;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * @Description: 用户业务层接口实现类
@@ -60,6 +55,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Autowired
 	private MailLogMapper mailLogMapper;
+
+	@Autowired
+	private CodeLogMapper codeLogMapper;
+
+	@Autowired
+	private RedisService redisService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -96,6 +97,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (userMapper.findByUsername(user.getUsername()) !=null){
 			return Result.error("用户名已存在");
 		}
+		String code = (String) redisService.getValueByHashKey(RedisKeyConstants.CODE_MSG_ID_MAP, user.getEmail());
+		if (!code.equals(user.getCode())){
+			return Result.error("验证码错误");
+		}
 		// 创建账号时间
 		user.setCreateTime(LocalDateTime.now());
 		user.setUpdateTime(LocalDateTime.now());
@@ -117,21 +122,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (userMapper.registerUser(user)){
 			User userMail = userMapper.findByUsername(user.getUsername());
 			// 唯一标识符UUID
-			String msgID = UUID.randomUUID().toString();
+			String msgId = UUID.randomUUID().toString();
 			MailLog mailLog = new MailLog();
-			mailLog.setMsgId(msgID);
+			mailLog.setMsgId(msgId);
 			mailLog.setUserId(userMail.getId());
-			mailLog.setStatus(MailConstants.DELIVERING);
-			mailLog.setRouteKey(MailConstants.MAIL_ROUTING_KEY_NAME);
-			mailLog.setExchange(MailConstants.MAIL_EXCHANGE_NAME);
+			mailLog.setStatus(RabbitMQConstant.MailConstant.DELIVERING);
+			mailLog.setRouteKey(RabbitMQConstant.MailConstant.MAIL_ROUTING_KEY_NAME);
+			mailLog.setExchange(RabbitMQConstant.MailConstant.MAIL_EXCHANGE_NAME);
 			mailLog.setCount(0);
-			mailLog.setTryTime(LocalDateTime.now().plusMinutes(MailConstants.MSG_TIMEOUT));
+			mailLog.setTryTime(LocalDateTime.now().plusMinutes(RabbitMQConstant.MailConstant.MSG_TIMEOUT));
 			mailLog.setCreateTime(LocalDateTime.now());
 			mailLog.setUpdateTime(LocalDateTime.now());
 			// 消息入库
 			mailLogMapper.insertMailLog(mailLog);
+			//清除邮箱验证码
+			redisService.deleteByHashKey(RedisKeyConstants.CODE_MSG_ID_MAP,user.getEmail());
 			// 发送消息
-			rabbitTemplate.convertAndSend(MailConstants.MAIL_EXCHANGE_NAME,MailConstants.MAIL_ROUTING_KEY_NAME,userMail,new CorrelationData(msgID));
+			rabbitTemplate.convertAndSend(
+					RabbitMQConstant.MailConstant.MAIL_EXCHANGE_NAME,
+					RabbitMQConstant.MailConstant.MAIL_ROUTING_KEY_NAME,
+					userMail,
+					new CorrelationData(RabbitMQConstant.MailConstant.MAIL_ID_PREFIX + RabbitMQConstant.DOT + msgId)
+			);
 			return Result.ok("注册成功");
 		}
 		return Result.error("注册失败");
@@ -310,6 +322,36 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		return Result.error("未查询到该用户");
 	}
+
+    @Override
+    public Result sendCode(User user) {
+		//TODO 没有做时间的校验 二次开发可以做
+		if (redisService.getValueByHashKey(RedisKeyConstants.CODE_MSG_ID_MAP,user.getEmail()) != null){
+			redisService.deleteByHashKey(RedisKeyConstants.CODE_MSG_ID_MAP,user.getEmail());
+		}
+		// 唯一标识符UUID
+		String msgId = UUID.randomUUID().toString();
+		CodeLog codeLog = new CodeLog();
+		codeLog.setMsgId(msgId);
+		codeLog.setEmail(user.getEmail());
+		codeLog.setStatus(RabbitMQConstant.CodeConstant.DELIVERING);
+		codeLog.setRouteKey(RabbitMQConstant.CodeConstant.CODE_ROUTING_KEY_NAME);
+		codeLog.setExchange(RabbitMQConstant.CodeConstant.CODE_EXCHANGE_NAME);
+		codeLog.setCount(0);
+		codeLog.setTryTime(LocalDateTime.now().plusMinutes(RabbitMQConstant.CodeConstant.MSG_TIMEOUT));
+		codeLog.setCreateTime(LocalDateTime.now());
+		codeLog.setUpdateTime(LocalDateTime.now());
+		// 消息入库
+		codeLogMapper.insertCodeLog(codeLog);
+		// 发送消息
+		rabbitTemplate.convertAndSend(
+				RabbitMQConstant.CodeConstant.CODE_EXCHANGE_NAME,
+				RabbitMQConstant.CodeConstant.CODE_ROUTING_KEY_NAME,
+				user.getEmail(),
+				new CorrelationData(RabbitMQConstant.CodeConstant.CODE_ID_PREFIX + RabbitMQConstant.DOT + msgId)
+		);
+		return Result.ok("发送成功");
+    }
 
 
 }

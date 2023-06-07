@@ -35,4 +35,6 @@ public interface UserService {
     Result deleteUser(Long id);
 
     Result getUser(Long id);
+
+    Result sendCode(User user);
 }

@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import top.naccl.annotation.AccessLimit;
 import top.naccl.constant.JwtConstants;
 import top.naccl.entity.User;
 import top.naccl.mapper.UserMapper;
@@ -71,6 +72,12 @@ public class LoginController {
 	@PostMapping("/register")
 	public Result register(@RequestBody User user){
 		return userService.register(user);
+	}
+
+	@AccessLimit(seconds = 60, maxCount = 1,msg = "请勿频繁发送验证码")
+	@PostMapping("/sendCode")
+	public Result sendCode(@RequestBody User user){
+		return userService.sendCode(user);
 	}
 
 

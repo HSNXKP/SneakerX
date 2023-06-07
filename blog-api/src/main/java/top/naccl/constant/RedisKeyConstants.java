@@ -56,4 +56,9 @@ public class RedisKeyConstants {
 	 * 邮件发送msgId key
 	 */
 	public static final String MAIL_MSG_ID_MAP = "mailMsgIdMap";
+
+	/**
+	 * 邮件注册codeId key
+	 */
+	public static final String CODE_MSG_ID_MAP = "codeMsgIdMap";
 }

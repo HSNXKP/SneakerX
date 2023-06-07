@@ -19,4 +19,6 @@ public interface MailLogMapper {
 
     int updateMail(MailLog mailLog);
 
+    MailLog getMailById(String s);
+
 }

@@ -516,6 +516,7 @@ public class OrderServiceImpl implements OrderService {
                     // 关联的也全部修改
                     orderMapper.updateExpress(null,express,id);
                     orderMapper.updateStatus(null,2L,id);
+                    return Result.ok("修改成功");
             }else if (order.get(0).getStatus() == 2L){
                 if (orderMapper.updateExpress(id,express,null) == 1) {
                     return Result.ok("修改成功");
