@@ -174,6 +174,15 @@ class BlogApiApplicationTests {
 
 	}
 
+	@Test
+	void test6(){
+		String s = "111,111";
+		String[] split = s.split(",");
+		for (String s1 : split) {
+			System.out.println(s1);
+		}
+	}
+
 
 
 
