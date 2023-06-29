@@ -161,8 +161,18 @@ public class CommentController {
 				comment.setBlogId(null);
 			}
 		}
-		//判断是否可评论
 		CommentOpenStateEnum openState = commentUtils.judgeCommentState(comment.getPage(), comment.getBlogId(),null);
+		if (JwtUtils.judgeTokenIsExist(jwt)){
+			String subject;
+			subject = JwtUtils.getTokenBody(jwt).getSubject();
+			String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
+			if(userMapper.findByUsernameIsNull(username) !=0){
+				User admin = (User) userService.loadUserByUsername(username);
+				//Token验证通过，获取Token中用户名
+				 openState = commentUtils.judgeCommentState(comment.getPage(), comment.getBlogId(),admin.getId());
+			}
+		}
+		//判断是否可评论
 		switch (openState) {
 			case NOT_FOUND:
 				return Result.create(404, "该博客不存在");

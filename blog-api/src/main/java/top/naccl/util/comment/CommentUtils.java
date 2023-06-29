@@ -183,10 +183,12 @@ public class CommentUtils {
 					//未查询到此博客
 					return CommentOpenStateEnum.NOT_FOUND;
 				} else if (!published) { // 保证自己的私密作品也可以查看评论
-					if (!publishedByBlogIdWithUserId.equals(blogId)){
+					if (publishedByBlogIdWithUserId != null && publishedByBlogIdWithUserId.equals(blogId)){
 						//博客未公开
-						return CommentOpenStateEnum.NOT_FOUND;
+						return CommentOpenStateEnum.OPEN;
 					}
+					//博客未公开
+					return CommentOpenStateEnum.NOT_FOUND;
 				} else if (!commentEnabled) {
 					//博客评论已关闭
 					return CommentOpenStateEnum.CLOSE;
