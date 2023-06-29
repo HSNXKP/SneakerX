@@ -175,13 +175,18 @@ public class CommentUtils {
 				//普通博客
 				Boolean commentEnabled = blogService.getCommentEnabledByBlogId(blogId);
 				Boolean published = blogService.getPublishedByBlogId(blogId);
-				Long publishedByBlogIdWithUserId = blogService.getPublishedByBlogIdWithUserId(blogId, userId);
+				Long publishedByBlogIdWithUserId = null;
+				if (userId != null){
+					publishedByBlogIdWithUserId = blogService.getPublishedByBlogIdWithUserId(blogId, userId);
+				}
 				if (commentEnabled == null || published == null) {
 					//未查询到此博客
 					return CommentOpenStateEnum.NOT_FOUND;
-				} else if (!published && !publishedByBlogIdWithUserId.equals(blogId)) { // 保证自己的私密作品也可以查看评论
-					//博客未公开
-					return CommentOpenStateEnum.NOT_FOUND;
+				} else if (!published) { // 保证自己的私密作品也可以查看评论
+					if (!publishedByBlogIdWithUserId.equals(blogId)){
+						//博客未公开
+						return CommentOpenStateEnum.NOT_FOUND;
+					}
 				} else if (!commentEnabled) {
 					//博客评论已关闭
 					return CommentOpenStateEnum.CLOSE;
