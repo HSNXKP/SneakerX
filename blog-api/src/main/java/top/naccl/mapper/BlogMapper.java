@@ -89,4 +89,7 @@ public interface BlogMapper {
     Boolean addLikeByBlogId(Long id);
 
 	List<Blog> getBlogByUserId(Long id);
+
+	Long getPublishedByBlogIdWithUserId(Long blogId, Long userId);
+
 }

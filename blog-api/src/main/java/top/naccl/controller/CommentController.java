@@ -61,13 +61,15 @@ public class CommentController {
 	 * @param jwt      若文章受密码保护，需要获取访问Token
 	 * @return
 	 */
+	//TODO 如果博主自己私密的作品进入的话 也是可以查询的 这里异步调用异常，所以得改 添加条件，需要博主id
 	@GetMapping("/comments")
 	public Result comments(@RequestParam Integer page,
 	                       @RequestParam(defaultValue = "") Long blogId,
 	                       @RequestParam(defaultValue = "1") Integer pageNum,
 	                       @RequestParam(defaultValue = "10") Integer pageSize,
+						   @RequestParam(defaultValue = "") Long userId,
 	                       @RequestHeader(value = "Authorization", defaultValue = "") String jwt) {
-		CommentOpenStateEnum openState = commentUtils.judgeCommentState(page, blogId);
+		CommentOpenStateEnum openState = commentUtils.judgeCommentState(page, blogId,userId);
 		switch (openState) {
 			case NOT_FOUND:
 				return Result.create(404, "该博客不存在");
@@ -159,8 +161,12 @@ public class CommentController {
 				comment.setBlogId(null);
 			}
 		}
+		String subject;
+		subject = JwtUtils.getTokenBody(jwt).getSubject();
+		String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
+		User admin = (User) userService.loadUserByUsername(username);
 		//判断是否可评论
-		CommentOpenStateEnum openState = commentUtils.judgeCommentState(comment.getPage(), comment.getBlogId());
+		CommentOpenStateEnum openState = commentUtils.judgeCommentState(comment.getPage(), comment.getBlogId(),admin.getId());
 		switch (openState) {
 			case NOT_FOUND:
 				return Result.create(404, "该博客不存在");
@@ -171,12 +177,8 @@ public class CommentController {
 				//文章受密码保护
 				//验证Token合法性
 				if (JwtUtils.judgeTokenIsExist(jwt)) {
-					String subject;
 					try {
-						subject = JwtUtils.getTokenBody(jwt).getSubject();
-						String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
 						if(userMapper.findByUsernameIsNull(username) !=0){
-							User admin = (User) userService.loadUserByUsername(username);
 							//Token验证通过，获取Token中用户名
 							commentUtils.setAdminComment(comment, request, admin);
 						} else {//普通访客经文章密码验证后携带Token
@@ -205,12 +207,8 @@ public class CommentController {
 				//评论正常开放
 				//有Token则为博主评论，或文章原先为密码保护，后取消保护，但客户端仍存在Token
 				if (JwtUtils.judgeTokenIsExist(jwt)) {
-					String subject;
 					try {
-						subject = JwtUtils.getTokenBody(jwt).getSubject();
-						String username = subject.replace(JwtConstants.ADMIN_PREFIX, "");
 						if(userMapper.findByUsernameIsNull(username) !=0){
-							User admin = (User) userService.loadUserByUsername(username);
 							commentUtils.setAdminComment(comment, request, admin);
 						} else {//文章原先为密码保护，后取消保护，但客户端仍存在Token，则忽略Token
 						//对访客的评论昵称、邮箱合法性校验

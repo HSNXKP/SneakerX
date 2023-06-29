@@ -68,4 +68,6 @@ public interface BlogService {
 	Result editBlog(top.naccl.model.dto.Blog blog,String type,Long userId);
 
 
+	Long getPublishedByBlogIdWithUserId(Long blogId, Long userId);
+
 }

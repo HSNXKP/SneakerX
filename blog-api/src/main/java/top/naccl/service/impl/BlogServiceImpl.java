@@ -529,8 +529,13 @@ public class BlogServiceImpl implements BlogService {
 		}
     }
 
+	@Override
+	public Long getPublishedByBlogIdWithUserId(Long blogId, Long userId) {
+		return blogMapper.getPublishedByBlogIdWithUserId(blogId, userId);
+	}
 
-    /**
+
+	/**
 	 * 删除首页缓存、最新推荐缓存、归档页面缓存、博客浏览量缓存
 	 */
 	private void deleteBlogRedisCache() {

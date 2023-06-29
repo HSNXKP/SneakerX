@@ -575,4 +575,8 @@
     <select id="getBlogByUserId" resultType="top.naccl.entity.Blog" parameterType="java.lang.Long">
         select * from blog left join user on  blog.user_id = user.id  where user.id=#{id}
     </select>
+    <!--查询当前私密动态的评论    -->
+    <select id="getPublishedByBlogIdWithUserId" resultType="java.lang.Long">
+        select blog.id from blog where blog.user_id = #{userId} and  blog.id = #{blogId}
+    </select>
 </mapper>

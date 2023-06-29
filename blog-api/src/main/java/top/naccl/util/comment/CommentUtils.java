@@ -169,16 +169,17 @@ public class CommentUtils {
 	 * @param blogId 如果page==0，需要博客id参数，校验文章是否公开状态
 	 * @return CommentOpenStateEnum
 	 */
-	public CommentOpenStateEnum judgeCommentState(Integer page, Long blogId) {
+	public CommentOpenStateEnum judgeCommentState(Integer page, Long blogId,Long userId) {
 		switch (page) {
 			case PageConstants.BLOG:
 				//普通博客
 				Boolean commentEnabled = blogService.getCommentEnabledByBlogId(blogId);
 				Boolean published = blogService.getPublishedByBlogId(blogId);
+				Long publishedByBlogIdWithUserId = blogService.getPublishedByBlogIdWithUserId(blogId, userId);
 				if (commentEnabled == null || published == null) {
 					//未查询到此博客
 					return CommentOpenStateEnum.NOT_FOUND;
-				} else if (!published) {
+				} else if (!published && !publishedByBlogIdWithUserId.equals(blogId)) { // 保证自己的私密作品也可以查看评论
 					//博客未公开
 					return CommentOpenStateEnum.NOT_FOUND;
 				} else if (!commentEnabled) {
