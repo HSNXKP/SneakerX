@@ -174,17 +174,40 @@ class BlogApiApplicationTests {
 
 	}
 
-	@Test
-	void test6(){
-		String s = "111,111";
-		String[] split = s.split(",");
-		for (String s1 : split) {
-			System.out.println(s1);
+
+
+
+	private int maxProfit(int[] prices, int pricesSize) {
+		int e=1; //
+		int pri = 0; //单次收益
+		for(int i=0;i<=prices.length && i+e-1<prices.length;i=+e){
+			e=1;
+			for(int j=i+1;j<prices.length;j++){
+				if(pri<prices[j+1]-prices[j]){
+					pri = prices[j+1] - prices[j];
+					e = j-1;
+				}
+			}
+			pricesSize = pricesSize + pri;
 		}
+		return pricesSize;
 	}
 
-
-
+	@Test
+	void test6(){
+		// 买卖股票的最佳时机
+		// 1.暴力解法
+		// 创建数组
+		int[] prices = new int[10];
+		prices[0] = 7;
+		prices[1] = 6;
+		prices[2] = 4;
+		prices[3] = 3;
+		prices[4] = 2;
+		prices[5] = 3;
+		int x = maxProfit(prices, 0);
+		System.out.println(x);
+	}
 
 
 }

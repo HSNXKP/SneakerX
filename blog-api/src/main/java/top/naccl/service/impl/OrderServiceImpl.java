@@ -610,7 +610,7 @@ public class OrderServiceImpl implements OrderService {
         if (order != null) {
             if (order.getStatus() == 5L) {
                 Long status = null;
-                if (order.getExpress() == null || order.getExpress().equals(" ")) {
+                if (order.getExpress() == null || order.getExpress().equals("")) {
                     status = 1L;
                 } else {
                     status = 2L;

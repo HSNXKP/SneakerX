@@ -112,6 +112,12 @@ public class OrderAdminController {
     }
 
 
+    /**
+     * 拒绝退款
+     * @param orderNumber
+     * @param userId
+     * @return
+     */
     @GetMapping("/refuseRefund")
     public Result refuseRefund(@RequestParam("orderNumber")String orderNumber,@RequestParam("userId") Long userId){
         return orderService.refuseRefund(orderNumber,userId);
